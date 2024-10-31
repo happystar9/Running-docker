@@ -9,7 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\TetrisApi\TetrisApi.csproj" />
     <ProjectReference Include="..\TetrisTest\TetrisTest.csproj" />
-    <ProjectReference Include="..\TetrisWeb\TetrisWeb.csproj" />
   </ItemGroup>
 
 </Project>
