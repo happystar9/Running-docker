@@ -34,13 +34,42 @@ public class EmailSender : IEmailSender<ApplicationUser>
         await client.DisconnectAsync(true);
     }
 
-    public Task SendPasswordResetCodeAsync(ApplicationUser user, string email, string resetCode)
+    public async Task SendPasswordResetCodeAsync(ApplicationUser user, string email, string resetCode)
     {
-        throw new NotImplementedException();
+        var emailMessage = new MimeMessage();
+        emailMessage.From.Add(new MailboxAddress(_configuration["EmailSettings:SenderName"], _configuration["EmailSettings:SenderEmail"]));
+        emailMessage.To.Add(new MailboxAddress(user.UserName, email));
+        emailMessage.Subject = "Reset your password";
+
+        emailMessage.Body = new TextPart("html")
+        {
+            Text = $"Your password reset code is: <strong>{resetCode}</strong>. Please use this code to reset your password."
+        };
+
+        using var client = new SmtpClient();
+        await client.ConnectAsync(_configuration["EmailSettings:SmtpServer"], int.Parse(_configuration["EmailSettings:Port"]), MailKit.Security.SecureSocketOptions.StartTls);
+        await client.AuthenticateAsync(_configuration["EmailSettings:Username"], _configuration["EmailSettings:Password"]);
+        await client.SendAsync(emailMessage);
+        await client.DisconnectAsync(true);
+
     }
 
-    public Task SendPasswordResetLinkAsync(ApplicationUser user, string email, string resetLink)
+    public async Task SendPasswordResetLinkAsync(ApplicationUser user, string email, string resetLink)
     {
-        throw new NotImplementedException();
+        var emailMessage = new MimeMessage();
+        emailMessage.From.Add(new MailboxAddress(_configuration["EmailSettings:SenderName"], _configuration["EmailSettings:SenderEmail"]));
+        emailMessage.To.Add(new MailboxAddress(user.UserName, email));
+        emailMessage.Subject = "Reset your password";
+
+        emailMessage.Body = new TextPart("html")
+        {
+            Text = $"Please reset your password by clicking <a href='{resetLink}'>here</a>."
+        };
+
+        using var client = new SmtpClient();
+        await client.ConnectAsync(_configuration["EmailSettings:SmtpServer"], int.Parse(_configuration["EmailSettings:Port"]), MailKit.Security.SecureSocketOptions.StartTls);
+        await client.AuthenticateAsync(_configuration["EmailSettings:Username"], _configuration["EmailSettings:Password"]);
+        await client.SendAsync(emailMessage);
+        await client.DisconnectAsync(true);
     }
 }
