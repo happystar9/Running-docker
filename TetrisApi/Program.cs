@@ -1,5 +1,7 @@
-using TetrisApi;
+using Microsoft.EntityFrameworkCore;
 using TetrisApi.Data;
+using TetrisApi.Services;
+using TetrisShared;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,12 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var connString = builder.Configuration["DB_CONN"];
+
+
+builder.Services.AddDbContext<Dbf25TeamArzContext>(options => options.UseNpgsql(connString));
+builder.Services.AddScoped<IPlayerService, PlayerService>();
 
 var app = builder.Build();
 
