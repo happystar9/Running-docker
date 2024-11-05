@@ -11,5 +11,5 @@ Content-Type: application/json
   player???
 }
 ###TEST ENDPOINT FOR CHAT GET not implemented yet
-GET {{TetrisApi_HostAddress}}/Chats
+GET {{TetrisApi_HostAddress}}/chats
 ###

@@ -26,6 +26,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 //not fully implemented
-//app.MapPost("/chat", (ChatService chat) => ChatService.PostChatAsync()));
+//app.MapPost("/chats", (ChatService chat) => ChatService.GetChatAsync());
+//app.MapGet("/chats", (ChatService chat) => ChatService.PostChatAsync());
 
 app.Run();

@@ -1,27 +1,20 @@
-﻿using TetrisApi.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using TetrisApi.Data;
 
 namespace TetrisApi
 {
-	public class ChatService : IChatservice
+	public class ChatService(Dbf25TeamArzContext context)
 	{
-		private readonly HttpClient _httpClient;
-
-		public ChatService(HttpClient httpClient)
+		public async Task<ICollection<Chat>> GetChatAsync()
 		{
-			_httpClient = httpClient;
+			return await context.Chats.ToListAsync();
 		}
 
-		public async Task<List<Chat>> GetChatAsync()
+		public async Task<IResult> PostChatAsync(Chat chat)
 		{
-			// Get all chats, can add where to specify which date, needs more more
-			var response = await _httpClient.GetFromJsonAsync<List<Chat>>("select * from dbf25_team_arz.game.chat");
-			return response;
-		}
-
-		public async Task<IResult> PostChatAsync()
-		{
-			//not fully implemented
-			//var response = await _httpClient.GetFromJsonAsync<List<Chat>>("select * from dbf25_team_arz.game.chat");
+			//not fully implemented in endpoint
+			context.Add(chat);
+			await context.SaveChangesAsync();
 			return Results.Created();
 		}
 	}
