@@ -1,6 +1,15 @@
 @TetrisApi_HostAddress = http://localhost:5248
 
-GET {{TetrisApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
+###TEST ENDPOINT FOR CHAT POST not implemented yet
+POST {{TetrisApi_HostAddress}}/chat
+Content-Type: application/json
+{
+  "id": 1, 
+  "playerid": 1, 
+  "message": "Please work or I will desire death",
+  "timesent": "12/20/2004",
+  player???
+}
+###TEST ENDPOINT FOR CHAT GET not implemented yet
+GET {{TetrisApi_HostAddress}}/Chats
 ###
