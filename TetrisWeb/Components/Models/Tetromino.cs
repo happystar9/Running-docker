@@ -15,7 +15,7 @@
         public int CenterPieceCol { get; set; }
         public virtual TetrominoStyle Style { get; }
         public virtual string CssClass { get; }
-        public virtual CellList? CoveredCells { get; set; }
+        public virtual CellList CoveredCells { get; set; }
 
         public bool CanMoveLeft()
         {
