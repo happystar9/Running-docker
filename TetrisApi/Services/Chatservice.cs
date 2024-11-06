@@ -21,7 +21,7 @@ namespace TetrisApi.Services
             return chats;
         }
 
-        public async Task<IResult> PostChatAsync(ChatDto chatDto)
+        public async Task<ChatDto> PostChatAsync(ChatDto chatDto)
         {
             Chat chatObj = new Chat
             {
@@ -32,7 +32,16 @@ namespace TetrisApi.Services
             };
             await dbcontext.Chats.AddAsync(chatObj);
             await dbcontext.SaveChangesAsync();
-            return Results.Created();
+
+            var result = new ChatDto
+            {
+                Id = chatDto.Id,
+                PlayerId = chatDto.PlayerId,
+                Message = chatDto.Message,
+                TimeSent = chatObj.TimeSent
+            };
+
+            return result;
         }
         
     }
@@ -40,5 +49,5 @@ namespace TetrisApi.Services
 public interface IChatService
 {
     Task<List<ChatDto>> GetAllChatsAsync();
-    Task<IResult> PostChatAsync(ChatDto chatDto);
+    Task<ChatDto> PostChatAsync(ChatDto chatDto);
 }

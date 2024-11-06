@@ -10,7 +10,7 @@ public class ChatController(IChatService chatService) : ControllerBase
     [HttpPost]
     public async Task<IResult> RegisterPlayer([FromBody] ChatDto chatDto)
     {
-        var newPlayer = await chatService.PostChatAsync(chatDto);
-        return Results.Ok(newPlayer);
+        var newChat = await chatService.PostChatAsync(chatDto);
+        return Results.Ok(newChat);
     }
 }
