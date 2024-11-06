@@ -35,12 +35,10 @@
                 <div class="tetris-row">
                     @for (int j = 1; j <= grid.Width; j++)
                     {
-                        <GridCell Row="i" Column="j" Tetromino="currentTetromino" Grid="grid"/>
+                        <GridCell Row="i" Column="j" Tetromino="currentTetromino" Grid="grid" />
                     }
                 </div>
             }
-        </div>
-        <div class="tetris-cell">
         </div>
     </div>
     <div class="col">
@@ -64,7 +62,7 @@
                     <h3>Controls</h3>
                     <span>&#8592;</span> / <span>&#8594;</span> Move Tetromino<br />
                     <span>&#8593;</span>: Rotate Tetromino<br />
-                    <span>&#8595;</span>: Move Down <br /> 
+                    <span>&#8595;</span>: Move Down <br />
                     <span>Space</span>: Quick Drop Tetromino<br />
                 </div>
             </div>
@@ -84,6 +82,7 @@
         </div>
     </div>
 </div>
+
 
 @code {
     Grid grid = new Grid();
