@@ -3,7 +3,6 @@
 @using TetrisWeb.Components.Models;
 @using TetrisWeb.Components.Pages.Partials;
 @inject IJSRuntime _jsRuntime;
-@RenderMode.InteractiveServer;
 
 <script>
     window.SetFocusToElement = (element) => {
@@ -36,7 +35,7 @@
                 <div class="tetris-row">
                     @for (int j = 1; j <= grid.Width; j++)
                     {
-                        <GridCell Row="i" Column="j" Tetromino="currentTetromino" Grid="grid" />
+                        <GridCell Row="i" Column="j" Tetromino="currentTetromino" Grid="grid"/>
                     }
                 </div>
             }
@@ -65,7 +64,8 @@
                     <h3>Controls</h3>
                     <span>&#8592;</span> / <span>&#8594;</span> Move Tetromino<br />
                     <span>&#8593;</span>: Rotate Tetromino<br />
-                    <span>&#8595;</span> / <span>Space</span>: Drop Tetromino<br />
+                    <span>&#8595;</span>: Move Down <br /> 
+                    <span>Space</span>: Quick Drop Tetromino<br />
                 </div>
             </div>
         }
