@@ -11,6 +11,7 @@ namespace TetrisWeb.Components.Models
         public int Height { get; } = 20;
         public CellList Cells { get; set; } = new CellList();
 
+
         public GameState State { get; set; } = GameState.NotStarted;
 
         public bool IsStarted
