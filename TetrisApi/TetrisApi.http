@@ -1,15 +1,15 @@
 @TetrisApi_HostAddress = http://localhost:5248
 
 ###TEST ENDPOINT FOR CHAT POST not implemented yet
-POST {{TetrisApi_HostAddress}}/chat
+POST {{TetrisApi_HostAddress}}/api/Chat
 Content-Type: application/json
 { 
   "Playerid": 1, 
-  "Message": "Please work or I will desire death",
-  "TimeSent": "12/20/2004"
+  "Message": "test 1"
+  
 }
 ###TEST ENDPOINT FOR CHAT GET not implemented yet
-GET {{TetrisApi_HostAddress}}/chats
+GET {{TetrisApi_HostAddress}}/api/Chat
 ###
 
 POST {{TetrisApi_HostAddress}}/api/Player/register

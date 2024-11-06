@@ -7,7 +7,7 @@ namespace TetrisApi.Services
     public class ChatService(Dbf25TeamArzContext dbcontext) : IChatService
     {
 
-        public async Task<List<ChatDto>> GetAllChatsAsync(Chat chat)
+        public async Task<List<ChatDto>> GetAllChatsAsync()
         {
             var chats = await dbcontext.Chats
             .Select(c => new ChatDto
@@ -21,9 +21,16 @@ namespace TetrisApi.Services
             return chats;
         }
 
-        public async Task<IResult> PostChatAsync(Chat chat)
+        public async Task<IResult> PostChatAsync(ChatDto chatDto)
         {
-            await dbcontext.Chats.AddAsync(chat);
+            Chat chatObj = new Chat
+            {
+                Id = chatDto.Id,
+                PlayerId = chatDto.PlayerId,
+                Message = chatDto.Message,
+                TimeSent = DateTime.Now
+            };
+            await dbcontext.Chats.AddAsync(chatObj);
             await dbcontext.SaveChangesAsync();
             return Results.Created();
         }
@@ -32,6 +39,6 @@ namespace TetrisApi.Services
 }
 public interface IChatService
 {
-    Task<List<ChatDto>> GetAllChatsAsync(Chat chat);
-    Task<IResult> PostChatAsync(Chat chat);
+    Task<List<ChatDto>> GetAllChatsAsync();
+    Task<IResult> PostChatAsync(ChatDto chatDto);
 }
