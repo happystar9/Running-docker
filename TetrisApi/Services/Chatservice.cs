@@ -7,21 +7,31 @@ namespace TetrisApi.Services
     public class ChatService(Dbf25TeamArzContext dbcontext) : IChatService
     {
 
-        public Task<ChatDto> GetChatAsync(Chat chat)
+        public async Task<List<ChatDto>> GetAllChatsAsync(Chat chat)
         {
-            throw new NotImplementedException();
+            var chats = await dbcontext.Chats
+            .Select(c => new ChatDto
+            {
+                PlayerId = c.PlayerId,
+                Message = c.Message,
+                TimeSent = c.TimeSent
+            })
+            .ToListAsync();
+
+            return chats;
         }
 
-        public Task<ChatDto> PostChatAsync(Chat chat)
+        public async Task<IResult> PostChatAsync(Chat chat)
         {
-            throw new NotImplementedException();
+            await dbcontext.Chats.AddAsync(chat);
+            await dbcontext.SaveChangesAsync();
+            return Results.Created();
         }
-
         
     }
 }
 public interface IChatService
 {
-    Task<ChatDto> GetChatAsync(Chat chat);
-    Task<ChatDto> PostChatAsync(Chat chat);
+    Task<List<ChatDto>> GetAllChatsAsync(Chat chat);
+    Task<IResult> PostChatAsync(Chat chat);
 }
