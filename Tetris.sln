@@ -3,13 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetrisApi", "TetrisApi\TetrisApi.csproj", "{A5EC6CF7-3033-4C9B-88CE-6A641EFC1DF3}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetrisTest", "TetrisTest\TetrisTest.csproj", "{65876DEB-9FAF-4A4A-9447-03B4EA7262F4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetrisShared", "TetrisShared\TetrisShared.csproj", "{68CE9E42-A822-48B4-BD50-FE86C6A4CF66}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetrisWeb", "TetrisWeb\TetrisWeb.csproj", "{89E18358-0955-49F1-A662-21606A60F2C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetrisWeb", "TetrisWeb\TetrisWeb.csproj", "{89E18358-0955-49F1-A662-21606A60F2C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,18 +13,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A5EC6CF7-3033-4C9B-88CE-6A641EFC1DF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A5EC6CF7-3033-4C9B-88CE-6A641EFC1DF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A5EC6CF7-3033-4C9B-88CE-6A641EFC1DF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A5EC6CF7-3033-4C9B-88CE-6A641EFC1DF3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{65876DEB-9FAF-4A4A-9447-03B4EA7262F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{65876DEB-9FAF-4A4A-9447-03B4EA7262F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65876DEB-9FAF-4A4A-9447-03B4EA7262F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65876DEB-9FAF-4A4A-9447-03B4EA7262F4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{68CE9E42-A822-48B4-BD50-FE86C6A4CF66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{68CE9E42-A822-48B4-BD50-FE86C6A4CF66}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{68CE9E42-A822-48B4-BD50-FE86C6A4CF66}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{68CE9E42-A822-48B4-BD50-FE86C6A4CF66}.Release|Any CPU.Build.0 = Release|Any CPU
 		{89E18358-0955-49F1-A662-21606A60F2C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{89E18358-0955-49F1-A662-21606A60F2C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89E18358-0955-49F1-A662-21606A60F2C6}.Release|Any CPU.ActiveCfg = Release|Any CPU

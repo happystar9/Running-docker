@@ -15,7 +15,7 @@ GET {{TetrisWeb_HostAddress}}/api/Chat
 POST {{TetrisWeb_HostAddress}}/api/Player/register
 Content-Type: application/json
 {
-  "Authid": "newuser123",
+  "Authid": "testuser3",
   "PlayerQuote": "A super cool quote!",
   "AvatarUrl": "https://example.com/avatar.jpg",
   "ApiKey": "fake-api-key",
