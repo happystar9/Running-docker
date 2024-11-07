@@ -8,7 +8,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using TetrisWeb.Components.Account.Pages;
 using TetrisWeb.Components.Account.Pages.Manage;
-using TetrisWeb.Data;
+using TetrisWeb.AuthData;
 
 namespace Microsoft.AspNetCore.Routing
 {

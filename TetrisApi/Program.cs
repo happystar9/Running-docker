@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using TetrisApi.Data;
-using TetrisApi.Services;
+using TetrisWeb.AuthData;
+using TetrisWeb.ApiServices;
 using TetrisShared;
 
 var builder = WebApplication.CreateBuilder(args);

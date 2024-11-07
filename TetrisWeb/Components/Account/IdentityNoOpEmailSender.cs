@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using TetrisWeb.Data;
+using TetrisWeb.AuthData;
 
 namespace TetrisWeb.Components.Account
 {

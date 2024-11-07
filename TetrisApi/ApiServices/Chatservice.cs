@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TetrisApi.Data;
+using TetrisWeb.AuthData;
 using TetrisShared.DTOs;
 
-namespace TetrisApi.Services
+namespace TetrisWeb.ApiServices
 {
     public class ChatService(Dbf25TeamArzContext dbcontext) : IChatService
     {

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TetrisApi.Data;
-
+namespace TetrisWeb.GameData;
 public partial class Leaderboard
 {
     public int Id { get; set; }

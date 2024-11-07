@@ -4,14 +4,28 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using TetrisWeb.Components;
 using TetrisWeb.Components.Account;
-using TetrisWeb.Data;
-using TetrisWeb.Services;
+using TetrisWeb.GameData;
+using TetrisWeb.ApiServices;
+using TetrisWeb.AuthData;
+using Microsoft.AspNetCore.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddControllers();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var connString = builder.Configuration["DB_CONN"];
+
+builder.Services.AddDbContext<Dbf25TeamArzContext>(options => options.UseNpgsql(connString));
+builder.Services.AddScoped<IPlayerService, PlayerService>();
+builder.Services.AddScoped<IChatService, ChatService>();
+
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
@@ -47,7 +61,6 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 
 builder.Services.AddTransient<IEmailSender<ApplicationUser>, EmailSender>();
-//builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 var app = builder.Build();
 
@@ -63,7 +76,16 @@ else
     app.UseHsts();
 }
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
+
 
 app.UseStaticFiles();
 app.UseAntiforgery();

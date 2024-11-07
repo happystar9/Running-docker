@@ -1,0 +1,22 @@
+@TetrisApi_HostAddress = http://localhost:5248
+
+POST {{TetrisApi_HostAddress}}/api/Chat
+Content-Type: application/json
+{ 
+  "Playerid": 1, 
+  "Message": "test 1"
+  
+}
+###TEST ENDPOINT FOR CHAT GET not implemented yet
+GET {{TetrisApi_HostAddress}}/api/Chat
+###
+
+POST {{TetrisApi_HostAddress}}/api/Player/register
+Content-Type: application/json
+{
+  "Authid": "user123",
+  "PlayerQuote": "A super cool quote!",
+  "AvatarUrl": "https://example.com/avatar.jpg",
+  "ApiKey": "fake-api-key",
+  "Isblocked": false
+}

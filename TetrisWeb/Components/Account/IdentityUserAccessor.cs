@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Identity;
-using TetrisWeb.Data;
+using TetrisWeb.AuthData;
 
 namespace TetrisWeb.Components.Account
 {

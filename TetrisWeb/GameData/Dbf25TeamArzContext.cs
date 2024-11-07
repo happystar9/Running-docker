@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace TetrisApi.Data;
+namespace TetrisWeb.GameData;
 
 public partial class Dbf25TeamArzContext : DbContext
 {

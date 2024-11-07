@@ -3,9 +3,9 @@ using MimeKit;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Identity;
-using TetrisWeb.Data;
+using TetrisWeb.AuthData;
 
-namespace TetrisWeb.Services;
+namespace TetrisWeb.ApiServices;
 public class EmailSender : IEmailSender<ApplicationUser>
 {
     private readonly IConfiguration _configuration;

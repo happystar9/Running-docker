@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace TetrisApi.Controllers
+namespace TetrisWeb.Controllers
 {
 	[ApiController]
 	[Route("[controller]")]

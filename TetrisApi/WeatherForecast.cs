@@ -1,4 +1,4 @@
-namespace TetrisApi
+namespace TetrisWeb
 {
 	public class WeatherForecast
 	{

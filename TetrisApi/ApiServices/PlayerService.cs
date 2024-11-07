@@ -1,7 +1,7 @@
-﻿using TetrisApi.Data;
+﻿using TetrisWeb.AuthData;
 using TetrisShared;
 using TetrisShared.DTOs;
-namespace TetrisApi.Services;
+namespace TetrisWeb.ApiServices;
 
 public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TetrisApi.Data;
+namespace TetrisWeb.AuthData;
 
 public partial class Chat
 {
