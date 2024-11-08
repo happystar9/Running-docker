@@ -21,3 +21,18 @@ Content-Type: application/json
   "ApiKey": "fake-api-key",
   "Isblocked": false
 }
+
+###
+GET {{TetrisWeb_HostAddress}}/api/boardState
+
+###
+POST {{TetrisWeb_HostAddress}}/api/moveLeft/x
+
+###
+POST {{TetrisWeb_HostAddress}}/api/moveRight/x
+
+###
+POST {{TetrisWeb_HostAddress}}/api/rotate
+
+###
+POST {{TetrisWeb_HostAddress}}/api/drop
