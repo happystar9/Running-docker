@@ -8,6 +8,7 @@ using TetrisWeb.GameData;
 using TetrisWeb.ApiServices;
 using TetrisWeb.AuthData;
 using Microsoft.AspNetCore.Builder;
+using TetrisWeb.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
