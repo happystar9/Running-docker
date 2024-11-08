@@ -123,18 +123,6 @@
         }
     }
 
-    //public void NewGame()
-    //{
-    //    grid = new Grid();
-
-    //    generator = new TetrominoGenerator();
-
-    //    currentTetromino = null;
-
-    //    level = 1;
-    //    score = 0;
-    //}
-
     public void NewGame()
     {
         gameState.ResetGame();
@@ -201,7 +189,7 @@
                 await Delay(500);
         }
 
-        gameState.Grid.Cells.AddMany(currentTetromino.CoveredCells.GetAll(), currentTetromino.CssClass);
+        gameState.UpdateBoard(currentTetromino);
     }
 
     public void LevelChange()

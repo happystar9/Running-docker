@@ -16,6 +16,10 @@ public class GameStateService
     {
         Grid = new Grid();
     }
+    public void UpdateBoard(Tetromino t)
+    {
+        Grid.Cells.AddMany(t.CoveredCells.GetAll(),t.CssClass);
+    }
 }
 
 

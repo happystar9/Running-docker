@@ -16,7 +16,6 @@ namespace TetrisWeb.Components.Models
         {
             return cells.Where(x => x.Row == row).ToList();
         }
-
         public void Add(int row, int column)
         {
             cells.Add(new Cell(row, column));
@@ -24,7 +23,8 @@ namespace TetrisWeb.Components.Models
 
         public void AddMany(List<Cell> _cells, string cssClass)
         {
-            foreach (var cell in cells)
+            var newCells = _cells.Where(cell => cssClass != "tetris-cell");
+            foreach (var cell in newCells)
             {
                 cells.Add(new Cell(cell.Row, cell.Column, cssClass));
             }
