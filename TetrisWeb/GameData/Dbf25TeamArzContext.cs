@@ -6,9 +6,6 @@ namespace TetrisWeb.GameData;
 
 public partial class Dbf25TeamArzContext : DbContext
 {
-    public Dbf25TeamArzContext()
-    {
-    }
 
     public Dbf25TeamArzContext(DbContextOptions<Dbf25TeamArzContext> options)
         : base(options)

@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetrisTest", "TetrisTest\TetrisTest.csproj", "{65876DEB-9FAF-4A4A-9447-03B4EA7262F4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{89E18358-0955-49F1-A662-21606A60F2C6} = {89E18358-0955-49F1-A662-21606A60F2C6}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetrisWeb", "TetrisWeb\TetrisWeb.csproj", "{89E18358-0955-49F1-A662-21606A60F2C6}"
 EndProject
