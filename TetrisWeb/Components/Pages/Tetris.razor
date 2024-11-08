@@ -129,6 +129,10 @@
         generator = new TetrominoGenerator();
         currentTetromino = null;
         level = 1;
+        if (score > previousHighScore)
+        {
+            previousHighScore = score;
+        }
         score = 0;
     }
 
@@ -160,8 +164,8 @@
 
         gameState.Grid.State = GameState.GameOver;
 
-        if(score > previousHighScore)
-            await _jsRuntime.InvokeAsync<object>("WriteCookie", "tetrisHighScore", score, 14);
+        // if(score > previousHighScore)
+        //     await _jsRuntime.InvokeAsync<object>("WriteCookie", "tetrisHighScore", score, 14);
     }
 
     public async Task Delay(int millis)
