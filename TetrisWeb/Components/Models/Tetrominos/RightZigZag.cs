@@ -20,24 +20,24 @@
                     case Orientation.LeftRight:
                         cells.Add(CenterPieceRow + 1, CenterPieceCol);
                         cells.Add(CenterPieceRow, CenterPieceCol + 1);
-                        cells.Add(CenterPieceRow + 1, CenterPieceCol + 1);
+                        cells.Add(CenterPieceRow - 1, CenterPieceCol + 1);
                         break;
                     case Orientation.DownUp:
-                        cells.Add(CenterPieceRow, CenterPieceCol + 1);
-                        cells.Add(CenterPieceRow - 1, CenterPieceCol);
-                        cells.Add(CenterPieceRow - 1, CenterPieceCol - 1);
+                        cells.Add(CenterPieceRow + 1, CenterPieceCol);
+                        cells.Add(CenterPieceRow, CenterPieceCol - 1);
+                        cells.Add(CenterPieceRow + 1, CenterPieceCol + 1);
                         break;
 
                     case Orientation.RightLeft:
                         cells.Add(CenterPieceRow + 1, CenterPieceCol);
                         cells.Add(CenterPieceRow, CenterPieceCol + 1);
-                        cells.Add(CenterPieceRow + 1, CenterPieceCol + 1);
+                        cells.Add(CenterPieceRow - 1, CenterPieceCol + 1);
                         break;
 
                     case Orientation.UpDown:
-                        cells.Add(CenterPieceRow, CenterPieceCol + 1);
-                        cells.Add(CenterPieceRow - 1, CenterPieceCol);
-                        cells.Add(CenterPieceRow - 1, CenterPieceCol - 1);
+                        cells.Add(CenterPieceRow + 1, CenterPieceCol);
+                        cells.Add(CenterPieceRow, CenterPieceCol - 1);
+                        cells.Add(CenterPieceRow + 1, CenterPieceCol + 1);
                         break;
                 }
                 return cells;

@@ -7,6 +7,9 @@
     <UserSecretsId>aspnet-TetrisWeb-34881edf-42c4-415c-98f0-7315aa347b79</UserSecretsId>
   </PropertyGroup>
 
+
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
     <PackageReference Include="MailKit" Version="4.8.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.10" />

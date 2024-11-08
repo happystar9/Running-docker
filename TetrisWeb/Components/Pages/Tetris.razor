@@ -2,8 +2,9 @@
 @inherits LayoutComponentBase
 @using TetrisWeb.Components.Models;
 @using TetrisWeb.Components.Pages.Partials;
+@using TetrisWeb.Services;
 @inject IJSRuntime _jsRuntime;
-@RenderMode.InteractiveServer;
+@inject GameStateService gameState;
 
 <script>
     window.SetFocusToElement = (element) => {
@@ -17,11 +18,11 @@
 
 <div class="row">
     <div class="col">
-        @if (grid.State == GameState.NotStarted)
+        @if (gameState.Grid.State == GameState.NotStarted)
         {
             <button @onclick="RunGame" class="btn btn-primary">Start!</button>
         }
-        @if (grid.State == GameState.GameOver)
+        @if (gameState.Grid.State == GameState.GameOver)
         {
             <button @onclick="NewGame" class="btn btn-primary">New Game!</button>
         }
@@ -31,25 +32,24 @@
 <div class="row">
     <div class="col">
         <div class="tetris-container" tabindex="0" @onkeydown="KeyDown" @ref="gameBoardDiv">
-            @for (int i = grid.Height; i >= 1; i--)
+            @for (int i = gameState.Grid.Height; i >= 1; i--)
             {
                 <div class="tetris-row">
-                    @for (int j = 1; j <= grid.Width; j++)
+                    @for (int j = 1; j <= gameState.Grid.Width; j++)
                     {
-                        <GridCell Row="i" Column="j" Tetromino="currentTetromino" Grid="grid" />
+                        <GridCell Row="i" Column="j" Tetromino="currentTetromino" Grid="gameState.Grid" />
                     }
-                    <p>write stuff here so I can see</p>
                 </div>
             }
         </div>
     </div>
     <div class="col">
-        @if(grid.State == GameState.GameOver)
+        @if(gameState.Grid.State == GameState.GameOver)
         {
             <h1>Game Over!</h1>
             <p>Thanks for playing!</p>
         }
-        @if (grid.IsStarted)
+        @if (gameState.Grid.IsStarted)
         {
             <div class="row">
                 <div class="col">
@@ -64,7 +64,8 @@
                     <h3>Controls</h3>
                     <span>&#8592;</span> / <span>&#8594;</span> Move Tetromino<br />
                     <span>&#8593;</span>: Rotate Tetromino<br />
-                    <span>&#8595;</span> / <span>Space</span>: Drop Tetromino<br />
+                    <span>&#8595;</span>: Move Down <br />
+                    <span>Space</span>: Quick Drop Tetromino<br />
                 </div>
             </div>
         }
@@ -84,8 +85,9 @@
     </div>
 </div>
 
+
 @code {
-    Grid grid = new Grid();
+    Grid grid => gameState.Grid;
 
     TetrominoGenerator generator = new TetrominoGenerator();
 
@@ -104,10 +106,11 @@
     int previousHighScore = 0;
     string previousScoreCookieValue = "Nothing";
 
-    protected ElementReference gameBoardDiv;  
+    protected ElementReference gameBoardDiv;
 
     protected override async Task OnInitializedAsync()
     {
+
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -122,13 +125,14 @@
 
     public void NewGame()
     {
-        grid = new Grid();
-
+        gameState.ResetGame();
         generator = new TetrominoGenerator();
-
         currentTetromino = null;
-
         level = 1;
+        if (score > previousHighScore)
+        {
+            previousHighScore = score;
+        }
         score = 0;
     }
 
@@ -139,10 +143,10 @@
         thirdNextStyle = generator.Next(nextStyle, secondNextStyle);
 
         await _jsRuntime.InvokeVoidAsync("SetFocusToElement", gameBoardDiv);
-        
-        grid.State = GameState.Playing;
 
-        while (!grid.Cells.HasRow(21)) 
+        gameState.Grid.State = GameState.Playing;
+
+        while (!gameState.Grid.Cells.HasRow(21))
         {
             currentTetromino = generator.CreateFromStyle(nextStyle, grid);
             nextStyle = secondNextStyle;
@@ -158,10 +162,10 @@
             LevelChange();
         }
 
-        grid.State = GameState.GameOver;
+        gameState.Grid.State = GameState.GameOver;
 
-        if(score > previousHighScore)
-            await _jsRuntime.InvokeAsync<object>("WriteCookie", "tetrisHighScore", score, 14);
+        // if(score > previousHighScore)
+        //     await _jsRuntime.InvokeAsync<object>("WriteCookie", "tetrisHighScore", score, 14);
     }
 
     public async Task Delay(int millis)
@@ -189,7 +193,7 @@
                 await Delay(500);
         }
 
-        grid.Cells.AddMany(currentTetromino.CoveredCells.GetAll(), currentTetromino.CssClass);
+        gameState.UpdateBoard(currentTetromino);
     }
 
     public void LevelChange()
@@ -203,7 +207,7 @@
         }
 
         int newLevel = counter;
-        if(newLevel != level) 
+        if(newLevel != level)
         {
             standardDelay = 1000 - ((newLevel - 1) * 100);
 
@@ -214,11 +218,11 @@
     public async Task ClearCompleteRows()
     {
         List<int> rowsComplete = new List<int>();
-        for (int i = 1; i <= grid.Height; i++)
+        for (int i = 1; i <= gameState.Grid.Height; i++)
         {
-            if (grid.Cells.GetAllInRow(i).Count == grid.Width)
+            if (gameState.Grid.Cells.GetAllInRow(i).Count == gameState.Grid.Width)
             {
-                grid.Cells.SetCssClass(i, "tetris-clear-row");
+                gameState.Grid.Cells.SetCssClass(i, "tetris-clear-row");
 
                 rowsComplete.Add(i);
             }
@@ -228,7 +232,7 @@
         {
             StateHasChanged();
 
-            grid.Cells.CollapseRows(rowsComplete);
+            gameState.Grid.Cells.CollapseRows(rowsComplete);
 
             switch (rowsComplete.Count)
             {
@@ -251,12 +255,12 @@
 
             await Task.Delay(1000);
         }
-        grid.State = GameState.Playing;
+        gameState.Grid.State = GameState.Playing;
     }
 
     protected async Task KeyDown(KeyboardEventArgs e)
     {
-        if (grid.State == GameState.Playing)
+        if (gameState.Grid.State == GameState.Playing)
         {
             if (e.Key == "ArrowRight")
             {

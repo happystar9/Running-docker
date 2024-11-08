@@ -1,0 +1,109 @@
+﻿.tetris-container {
+    display: table;
+    width: 240px;
+}
+
+.tetris-row {
+    display: table-row;
+    height: 24px;
+    width: 240px;
+}
+
+.tetris-cell {
+    display: table-cell;
+    background-color: #000000;
+    width: 24px;
+    height: 24px;
+    border: solid 1px #242323;
+}
+
+.tetris-piece {
+    border-top: solid 1px white;
+    border-right: solid 1px gray;
+    border-left: solid 1px gray;
+    border-bottom: solid 1px black;
+}
+
+.tetris-red-cell {
+    background-image: url(../images/tetromino-red.png);
+}
+
+.tetris-lightblue-cell {
+    background-image: url(../images/tetromino-lightblue.png);
+}
+
+.tetris-purple-cell {
+    background-image: url(../images/tetromino-purple.png);
+}
+
+.tetris-yellow-cell {
+    background-image: url(../images/tetromino-yellow.png);
+}
+
+.tetris-green-cell {
+    background-image: url(../images/tetromino-green.png);
+}
+
+.tetris-orange-cell {
+    background-image: url(../images/tetromino-orange.png);
+}
+
+.tetris-darkblue-cell {
+    background-image: url(../images/tetromino-darkblue.png);
+}
+
+.tetris-block-display {
+    background-image: url(../images/tetromino-block.png);
+    width: 48px;
+    height: 48px;
+}
+
+.tetris-straight-display {
+    background-image: url(../images/tetromino-straight.png);
+    width: 96px;
+    height: 24px;
+}
+
+.tetris-tshaped-display {
+    background-image: url(../images/tetromino-tshaped.png);
+    width: 72px;
+    height: 48px;
+}
+
+.tetris-leftzigzag-display {
+    background-image: url(../images/tetromino-leftzigzag.png);
+    width: 72px;
+    height: 48px;
+}
+
+.tetris-rightzigzag-display {
+    background-image: url(../images/tetromino-rightzigzag.png);
+    width: 72px;
+    height: 48px;
+}
+
+.tetris-reverselshaped-display {
+    background-image: url(../images/tetromino-reverselshaped.png);
+    width: 72px;
+    height: 48px;
+}
+
+.tetris-lshaped-display {
+    background-image: url(../images/tetromino-lshaped.png);
+    width: 72px;
+    height: 48px;
+}
+
+.tetris-display-row {
+    padding: 10px;
+}
+
+.tetris-clear-row {
+    border: solid 1px gray;
+    animation-name: fadeOut;
+    animation-duration: 1s;
+    -webkit-animation-name: fadeOut;
+    -webkit-animation-duration: 1s;
+    -moz-animation-name: fadeOut;
+    -moz-animation-duration: 1s;
+}
