@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 namespace TetrisWeb.GameData;
+
 public partial class Leaderboard
 {
     public int Id { get; set; }

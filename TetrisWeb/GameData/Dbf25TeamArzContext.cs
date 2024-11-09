@@ -6,11 +6,16 @@ namespace TetrisWeb.GameData;
 
 public partial class Dbf25TeamArzContext : DbContext
 {
+    public Dbf25TeamArzContext()
+    {
+    }
 
     public Dbf25TeamArzContext(DbContextOptions<Dbf25TeamArzContext> options)
         : base(options)
     {
     }
+
+    public virtual DbSet<ApiKey> ApiKeys { get; set; }
 
     public virtual DbSet<Chat> Chats { get; set; }
 
@@ -27,6 +32,32 @@ public partial class Dbf25TeamArzContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ApiKey>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("api_key", "game");
+
+            entity.Property(e => e.CreatedOn)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("created_on");
+            entity.Property(e => e.ExpiredOn)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("expired_on");
+            entity.Property(e => e.Id)
+                .ValueGeneratedOnAdd()
+                .UseIdentityAlwaysColumn()
+                .HasColumnName("id");
+            entity.Property(e => e.Key)
+                .HasMaxLength(256)
+                .HasColumnName("key");
+            entity.Property(e => e.PlayerId).HasColumnName("player_id");
+
+            entity.HasOne(d => d.Player).WithMany()
+                .HasForeignKey(d => d.PlayerId)
+                .HasConstraintName("api_key_player_id_fkey");
+        });
+
         modelBuilder.Entity<Chat>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("chat_pkey");
@@ -133,9 +164,6 @@ public partial class Dbf25TeamArzContext : DbContext
             entity.Property(e => e.Id)
                 .UseIdentityAlwaysColumn()
                 .HasColumnName("id");
-            entity.Property(e => e.ApiKey)
-                .HasMaxLength(100)
-                .HasColumnName("api_key");
             entity.Property(e => e.Authid)
                 .HasMaxLength(450)
                 .HasColumnName("authid");
