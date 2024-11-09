@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TetrisWeb.ApiServices;
+using TetrisWeb.ApiServices.Interfaces;
 using TetrisWeb.DTOs;
 
 
