@@ -12,6 +12,9 @@ Content-Type: application/json
 GET {{TetrisWeb_HostAddress}}/api/Chat
 ###
 
+
+###requests for player/profile management
+
 POST {{TetrisWeb_HostAddress}}/api/Player/register
 Content-Type: application/json
 {
@@ -21,3 +24,8 @@ Content-Type: application/json
   "ApiKey": "fake-api-key",
   "Isblocked": false
 }
+
+
+### requests for API key management endpoints
+
+POST {{TetrisWeb_HostAddress}}/api/player/1/assignkey

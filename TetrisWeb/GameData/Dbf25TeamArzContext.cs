@@ -34,26 +34,25 @@ public partial class Dbf25TeamArzContext : DbContext
     {
         modelBuilder.Entity<ApiKey>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("api_key", "game");
+            entity.HasKey(e => e.Id).HasName("api_key_pkey");
 
+            entity.ToTable("api_key", "game");
+
+            entity.Property(e => e.Id)
+                .UseIdentityAlwaysColumn()
+                .HasColumnName("id");
             entity.Property(e => e.CreatedOn)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("created_on");
             entity.Property(e => e.ExpiredOn)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("expired_on");
-            entity.Property(e => e.Id)
-                .ValueGeneratedOnAdd()
-                .UseIdentityAlwaysColumn()
-                .HasColumnName("id");
             entity.Property(e => e.Key)
                 .HasMaxLength(256)
                 .HasColumnName("key");
             entity.Property(e => e.PlayerId).HasColumnName("player_id");
 
-            entity.HasOne(d => d.Player).WithMany()
+            entity.HasOne(d => d.Player).WithMany(p => p.ApiKeys)
                 .HasForeignKey(d => d.PlayerId)
                 .HasConstraintName("api_key_player_id_fkey");
         });

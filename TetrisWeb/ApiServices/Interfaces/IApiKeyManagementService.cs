@@ -2,9 +2,10 @@
 
 namespace TetrisWeb.ApiServices.Interfaces;
 
-public interface IApiKeyValidationService
+public interface IApiKeyManagementService
 {
     bool IsValidApiKey(string key);
     Task InvalidateApiKeyAsync(string key);
-    Task AssignKeyAsync(PlayerDto player, string key);
+    Task<string> AssignKeyAsync(int playerId);
+    Task<List<ApiKeyDto>> GetPlayerKeysAsync(int playerId);
 }
