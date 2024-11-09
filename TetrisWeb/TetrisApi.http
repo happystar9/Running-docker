@@ -14,7 +14,7 @@ GET {{TetrisApi_HostAddress}}/api/Chat
 POST {{TetrisApi_HostAddress}}/api/Player/register
 Content-Type: application/json
 {
-  "Authid": "usertest",
+  "Authid": "usert",
   "PlayerQuote": "test",
   "AvatarUrl": "https://example.com/avatar.jpg",
   "Isblocked": false
