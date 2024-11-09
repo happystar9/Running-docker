@@ -33,7 +33,7 @@ public class PlayerController(IPlayerService playerService, IApiKeyManagementSer
         }
     }
 
-    [HttpGet("{playerId}/apiKeys")]
+    [HttpGet("{playerId}/apikeys")]
     public async Task<IResult> GetApiKeys(int playerId)
     {
         try
@@ -66,7 +66,7 @@ public class PlayerController(IPlayerService playerService, IApiKeyManagementSer
 
     //doesn't actually delete the key, just sets the expiration date to now
     [HttpDelete("invalidate")]
-    public async Task<IActionResult> InvalidateApiKey([FromBody] string key)
+    public async Task<IActionResult> InvalidateApiKey([FromQuery] string key)
     {
         await apiKeyService.InvalidateApiKeyAsync(key);
 

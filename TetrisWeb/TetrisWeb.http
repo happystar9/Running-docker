@@ -27,5 +27,10 @@ Content-Type: application/json
 
 
 ### requests for API key management endpoints
-
 POST {{TetrisWeb_HostAddress}}/api/player/1/assignkey
+###
+GET {{TetrisWeb_HostAddress}}/api/player/1/apikeys
+###
+GET {{TetrisWeb_HostAddress}}/api/player/validate?key=jtAeTgYQ6Ei0eULGIYGIhMQmaqbLS0FJ
+###
+DELETE {{TetrisWeb_HostAddress}}/api/player/invalidate?key=Tiu063244Svc8n2ZplQP9XUlIj0hJVZ6
