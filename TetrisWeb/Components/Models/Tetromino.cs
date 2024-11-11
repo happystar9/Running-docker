@@ -73,7 +73,7 @@
                 CenterPieceRow -= 1;
                 i++;
             }
-            return 10 * i;
+            return 1 * i;
         }
 
         public void MoveRight()
