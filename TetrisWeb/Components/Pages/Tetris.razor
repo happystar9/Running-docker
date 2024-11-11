@@ -18,11 +18,11 @@
 
 <div class="row">
     <div class="col">
-        @if (gameState.Grid.State == GameState.NotStarted)
+        @if (gameState.gameStateGrid.State == GameState.NotStarted)
         {
             <button @onclick="RunGame" class="btn btn-primary">Start!</button>
         }
-        @if (gameState.Grid.State == GameState.GameOver)
+        @if (gameState.gameStateGrid.State == GameState.GameOver)
         {
             <button @onclick="NewGame" class="btn btn-primary">New Game!</button>
         }
@@ -32,24 +32,24 @@
 <div class="row">
     <div class="col">
         <div class="tetris-container" tabindex="0" @onkeydown="KeyDown" @ref="gameBoardDiv">
-            @for (int i = gameState.Grid.Height; i >= 1; i--)
+            @for (int i = gameState.gameStateGrid.Height; i >= 1; i--)
             {
                 <div class="tetris-row">
-                    @for (int j = 1; j <= gameState.Grid.Width; j++)
+                    @for (int j = 1; j <= gameState.gameStateGrid.Width; j++)
                     {
-                        <GridCell Row="i" Column="j" Tetromino="currentTetromino" Grid="gameState.Grid" />
+                        <GridCell Row="i" Column="j" Tetromino="currentTetromino" Grid="gameState.gameStateGrid" />
                     }
                 </div>
             }
         </div>
     </div>
     <div class="col">
-        @if(gameState.Grid.State == GameState.GameOver)
+        @if (gameState.gameStateGrid.State == GameState.GameOver)
         {
             <h1>Game Over!</h1>
             <p>Thanks for playing!</p>
         }
-        @if (gameState.Grid.IsStarted)
+        @if (gameState.gameStateGrid.IsStarted)
         {
             <div class="row">
                 <div class="col">
@@ -87,7 +87,7 @@
 
 
 @code {
-    Grid grid => gameState.Grid;
+    Grid grid => gameState.gameStateGrid;
 
     TetrominoGenerator generator = new TetrominoGenerator();
 
@@ -118,8 +118,6 @@
         if (firstRender)
         {
             await _jsRuntime.InvokeVoidAsync("SetFocusToElement", gameBoardDiv);
-            //previousScoreCookieValue = await _jsRuntime.InvokeAsync<string>("ReadCookie", "tetrisHighScore");
-            //bool hasHighScore = int.TryParse(previousScoreCookieValue, out previousHighScore);
         }
     }
 
@@ -144,9 +142,9 @@
 
         await _jsRuntime.InvokeVoidAsync("SetFocusToElement", gameBoardDiv);
 
-        gameState.Grid.State = GameState.Playing;
+        gameState.gameStateGrid.State = GameState.Playing;
 
-        while (!gameState.Grid.Cells.HasRow(21))
+        while (!gameState.gameStateGrid.Cells.HasRow(21))
         {
             currentTetromino = generator.CreateFromStyle(nextStyle, grid);
             nextStyle = secondNextStyle;
@@ -162,7 +160,7 @@
             LevelChange();
         }
 
-        gameState.Grid.State = GameState.GameOver;
+        gameState.gameStateGrid.State = GameState.GameOver;
 
         // if(score > previousHighScore)
         //     await _jsRuntime.InvokeAsync<object>("WriteCookie", "tetrisHighScore", score, 14);
@@ -218,11 +216,11 @@
     public async Task ClearCompleteRows()
     {
         List<int> rowsComplete = new List<int>();
-        for (int i = 1; i <= gameState.Grid.Height; i++)
+        for (int i = 1; i <= gameState.gameStateGrid.Height; i++)
         {
-            if (gameState.Grid.Cells.GetAllInRow(i).Count == gameState.Grid.Width)
+            if (gameState.gameStateGrid.Cells.GetAllInRow(i).Count == gameState.gameStateGrid.Width)
             {
-                gameState.Grid.Cells.SetCssClass(i, "tetris-clear-row");
+                gameState.gameStateGrid.Cells.SetCssClass(i, "tetris-clear-row");
 
                 rowsComplete.Add(i);
             }
@@ -232,7 +230,7 @@
         {
             StateHasChanged();
 
-            gameState.Grid.Cells.CollapseRows(rowsComplete);
+            gameState.gameStateGrid.Cells.CollapseRows(rowsComplete);
 
             switch (rowsComplete.Count)
             {
@@ -255,12 +253,12 @@
 
             await Task.Delay(1000);
         }
-        gameState.Grid.State = GameState.Playing;
+        gameState.gameStateGrid.State = GameState.Playing;
     }
 
     protected async Task KeyDown(KeyboardEventArgs e)
     {
-        if (gameState.Grid.State == GameState.Playing)
+        if (gameState.gameStateGrid.State == GameState.Playing)
         {
             if (e.Key == "ArrowRight")
             {
