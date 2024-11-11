@@ -30,13 +30,49 @@ public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
         };
     }
 
-    public Task<PlayerDto> GetPlayerAsync(Guid playerId)
+    public async Task<PlayerDto> GetPlayerAsync(int playerId)
     {
-        throw new NotImplementedException();
+        var player = await dbContext.Players.FindAsync(playerId);
+
+        if (player == null)
+        {
+            throw new KeyNotFoundException("Player details not found.");
+        }
+
+        return new PlayerDto
+        {
+            Id = player.Id,
+            Authid = player.Authid,
+            PlayerQuote = player.PlayerQuote,
+            AvatarUrl = player.AvatarUrl,
+            Isblocked = player.Isblocked
+        };
     }
 
-    public Task<PlayerDto> UpdatePlayerAsync(PlayerDto player)
+    public async Task<PlayerDto> UpdatePlayerAsync(PlayerDto playerDto)
     {
-        throw new NotImplementedException();
+        var player = await dbContext.Players.FindAsync(playerDto.Id);
+
+        if (player == null)
+        {
+            throw new KeyNotFoundException("Player details not found.");
+        }
+
+        player.Authid = playerDto.Authid;
+        player.PlayerQuote = playerDto.PlayerQuote;
+        player.AvatarUrl = playerDto.AvatarUrl;
+        player.Isblocked = playerDto.Isblocked;
+
+        await dbContext.SaveChangesAsync();
+
+        return new PlayerDto
+        {
+            Id = player.Id,
+            Authid = player.Authid,
+            PlayerQuote = player.PlayerQuote,
+            AvatarUrl = player.AvatarUrl,
+            Isblocked = player.Isblocked
+        };
+
     }
 }
