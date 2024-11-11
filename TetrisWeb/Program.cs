@@ -9,6 +9,7 @@ using TetrisWeb.ApiServices;
 using TetrisWeb.AuthData;
 using Microsoft.AspNetCore.Builder;
 using TetrisWeb.Services;
+using TetrisWeb.ApiServices.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,7 @@ var connString = builder.Configuration["DB_CONN"];
 builder.Services.AddDbContext<Dbf25TeamArzContext>(options => options.UseNpgsql(connString));
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<IApiKeyManagementService, ApiKeyManagementService>();
 
 
 builder.Services.AddCascadingAuthenticationState();

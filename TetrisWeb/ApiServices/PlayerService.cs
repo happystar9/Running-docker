@@ -1,6 +1,8 @@
 ﻿using TetrisWeb.GameData;
 using TetrisShared;
 using TetrisShared.DTOs;
+using TetrisWeb.DTOs;
+using TetrisWeb.ApiServices.Interfaces;
 namespace TetrisWeb.ApiServices;
 
 public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
@@ -12,7 +14,6 @@ public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
             Authid = player.Authid,
             PlayerQuote = player.PlayerQuote,
             AvatarUrl = player.AvatarUrl,
-            ApiKey = player.ApiKey,
             Isblocked = player.Isblocked
         };
 
@@ -25,7 +26,6 @@ public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
             Authid = playerObject.Authid,
             PlayerQuote = playerObject.PlayerQuote,
             AvatarUrl = playerObject.AvatarUrl,
-            ApiKey = playerObject.ApiKey,
             Isblocked = playerObject.Isblocked
         };
     }
@@ -39,11 +39,4 @@ public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
     {
         throw new NotImplementedException();
     }
-}
-
-public interface IPlayerService
-{
-    Task<PlayerDto> GetPlayerAsync(Guid playerId);
-    Task<PlayerDto> CreatePlayerAsync(PlayerDto player);
-    Task<PlayerDto> UpdatePlayerAsync(PlayerDto player);
 }

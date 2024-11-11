@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 namespace TetrisWeb.GameData;
+
 public partial class Player
 {
     public int Id { get; set; }
@@ -12,9 +13,9 @@ public partial class Player
 
     public string? AvatarUrl { get; set; }
 
-    public string? ApiKey { get; set; }
-
     public bool? Isblocked { get; set; }
+
+    public virtual ICollection<ApiKey> ApiKeys { get; set; } = new List<ApiKey>();
 
     public virtual ICollection<Chat> Chats { get; set; } = new List<Chat>();
 

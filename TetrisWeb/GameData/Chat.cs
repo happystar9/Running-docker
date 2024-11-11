@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 namespace TetrisWeb.GameData;
+
 public partial class Chat
 {
     public int Id { get; set; }

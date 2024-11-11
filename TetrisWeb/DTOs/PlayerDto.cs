@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TetrisShared.DTOs;
+namespace TetrisWeb.DTOs;
 
 public class PlayerDto
 {
@@ -15,8 +15,6 @@ public class PlayerDto
     public string? PlayerQuote { get; set; }
 
     public string? AvatarUrl { get; set; }
-
-    public string? ApiKey { get; set; }
 
     public bool? Isblocked { get; set; }
 }
