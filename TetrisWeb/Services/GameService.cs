@@ -40,7 +40,7 @@ public class GameStateService
     }
     public void UpdateBoard(Tetromino t)
     {
-        gameStateGrid.Cells.AddMany(t.CoveredCells.GetAll(),t.CssClass);
+        gameStateGrid.Cells.AddMany(t.CoveredCells.GetAll(), t.CssClass);
     }
 
     public void NewGame()
@@ -197,5 +197,6 @@ public class GameStateService
     {
         currentTetromino.Rotate();
     }
+}
 
 

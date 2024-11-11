@@ -10,43 +10,42 @@ namespace TetrisWeb.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class TetrisController(IPlayerService playerService, GameStateService game) : ControllerBase
+public class TetrisController(IPlayerService playerService, GameManager game) : ControllerBase
 {
     [HttpPost("startGame/{apiKey}")]
-    public async Task StartGame(string apiKey)
+    public void StartGame(string apiKey)
     {
-        //need to make game based off api key not just creating a game
-        await game.RunGame();
+        game.GetOrCreateGame(apiKey);
         return;
     }
 
-    [HttpGet("boardState")]
-    public async Task<CellList> BoardState()
+    [HttpGet("boardState/{apiKey}")]
+    public async Task<CellList> BoardState(string apiKey)
     {
-        return game.gameStateGrid.Cells;
+        return game.GetOrCreateGame(apiKey).gameStateGrid.Cells;
     }
 
-    [HttpPost("moveRight/{x}")]
-    public async Task MoveRight(int x)
+    [HttpPost("moveRight/{apiKey}/{x}")]
+    public async Task MoveRight(int x, string apiKey)
     {
-        game.MoveRight(x);
+        game.GetOrCreateGame(apiKey).MoveRight(x);
     }
 
-    [HttpPost("moveLeft/{x}")]
-    public async Task MoveLeft(int x)
+    [HttpPost("moveLeft/{apiKey}/{x}")]
+    public async Task MoveLeft(int x, string apiKey)
     {
-        game.MoveLeft(x);
+        game.GetOrCreateGame(apiKey).MoveLeft(x);
     }
 
-    [HttpPost("rotate")]
-    public async Task Rotate()
+    [HttpPost("rotate/{apiKey}")]
+    public async Task Rotate(string apiKey)
     {
-        game.Rotate();
+        game.GetOrCreateGame(apiKey).Rotate();
     }
 
-    [HttpPost("drop")]
-    public async Task Drop()
+    [HttpPost("drop/{apiKey}")]
+    public async Task Drop(string apiKey)
     {
-        game.Drop();
+        game.GetOrCreateGame(apiKey).Drop();
     }
 }
