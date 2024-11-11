@@ -10,42 +10,42 @@ namespace TetrisWeb.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class TetrisController(IPlayerService playerService, GameManager game) : ControllerBase
+public class GameSessionController(GameManager game) : ControllerBase
 {
-    [HttpPost("startGame/{apiKey}")]
-    public void StartGame(string apiKey)
+    [HttpPost("startGame/{playerId}")]
+    public void JoinGame(int playerId)
     {
-        game.GetOrCreateGame(apiKey);
+        game.CreateGame(playerId);
         return;
     }
 
     [HttpGet("boardState/{apiKey}")]
     public async Task<CellList> BoardState(string apiKey)
     {
-        return game.GetOrCreateGame(apiKey).gameStateGrid.Cells;
+        return game._games[apiKey].gameStateGrid.Cells;
     }
 
     [HttpPost("moveRight/{apiKey}/{x}")]
     public async Task MoveRight(int x, string apiKey)
     {
-        game.GetOrCreateGame(apiKey).MoveRight(x);
+        game._games[apiKey].MoveRight(x);
     }
 
     [HttpPost("moveLeft/{apiKey}/{x}")]
     public async Task MoveLeft(int x, string apiKey)
     {
-        game.GetOrCreateGame(apiKey).MoveLeft(x);
+        game._games[apiKey].MoveLeft(x);
     }
 
     [HttpPost("rotate/{apiKey}")]
     public async Task Rotate(string apiKey)
     {
-        game.GetOrCreateGame(apiKey).Rotate();
+        game._games[apiKey].Rotate();
     }
 
     [HttpPost("drop/{apiKey}")]
     public async Task Drop(string apiKey)
     {
-        game.GetOrCreateGame(apiKey).Drop();
+        game._games[apiKey].Drop();
     }
 }

@@ -1,18 +1,19 @@
-﻿
+﻿using TetrisWeb.ApiServices;
+using TetrisWeb.Services;
 
 namespace TetrisWeb.Services
 {
-    public class GameManager()
+    public class GameManager(ApiKeyManagementService keyManager)
     {
-        private readonly Dictionary<string, GameStateService> _games = new();
+        public readonly Dictionary<string, GameStateService> _games = new();
 
-        public GameStateService GetOrCreateGame(string playerId)
+        public async Task<GameStateService> CreateGame(int playerId)
         {
-            if ()
-            if (!_games.TryGetValue(playerId, out var gameService))
+            var apiKey = await keyManager.AssignKeyAsync(playerId);
+            if (!_games.TryGetValue(apiKey, out var gameService))
             {
                 gameService = new GameStateService();
-                _games[playerId] = gameService;
+                _games[apiKey] = gameService;
             }
             return gameService;
         }
