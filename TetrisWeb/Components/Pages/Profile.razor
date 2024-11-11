@@ -1,12 +1,54 @@
 ﻿@page "/profile"
+@inject UserManager<ApplicationUser> UserManager
+@inject NavigationManager Navigation
+@inject IPlayerService PlayerService
+@inject AuthenticationStateProvider AuthStateProvider
+
+@using System.Security.Claims
+@using TetrisWeb.ApiServices.Interfaces;
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.WebUtilities
+@using TetrisWeb.AuthData
 
 <h2>Profile</h2>
+
 @*if user is not logged in, redirect them to the log-in page*@
+@if (!isAuthenticated)
+{
+    Navigation.NavigateTo("/login", true);
+}
+else
+{
+    <p>Loading profile...</p>
+    @* Logic to display user information *@
+}
+
+
+
 @*try to access the player's info; if it doesn't exist, show them the interface to register to play*@
 
 
-
 @code {
+    private string authid;
+    private bool isAuthenticated = false;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity == null)
+        {
+            Navigation.NavigateTo("/login", true);
+        }
+        else
+        {
+            isAuthenticated = true;
+            authid = user.FindFirstValue(ClaimTypes.NameIdentifier);
+            var player = await PlayerService.GetPlayerAsync(authid);
+        }
+    }
 
 }
 

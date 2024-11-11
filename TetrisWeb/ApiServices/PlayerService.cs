@@ -3,6 +3,8 @@ using TetrisShared;
 using TetrisShared.DTOs;
 using TetrisWeb.DTOs;
 using TetrisWeb.ApiServices.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
 namespace TetrisWeb.ApiServices;
 
 public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
@@ -30,9 +32,11 @@ public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
         };
     }
 
-    public async Task<PlayerDto> GetPlayerAsync(int playerId)
+    public async Task<PlayerDto> GetPlayerAsync(string authId)
     {
-        var player = await dbContext.Players.FindAsync(playerId);
+        var player = await dbContext.Players
+                .SingleOrDefaultAsync(p => p.Authid == authId);
+
 
         if (player == null)
         {
