@@ -5,7 +5,7 @@ POST {{TetrisWeb_HostAddress}}/api/Chat
 Content-Type: application/json
 { 
   "Playerid": 1, 
-  "Message": "test 1"
+  "Message": "test 100"
   
 }
 ###TEST ENDPOINT FOR CHAT GET not implemented yet
@@ -18,7 +18,7 @@ GET {{TetrisWeb_HostAddress}}/api/Chat
 POST {{TetrisWeb_HostAddress}}/api/Player/register
 Content-Type: application/json
 {
-  "Authid": "testuser3",
+  "Authid": "testuser5",
   "PlayerQuote": "A super cool quote!",
   "AvatarUrl": "https://example.com/avatar.jpg",
   "ApiKey": "fake-api-key",
@@ -34,3 +34,12 @@ GET {{TetrisWeb_HostAddress}}/api/player/1/apikeys
 GET {{TetrisWeb_HostAddress}}/api/player/validate?key=jtAeTgYQ6Ei0eULGIYGIhMQmaqbLS0FJ
 ###
 DELETE {{TetrisWeb_HostAddress}}/api/player/invalidate?key=Tiu063244Svc8n2ZplQP9XUlIj0hJVZ6
+
+###
+POST {{TetrisWeb_HostAddress}}/api/player/5/assignkey
+###
+GET {{TetrisWeb_HostAddress}}/api/player/5/apikeys
+###
+GET {{TetrisWeb_HostAddress}}/api/player/validate?key=xeOYzMpfkpJdl57NY6mnca8GmkVqO110
+###
+DELETE {{TetrisWeb_HostAddress}}/api/player/invalidate?key=xeOYzMpfkpJdl57NY6mnca8GmkVqO110

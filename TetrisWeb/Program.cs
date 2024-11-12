@@ -35,7 +35,7 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 builder.Services.AddTransient<GameStateService>();
-builder.Services.AddSingleton<GameManager>();
+//builder.Services.AddTransient<GameManager>();
 
 
 builder.Services.AddAuthentication(options =>
