@@ -31,7 +31,7 @@ public class GameService(Dbf25TeamArzContext context)
         return game;
     }
 
-    public async Task<GameSession> JoinGameAsync(string gameId, int playerId)
+    public async Task<GameSession> JoinGameAsync(int gameId, int playerId)
     {
         var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
         if ( game == null)
