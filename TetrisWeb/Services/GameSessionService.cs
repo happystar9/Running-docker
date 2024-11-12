@@ -1,9 +1,12 @@
 ﻿using TetrisWeb.Components.Models;
+using TetrisWeb.DTOs;
 
 namespace TetrisWeb.Services;
 
 public class GameSessionService
 {
+    private readonly GameSessionDto _gameSessionDto;
+
     private TetrominoGenerator generator = new TetrominoGenerator();
     private Tetromino? currentTetromino;
 
@@ -21,14 +24,15 @@ public class GameSessionService
 
     public Grid GameStateGrid { get; private set; }
 
-    public GameSessionService()
+    public GameSessionService(GameSessionDto sessionDto)
     {
+        _gameSessionDto = sessionDto;
         GameStateGrid = new Grid();
     }
 
-    public void NewGame()
+    public void NewGameSession()
     {
-        ResetGame();
+        GameStateGrid = new Grid();
         generator = new TetrominoGenerator();
         currentTetromino = null;
         level = 1;

@@ -73,30 +73,3 @@ public class GameService(Dbf25TeamArzContext context)
 }
 
 
-
-
-//public class GameStateService
-//{
-//   
-//    public void NewGame()
-//    {
-//        ResetGame();
-//        generator = new TetrominoGenerator();
-//        currentTetromino = null;
-//        level = 1;
-//        if (score > previousHighScore)
-//        {
-//            previousHighScore = score;
-//        }
-//        score = 0;
-//    }
-
-
-//   
-
-
-
-
-//}
-
-
