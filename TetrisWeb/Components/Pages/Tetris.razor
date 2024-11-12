@@ -2,9 +2,10 @@
 @inherits LayoutComponentBase
 @using TetrisWeb.Components.Models;
 @using TetrisWeb.Components.Pages.Partials;
-@using TetrisWeb.Services;
+@using TetrisWeb.ApiServices;
 @inject IJSRuntime _jsRuntime;
-@inject GameStateService gameState;
+@inject GameSessionService gameSessionService;
+@inject GameService gameService;
 
 <script>
     window.SetFocusToElement = (element) => {
@@ -18,11 +19,11 @@
 
 <div class="row">
     <div class="col">
-        @if (gameState.gameStateGrid.State == GameState.NotStarted)
+        @if (gameSessionService.GameStateGrid.State == GameState.NotStarted)
         {
             <button @onclick="RunGame" class="btn btn-primary">Start!</button>
         }
-        @if (gameState.gameStateGrid.State == GameState.GameOver)
+        @if (gameSessionService.GameStateGrid.State == GameState.GameOver)
         {
             <button @onclick="NewGame" class="btn btn-primary">New Game!</button>
         }
@@ -32,24 +33,24 @@
 <div class="row">
     <div class="col">
         <div class="tetris-container" tabindex="0" @onkeydown="KeyDown" @ref="gameBoardDiv">
-            @for (int i = gameState.gameStateGrid.Height; i >= 1; i--)
+            @for (int i = gameSessionService.GameStateGrid.Height; i >= 1; i--)
             {
                 <div class="tetris-row">
-                    @for (int j = 1; j <= gameState.gameStateGrid.Width; j++)
+                    @for (int j = 1; j <= gameSessionService.GameStateGrid.Width; j++)
                     {
-                        <GridCell Row="i" Column="j" Tetromino="currentTetromino" Grid="gameState.gameStateGrid" />
+                        <GridCell Row="i" Column="j" Tetromino="currentTetromino" Grid="gameSessionService.GameStateGrid" />
                     }
                 </div>
             }
         </div>
     </div>
     <div class="col">
-        @if (gameState.gameStateGrid.State == GameState.GameOver)
+        @if (gameSessionService.GameStateGrid.State == GameState.GameOver)
         {
             <h1>Game Over!</h1>
             <p>Thanks for playing!</p>
         }
-        @if (gameState.gameStateGrid.IsStarted)
+        @if (gameSessionService.GameStateGrid.IsStarted)
         {
             <div class="row">
                 <div class="col">
@@ -87,7 +88,7 @@
 
 
 @code {
-    Grid grid => gameState.gameStateGrid;
+    Grid grid => gameSessionService.GameStateGrid;
 
     TetrominoGenerator generator = new TetrominoGenerator();
 
@@ -123,7 +124,7 @@
 
     public void NewGame()
     {
-        gameState.ResetGame();
+        gameSessionService.ResetGame();
         generator = new TetrominoGenerator();
         currentTetromino = null;
         level = 1;
@@ -142,9 +143,9 @@
 
         await _jsRuntime.InvokeVoidAsync("SetFocusToElement", gameBoardDiv);
 
-        gameState.gameStateGrid.State = GameState.Playing;
+        gameSessionService.GameStateGrid.State = GameState.Playing;
 
-        while (!gameState.gameStateGrid.Cells.HasRow(21))
+        while (!gameSessionService.GameStateGrid.Cells.HasRow(21))
         {
             currentTetromino = generator.CreateFromStyle(nextStyle, grid);
             nextStyle = secondNextStyle;
@@ -160,7 +161,7 @@
             LevelChange();
         }
 
-        gameState.gameStateGrid.State = GameState.GameOver;
+        gameSessionService.GameStateGrid.State = GameState.GameOver;
 
         // if(score > previousHighScore)
         //     await _jsRuntime.InvokeAsync<object>("WriteCookie", "tetrisHighScore", score, 14);
@@ -191,7 +192,7 @@
                 await Delay(500);
         }
 
-        gameState.UpdateBoard(currentTetromino);
+        gameSessionService.UpdateBoard(currentTetromino);
     }
 
     public void LevelChange()
@@ -216,11 +217,11 @@
     public async Task ClearCompleteRows()
     {
         List<int> rowsComplete = new List<int>();
-        for (int i = 1; i <= gameState.gameStateGrid.Height; i++)
+        for (int i = 1; i <= gameSessionService.GameStateGrid.Height; i++)
         {
-            if (gameState.gameStateGrid.Cells.GetAllInRow(i).Count == gameState.gameStateGrid.Width)
+            if (gameSessionService.GameStateGrid.Cells.GetAllInRow(i).Count == gameSessionService.GameStateGrid.Width)
             {
-                gameState.gameStateGrid.Cells.SetCssClass(i, "tetris-clear-row");
+                gameSessionService.GameStateGrid.Cells.SetCssClass(i, "tetris-clear-row");
 
                 rowsComplete.Add(i);
             }
@@ -230,7 +231,7 @@
         {
             StateHasChanged();
 
-            gameState.gameStateGrid.Cells.CollapseRows(rowsComplete);
+            gameSessionService.GameStateGrid.Cells.CollapseRows(rowsComplete);
 
             switch (rowsComplete.Count)
             {
@@ -253,35 +254,35 @@
 
             await Task.Delay(1000);
         }
-        gameState.gameStateGrid.State = GameState.Playing;
+        gameSessionService.GameStateGrid.State = GameState.Playing;
     }
 
     protected async Task KeyDown(KeyboardEventArgs e)
     {
-        if (gameState.gameStateGrid.State == GameState.Playing)
+        if (gameSessionService.GameStateGrid.State == GameState.Playing)
         {
             if (e.Key == "ArrowRight")
             {
-                currentTetromino.MoveRight();
+                await gameSessionService.MoveRight(1);
             }
             if (e.Key == "ArrowLeft")
             {
-                currentTetromino.MoveLeft();
+                await gameSessionService.MoveLeft(1);
             }
             if(e.Key == " ")
             {
-                int addlScore = currentTetromino.Drop();
+                int addlScore = await gameSessionService.Drop();
                 score += addlScore;
                 skipDelay = true;
                 StateHasChanged();
             }
             if(e.Key == "ArrowDown")
             {
-                currentTetromino.MoveDown();
+                await gameSessionService.MoveDown(1);
             }
             if(e.Key == "ArrowUp")
             {
-                currentTetromino.Rotate();
+                await gameSessionService.Rotate();
             }
             StateHasChanged();
         }

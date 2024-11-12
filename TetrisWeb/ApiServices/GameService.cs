@@ -4,12 +4,11 @@ using System;
 using TetrisWeb.Components.Models;
 using System.Net.NetworkInformation;
 using TetrisWeb.Components.Pages.Partials;
-using TetrisWeb.Services;
 using System.Collections.Concurrent;
 using TetrisWeb.GameData;
 using Microsoft.EntityFrameworkCore;
 
-namespace TetrisWeb.Services;
+namespace TetrisWeb.ApiServices;
 
 public class GameService(Dbf25TeamArzContext context)
 {
@@ -18,13 +17,13 @@ public class GameService(Dbf25TeamArzContext context)
 
     public async Task<Game> CreateGameAsync(string createdByAuthId)
     {
-        var game = new GameData.Game()
+        var game = new Game()
         {
             CreatedByAuthId = createdByAuthId,
             StartTime = DateTime.Now,
             PlayerCount = 0
         };
-        
+
         context.Games.Add(game);
         await context.SaveChangesAsync();
 
@@ -34,11 +33,11 @@ public class GameService(Dbf25TeamArzContext context)
     public async Task<GameSession> JoinGameAsync(int gameId, int playerId)
     {
         var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
-        if ( game == null)
+        if (game == null)
         {
             throw new KeyNotFoundException("Game not found.");
         }
-        if(game.PlayerCount > maxPlayersPerGame)
+        if (game.PlayerCount > maxPlayersPerGame)
         {
             throw new InvalidOperationException("Game is at max capacity.");
 
@@ -59,7 +58,7 @@ public class GameService(Dbf25TeamArzContext context)
 
     }
 
-    public async void EndGame(int gameId)
+    public async Task EndGameAsync(int gameId)
     {
         var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
         if (game == null)

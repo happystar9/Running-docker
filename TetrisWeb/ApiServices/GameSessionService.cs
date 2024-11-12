@@ -1,7 +1,7 @@
 ﻿using TetrisWeb.Components.Models;
 using TetrisWeb.DTOs;
 
-namespace TetrisWeb.Services;
+namespace TetrisWeb.ApiServices;
 
 public class GameSessionService
 {
@@ -52,6 +52,9 @@ public class GameSessionService
 
         GameStateGrid.State = GameState.Playing;
 
+        currentTetromino = generator.CreateFromStyle(nextStyle, GameStateGrid);
+
+
         while (!GameStateGrid.Cells.HasRow(21))
         {
             currentTetromino = generator.CreateFromStyle(nextStyle, GameStateGrid);
@@ -93,7 +96,7 @@ public class GameSessionService
         int newLevel = counter;
         if (newLevel != level)
         {
-            standardDelay = 1000 - ((newLevel - 1) * 100);
+            standardDelay = 1000 - (newLevel - 1) * 100;
 
             level = newLevel;
         }
@@ -178,9 +181,9 @@ public class GameSessionService
             currentTetromino.MoveRight();
         }
     }
-    public async Task Drop()
+    public async Task<int> Drop()
     {
-        currentTetromino.Drop();
+        return currentTetromino.Drop();
     }
     public async Task Rotate()
     {
