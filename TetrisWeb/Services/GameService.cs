@@ -5,198 +5,98 @@ using TetrisWeb.Components.Models;
 using System.Net.NetworkInformation;
 using TetrisWeb.Components.Pages.Partials;
 using TetrisWeb.Services;
+using System.Collections.Concurrent;
+using TetrisWeb.GameData;
+using Microsoft.EntityFrameworkCore;
 
 namespace TetrisWeb.Services;
 
-public class GameStateService
+public class GameService(Dbf25TeamArzContext context)
 {
-    TetrominoGenerator generator = new TetrominoGenerator();
+    private readonly ConcurrentDictionary<string, Game> _games = new();
+    private readonly int maxPlayersPerGame = 99; // Example max limit for players
 
-    Tetromino? currentTetromino;
-
-    TetrominoStyle nextStyle;
-    TetrominoStyle secondNextStyle;
-    TetrominoStyle thirdNextStyle;
-
-    int standardDelay = 1000;
-
-    bool skipDelay = false;
-
-    int level = 1;
-    int score = 0;
-    int previousHighScore = 0;
-    string previousScoreValue = "Nothing";
-
-    public Grid gameStateGrid { get; private set; }
-
-    public GameStateService()
+    public async Task<Game> CreateGameAsync(string createdByAuthId)
     {
-        gameStateGrid = new Grid();
-    }
-
-    public void ResetGame()
-    {
-        gameStateGrid = new Grid();
-    }
-    public void UpdateBoard(Tetromino t)
-    {
-        gameStateGrid.Cells.AddMany(t.CoveredCells.GetAll(), t.CssClass);
-    }
-
-    public void NewGame()
-    {
-        ResetGame();
-        generator = new TetrominoGenerator();
-        currentTetromino = null;
-        level = 1;
-        if (score > previousHighScore)
+        var game = new GameData.Game()
         {
-            previousHighScore = score;
+            CreatedByAuthId = createdByAuthId,
+            StartTime = DateTime.Now,
+            PlayerCount = 0
+        };
+        
+        context.Games.Add(game);
+        await context.SaveChangesAsync();
+
+        return game;
+    }
+
+    public async Task<GameSession> JoinGameAsync(string gameId, int playerId)
+    {
+        var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
+        if ( game == null)
+        {
+            throw new KeyNotFoundException("Game not found.");
         }
-        score = 0;
-    }
-
-    public async Task RunGame()
-    {
-        nextStyle = generator.Next();
-        secondNextStyle = generator.Next(nextStyle);
-        thirdNextStyle = generator.Next(nextStyle, secondNextStyle);
-
-        gameStateGrid.State = GameState.Playing;
-
-        while (!gameStateGrid.Cells.HasRow(21))
+        if(game.PlayerCount > maxPlayersPerGame)
         {
-            currentTetromino = generator.CreateFromStyle(nextStyle, gameStateGrid);
-            nextStyle = secondNextStyle;
-            secondNextStyle = thirdNextStyle;
-            thirdNextStyle = generator.Next(currentTetromino.Style, nextStyle, secondNextStyle);
+            throw new InvalidOperationException("Game is at max capacity.");
 
-            await RunCurrentTetromino();
-
-            await ClearCompleteRows();
-
-            LevelChange();
         }
 
-        gameStateGrid.State = GameState.GameOver;
+        var session = new GameSession()
+        {
+            GameId = game.Id,
+            PlayerId = playerId,
+            Score = 0
+        };
+
+        game.GameSessions.Add(session);
+        game.PlayerCount++;
+
+        await context.SaveChangesAsync();
+        return session;
+
     }
 
-    public async Task Delay(int millis)
+    public async void EndGame(int gameId)
     {
-        int totalDelay = 0;
-        while (totalDelay < millis && !skipDelay)
+        var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
+        if (game == null)
         {
-            totalDelay += 50;
-            await Task.Delay(50);
-        }
-        skipDelay = false;
-    }
-
-    public async Task RunCurrentTetromino()
-    {
-        while (currentTetromino.CanMoveDown())
-        {
-            await Delay(standardDelay);
-
-            currentTetromino.MoveDown();
-
-            if (!currentTetromino.CanMoveDown())
-                await Delay(500);
+            throw new KeyNotFoundException("Game not found.");
         }
 
-        UpdateBoard(currentTetromino);
-    }
-
-    public void LevelChange()
-    {
-        int counter = 1;
-        int scoreCopy = score;
-        while (scoreCopy > 4000)
-        {
-            counter++;
-            scoreCopy -= 4000;
-        }
-
-        int newLevel = counter;
-        if (newLevel != level)
-        {
-            standardDelay = 1000 - ((newLevel - 1) * 100);
-
-            level = newLevel;
-        }
-    }
-
-    public async Task ClearCompleteRows()
-    {
-        List<int> rowsComplete = new List<int>();
-        for (int i = 1; i <= gameStateGrid.Height; i++)
-        {
-            if (gameStateGrid.Cells.GetAllInRow(i).Count == gameStateGrid.Width)
-            {
-                gameStateGrid.Cells.SetCssClass(i, "tetris-clear-row");
-
-                rowsComplete.Add(i);
-            }
-        }
-
-        if (rowsComplete.Any())
-        {
-
-            gameStateGrid.Cells.CollapseRows(rowsComplete);
-
-            switch (rowsComplete.Count)
-            {
-                case 1:
-                    score += 40 * level;
-                    break;
-
-                case 2:
-                    score += 100 * level;
-                    break;
-
-                case 3:
-                    score += 300 * level;
-                    break;
-
-                case 4:
-                    score += 1200 * level;
-                    break;
-            }
-
-            await Task.Delay(1000);
-        }
-        gameStateGrid.State = GameState.Playing;
-    }
-
-    public async Task MoveDown(int x)
-    {
-        for (int i = 1; i < x; i++)
-        {
-            currentTetromino.MoveDown();
-        }
-    }
-    public async Task MoveLeft(int x)
-    {
-        for (int i = 1; i < x; i++)
-        {
-            currentTetromino.MoveLeft();
-        }
-    }
-    public async Task MoveRight(int x)
-    {
-        for (int i = 1; i < x; i++)
-        {
-            currentTetromino.MoveRight();
-        }
-    }
-    public async Task Drop()
-    {
-        currentTetromino.Drop();
-    }
-    public async Task Rotate()
-    {
-        currentTetromino.Rotate();
+        game.StopTime = DateTime.Now;
+        await context.SaveChangesAsync();
     }
 }
+
+
+
+
+//public class GameStateService
+//{
+//   
+//    public void NewGame()
+//    {
+//        ResetGame();
+//        generator = new TetrominoGenerator();
+//        currentTetromino = null;
+//        level = 1;
+//        if (score > previousHighScore)
+//        {
+//            previousHighScore = score;
+//        }
+//        score = 0;
+//    }
+
+
+//   
+
+
+
+
+//}
 
 
