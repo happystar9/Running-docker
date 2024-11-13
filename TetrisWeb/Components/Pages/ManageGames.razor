@@ -1,0 +1,24 @@
+﻿@page "/manageGames"
+@using TetrisWeb.ApiServices;
+@using Microsoft.AspNetCore.Identity;
+@using TetrisWeb.AuthData;
+@inject GameService gameService;
+@inject UserManager<ApplicationUser> userManager;
+
+@*TODO: Authorize for admins only*@
+<button @onclick="CreateGame">CreateGame</button>
+<button @onclick="EndGame">EndGame</button>
+
+@code {
+	string authId = "jfnsjgoewrnonnmjwkgfnpwerngwengpw";
+	List<GameData.Game> gameIds;
+
+	public async Task CreateGame(){
+		gameIds.Add(gameService.CreateGameAsync(authId));
+		return;
+	}
+	public async Task EndGame(){
+		await gameService.EndGameAsync();
+		return;
+	}
+}
