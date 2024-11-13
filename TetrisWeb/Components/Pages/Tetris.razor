@@ -92,12 +92,6 @@
 
     TetrominoGenerator generator = new TetrominoGenerator();
 
-    Tetromino currentTetromino;
-
-    TetrominoStyle nextStyle;
-    TetrominoStyle secondNextStyle;
-    TetrominoStyle thirdNextStyle;
-
     int standardDelay = 1000;
 
     bool skipDelay = false;
@@ -111,7 +105,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-
+        gameSessionService.OnStateChange += StateHasChanged;
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -125,7 +119,6 @@
     public void NewGame()
     {
         gameSessionService.ResetGame();
-        currentTetromino = null;
         level = 1;
         if (score > previousHighScore)
         {
@@ -156,66 +149,10 @@
         gameSessionService.RunCurrentTetromino();
     }
 
-    public void LevelChange()
-    {
-        int counter = 1;
-        int scoreCopy = score;
-        while(scoreCopy > 4000)
-        {
-            counter++;
-            scoreCopy -= 4000;
-        }
-
-        int newLevel = counter;
-        if(newLevel != level)
-        {
-            standardDelay = 1000 - ((newLevel - 1) * 100);
-
-            level = newLevel;
-        }
-    }
-
     public async Task ClearCompleteRows()
     {
-        List<int> rowsComplete = new List<int>();
-        for (int i = 1; i <= gameSessionService.GameStateGrid.Height; i++)
-        {
-            if (gameSessionService.GameStateGrid.Cells.GetAllInRow(i).Count == gameSessionService.GameStateGrid.Width)
-            {
-                gameSessionService.GameStateGrid.Cells.SetCssClass(i, "tetris-clear-row");
-
-                rowsComplete.Add(i);
-            }
-        }
-
-        if(rowsComplete.Any())
-        {
-            StateHasChanged();
-
-            gameSessionService.GameStateGrid.Cells.CollapseRows(rowsComplete);
-
-            switch (rowsComplete.Count)
-            {
-                case 1:
-                    score += 40 * level;
-                    break;
-
-                case 2:
-                    score += 100 * level;
-                    break;
-
-                case 3:
-                    score += 300 * level;
-                    break;
-
-                case 4:
-                    score += 1200 * level;
-                    break;
-            }
-
-            await Task.Delay(1000);
-        }
-        gameSessionService.GameStateGrid.State = GameState.Playing;
+        gameSessionService.ClearCompleteRows();
+        StateHasChanged();
     }
 
     protected async Task KeyDown(KeyboardEventArgs e)
@@ -247,6 +184,10 @@
             }
             StateHasChanged();
         }
+    }
+    public void Dispose()
+    {
+        gameSessionService.OnStateChange -= StateHasChanged;
     }
 }
 

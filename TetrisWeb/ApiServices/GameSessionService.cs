@@ -1,4 +1,5 @@
-﻿using TetrisWeb.Components.Models;
+﻿using System.Data;
+using TetrisWeb.Components.Models;
 using TetrisWeb.DTOs;
 
 namespace TetrisWeb.ApiServices;
@@ -20,6 +21,10 @@ public class GameSessionService
     private int score = 0;
     private int previousHighScore = 0;
     string previousScoreValue = "Nothing";
+
+    public event Action? OnStateChange;
+
+    public void NotifyStateChanged() => OnStateChange?.Invoke();
 
 
     public Grid GameStateGrid { get; private set; }
@@ -61,6 +66,8 @@ public class GameSessionService
             secondNextStyle = thirdNextStyle;
             thirdNextStyle = generator.Next(currentTetromino.Style, nextStyle, secondNextStyle);
 
+            NotifyStateChanged();
+
             await RunCurrentTetromino();
             await ClearCompleteRows();
             LevelChange();
@@ -75,6 +82,8 @@ public class GameSessionService
         {
             await Delay(standardDelay);
             currentTetromino.MoveDown();
+
+            NotifyStateChanged();
 
             if (!currentTetromino.CanMoveDown())
                 await Delay(500);
@@ -127,7 +136,7 @@ public class GameSessionService
 
         if (rowsComplete.Any())
         {
-
+            NotifyStateChanged();
             GameStateGrid.Cells.CollapseRows(rowsComplete);
 
             switch (rowsComplete.Count)
