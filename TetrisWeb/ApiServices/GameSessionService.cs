@@ -8,11 +8,11 @@ public class GameSessionService
     private readonly GameSessionDto _gameSessionDto;
 
     private TetrominoGenerator generator = new TetrominoGenerator();
-    private Tetromino? currentTetromino;
+    public Tetromino? currentTetromino;
 
-    private TetrominoStyle nextStyle;
-    private TetrominoStyle secondNextStyle;
-    private TetrominoStyle thirdNextStyle;
+    public TetrominoStyle nextStyle;
+    public TetrominoStyle secondNextStyle;
+    public TetrominoStyle thirdNextStyle;
 
     private int standardDelay = 1000;
     private bool skipDelay = false;
@@ -34,7 +34,6 @@ public class GameSessionService
     {
         GameStateGrid = new Grid();
         generator = new TetrominoGenerator();
-        currentTetromino = null;
         level = 1;
         score = 0;
     }

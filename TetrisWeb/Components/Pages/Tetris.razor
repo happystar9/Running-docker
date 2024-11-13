@@ -9,7 +9,7 @@
 
 <script>
     window.SetFocusToElement = (element) => {
-        element.focus();
+    element.focus();
     };
 </script>
 
@@ -38,7 +38,7 @@
                 <div class="tetris-row">
                     @for (int j = 1; j <= gameSessionService.GameStateGrid.Width; j++)
                     {
-                        <GridCell Row="i" Column="j" Tetromino="currentTetromino" Grid="gameSessionService.GameStateGrid" />
+                        <GridCell Row="i" Column="j" Tetromino="gameSessionService.currentTetromino" Grid="gameSessionService.GameStateGrid" />
                     }
                 </div>
             }
@@ -57,9 +57,9 @@
                     <h2>Upcoming Pieces</h2>
                 </div>
             </div>
-            <TetrominoDisplay Style="nextStyle" />
-            <TetrominoDisplay Style="secondNextStyle" />
-            <TetrominoDisplay Style="thirdNextStyle" />
+            <TetrominoDisplay Style="gameSessionService.nextStyle" />
+            <TetrominoDisplay Style="gameSessionService.secondNextStyle" />
+            <TetrominoDisplay Style="gameSessionService.thirdNextStyle" />
             <div class="row">
                 <div class="col">
                     <h3>Controls</h3>
@@ -125,7 +125,6 @@
     public void NewGame()
     {
         gameSessionService.ResetGame();
-        generator = new TetrominoGenerator();
         currentTetromino = null;
         level = 1;
         if (score > previousHighScore)
@@ -137,34 +136,8 @@
 
     public async Task RunGame()
     {
-        nextStyle = generator.Next();
-        secondNextStyle = generator.Next(nextStyle);
-        thirdNextStyle = generator.Next(nextStyle, secondNextStyle);
-
+        gameSessionService.RunGameSession();
         await _jsRuntime.InvokeVoidAsync("SetFocusToElement", gameBoardDiv);
-
-        gameSessionService.GameStateGrid.State = GameState.Playing;
-
-        while (!gameSessionService.GameStateGrid.Cells.HasRow(21))
-        {
-            currentTetromino = generator.CreateFromStyle(nextStyle, grid);
-            nextStyle = secondNextStyle;
-            secondNextStyle = thirdNextStyle;
-            thirdNextStyle = generator.Next(currentTetromino.Style, nextStyle, secondNextStyle);
-
-            StateHasChanged();
-
-            await RunCurrentTetromino();
-
-            await ClearCompleteRows();
-
-            LevelChange();
-        }
-
-        gameSessionService.GameStateGrid.State = GameState.GameOver;
-
-        // if(score > previousHighScore)
-        //     await _jsRuntime.InvokeAsync<object>("WriteCookie", "tetrisHighScore", score, 14);
     }
 
     public async Task Delay(int millis)
@@ -180,19 +153,7 @@
 
     public async Task RunCurrentTetromino()
     {
-        while (currentTetromino.CanMoveDown())
-        {
-            await Delay(standardDelay);
-
-            currentTetromino.MoveDown();
-
-            StateHasChanged();
-
-            if (!currentTetromino.CanMoveDown())
-                await Delay(500);
-        }
-
-        gameSessionService.UpdateBoard(currentTetromino);
+        gameSessionService.RunCurrentTetromino();
     }
 
     public void LevelChange()
