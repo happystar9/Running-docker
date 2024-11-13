@@ -35,6 +35,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
@@ -50,5 +51,8 @@ else
         }
     }
 
+
+
+    //in the register page, do we want to call the CreateUser service method, or the register POST endpoint ?
 }
 
