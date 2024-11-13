@@ -161,21 +161,21 @@ public class GameSessionService
 
     public async Task MoveDown(int x)
     {
-        for (int i = 1; i < x; i++)
+        for (int i = 0; i < x; i++)
         {
             currentTetromino.MoveDown();
         }
     }
     public async Task MoveLeft(int x)
     {
-        for (int i = 1; i < x; i++)
+        for (int i = 0; i < x; i++)
         {
             currentTetromino.MoveLeft();
         }
     }
     public async Task MoveRight(int x)
     {
-        for (int i = 1; i < x; i++)
+        for (int i = 0; i < x; i++)
         {
             currentTetromino.MoveRight();
         }
