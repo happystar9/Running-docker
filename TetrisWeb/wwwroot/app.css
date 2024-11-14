@@ -6,7 +6,16 @@
 }
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /*font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
+    font-family: "Quantico", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    background-color: var(--mid-dark-purple);
+    color: #b9edeb;
+}
+
+h2,  h1 {
+    font-weight: 800;
 }
 
 a, .btn-link {
@@ -58,3 +67,6 @@ h1:focus {
 }
 
 
+a {
+    color: #34ebe5;
+}
