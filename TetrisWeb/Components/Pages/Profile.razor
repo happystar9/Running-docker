@@ -24,10 +24,11 @@
     }
     else
     {
+        @* include something here for a generic default profile picture if the user's url isn't valid *@
         <div class="profile-container">
+            <img style="width:90px" src="@player.AvatarUrl" alt="player avatar" />
             <h2>@player.Username</h2>
             <p>Quote: @player.PlayerQuote</p>
-            <img style="width:40px" src="@player.AvatarUrl" alt="player avatar" />
             <p>Total Score: @totalScore</p>
         </div>
     }
@@ -89,7 +90,5 @@
         player = await PlayerService.GetPlayerByAuthIdAsync(authid);
         // StateHasChanged();
     }
-
-    //in the register page, do we want to call the CreateUser service method, or the register POST endpoint ?
 }
 
