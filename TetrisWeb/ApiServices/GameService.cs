@@ -23,7 +23,6 @@ public class GameService(Dbf25TeamArzContext context)
             StartTime = DateTime.Now,
             PlayerCount = 0
         };
-
         context.Games.Add(game);
         await context.SaveChangesAsync();
 

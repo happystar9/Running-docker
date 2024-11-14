@@ -8,13 +8,21 @@
 @*TODO: Authorize for admins only*@
 <button @onclick="CreateGame">CreateGame</button>
 <button @onclick="EndGame">EndGame</button>
+<Dropdown Color="DropdownColor.Secondary">
+    <DropdownToggleButton>Dropdown button</DropdownToggleButton>
+    <DropdownMenu>
+        @foreach (GameData.Game game in games){
+			<DropdownItem></DropdownItem>
+		}
+    </DropdownMenu>
+</Dropdown>
 
 @code {
 	string authId = "jfnsjgoewrnonnmjwkgfnpwerngwengpw";
-	List<GameData.Game> gameIds;
+	List<GameData.Game> games;
 
 	public async Task CreateGame(){
-		gameIds.Add(gameService.CreateGameAsync(authId));
+		games.Add(gameService.CreateGameAsync(authId));
 		return;
 	}
 	public async Task EndGame(){
