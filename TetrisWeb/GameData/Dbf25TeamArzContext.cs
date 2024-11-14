@@ -175,6 +175,9 @@ public partial class Dbf25TeamArzContext : DbContext
             entity.Property(e => e.PlayerQuote)
                 .HasMaxLength(80)
                 .HasColumnName("player_quote");
+            entity.Property(e => e.Username)
+                .HasMaxLength(25)
+                .HasColumnName("username");
         });
 
         OnModelCreatingPartial(modelBuilder);

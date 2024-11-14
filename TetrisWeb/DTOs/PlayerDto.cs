@@ -8,6 +8,7 @@ namespace TetrisWeb.DTOs;
 
 public class PlayerDto
 {
+    public string Username { get; set; }
     public int Id { get; set; }
 
     public string Authid { get; set; } = null!;

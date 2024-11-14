@@ -4,22 +4,28 @@
 @inject IPlayerService PlayerService
 @inject AuthenticationStateProvider AuthStateProvider
 
-@using System.Security.Claims
-@using TetrisWeb.ApiServices.Interfaces;
-@using Microsoft.AspNetCore.Identity
-@using Microsoft.AspNetCore.WebUtilities
-@using TetrisWeb.AuthData
+@attribute [Authorize]
 
-<h2>Profile</h2>
+<PageTitle>Player Profile</PageTitle>
 
-@*if user is not logged in, redirect them to the log-in page*@
-@if (!isAuthenticated)
-{
-    Navigation.NavigateTo("/login", true);
-}
-else
-{
+<AuthorizeView>
+
+@* <h2>Profile</h2> *@
+
+
     <p>Loading profile...</p>
+    @if(player is null)
+    {
+        <p>Player not found. Please register to play.</p>
+        @* form for user to regiser as a player (give username, profile pic, quote, etc.) *@
+    }
+    else
+    {
+        @player.Username
+        @player.PlayerQuote
+        @player.AvatarUrl
+        
+    }
     @* Logic to display user information *@
 }
 
@@ -27,10 +33,15 @@ else
 
 @*try to access the player's info; if it doesn't exist, show them the interface to register to play*@
 
+</AuthorizeView>
+
+
 
 @code {
     private string authid;
     private bool isAuthenticated = false;
+    PlayerDto player = null;
+    int totalScore = 0;
 
 
     protected override async Task OnInitializedAsync()
@@ -56,7 +67,15 @@ else
                 }
             }
 
-            var player = await PlayerService.GetPlayerAsync(authid);
+            try
+            {
+                player = await PlayerService.GetPlayerAsync(authid);
+                totalScore = await PlayerService.GetPlayerTotalScore(authid);
+            }
+            catch(KeyNotFoundException)
+            {
+                player = null;
+            }
         }
     }
 
