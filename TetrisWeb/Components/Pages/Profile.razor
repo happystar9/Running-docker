@@ -9,38 +9,30 @@
 <PageTitle>Player Profile</PageTitle>
 
 <AuthorizeView>
-
-@* <h2>Profile</h2> *@
-
-
-    @* <p>Loading profile...</p> *@
-
-    @if(player is null)
+    @if (player is null)
     {
-        <p>Player not found. Please register to play.</p>
+        <div class="profile-container">
+            <p>Player not found. Please register to play.</p>
 
-        <EditForm Model="newPlayer" OnValidSubmit="RegisterPlayer" Context="editContext">
-            <InputText @bind-Value="newPlayer.Username" placeholder="Username" />
-            <InputText @bind-Value="newPlayer.PlayerQuote" placeholder="Favorite Quote" />
-            <InputText @bind-Value="newPlayer.AvatarUrl" placeholder="Avatar URL" />
-            <button type="submit">Register</button>
-        </EditForm>
+            <EditForm Model="newPlayer" OnValidSubmit="RegisterPlayer" Context="editContext">
+                <InputText @bind-Value="newPlayer.Username" placeholder="Username" class="input" />
+                <InputText @bind-Value="newPlayer.PlayerQuote" placeholder="Favorite Quote" class="input" />
+                <InputText @bind-Value="newPlayer.AvatarUrl" placeholder="Avatar URL" class="input" />
+                <button type="submit">Register</button>
+            </EditForm>
+        </div>
     }
     else
     {
-        <h2> @player.Username</h2>
-        <p>Quote: @player.PlayerQuote </p>
-        <img style="width:40px"src="@player.AvatarUrl" alt="player avatar"/>
-        <p>Total Score: @totalScore</p>
+        <div class="profile-container">
+            <h2>@player.Username</h2>
+            <p>Quote: @player.PlayerQuote</p>
+            <img style="width:40px" src="@player.AvatarUrl" alt="player avatar" />
+            <p>Total Score: @totalScore</p>
+        </div>
     }
-    @* Logic to display user information *@
-
-
-
-
-@*try to access the player's info; if it doesn't exist, show them the interface to register to play*@
-
 </AuthorizeView>
+
 
 
 
