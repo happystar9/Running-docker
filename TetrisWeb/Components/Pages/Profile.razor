@@ -1,0 +1,95 @@
+﻿@page "/Profile"
+@inject UserManager<ApplicationUser> UserManager
+@inject NavigationManager Navigation
+@inject IPlayerService PlayerService
+@inject AuthenticationStateProvider AuthStateProvider
+
+@attribute [Authorize]
+
+<PageTitle>Player Profile</PageTitle>
+
+<AuthorizeView>
+    @if (player is null)
+    {
+        <div class="profile-container">
+            <p>Player not found. Please register to play.</p>
+
+            <EditForm Model="newPlayer" OnValidSubmit="RegisterPlayer" Context="editContext">
+                <InputText @bind-Value="newPlayer.Username" placeholder="Username" class="input" />
+                <InputText @bind-Value="newPlayer.PlayerQuote" placeholder="Favorite Quote" class="input" />
+                <InputText @bind-Value="newPlayer.AvatarUrl" placeholder="Avatar URL" class="input" />
+                <button type="submit">Register</button>
+            </EditForm>
+        </div>
+    }
+    else
+    {
+        <div class="profile-container">
+            <h2>@player.Username</h2>
+            <p>Quote: @player.PlayerQuote</p>
+            <img style="width:40px" src="@player.AvatarUrl" alt="player avatar" />
+            <p>Total Score: @totalScore</p>
+        </div>
+    }
+</AuthorizeView>
+
+
+
+
+@code {
+    [Parameter] public string name { get; set; }
+    private string authid = null;
+    private bool isAuthenticated = false;
+    PlayerDto newPlayer = new PlayerDto();
+    PlayerDto player = null;
+    int totalScore = 0;
+    AuthenticationState authState = null;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity == null)
+        {
+            Navigation.NavigateTo("/login", true);
+        }
+        else
+        {
+            isAuthenticated = true;
+
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                var applicationUser = await UserManager.GetUserAsync(user);
+                if (applicationUser != null)
+                {
+                    authid = applicationUser.Id;
+                }
+            }
+
+            try
+            {
+                player = await PlayerService.GetPlayerByAuthIdAsync(authid);
+                totalScore = await PlayerService.GetPlayerTotalScore(authid);
+            }
+            catch(KeyNotFoundException)
+            {
+                player = null;
+            }
+        }
+    }
+
+    public async Task RegisterPlayer()
+    {
+        //await CreatePlayerAsync()
+        newPlayer.Authid = authid;
+        await PlayerService.CreatePlayerAsync(newPlayer);
+        player = await PlayerService.GetPlayerByAuthIdAsync(authid);
+        // StateHasChanged();
+    }
+
+    //in the register page, do we want to call the CreateUser service method, or the register POST endpoint ?
+}
+

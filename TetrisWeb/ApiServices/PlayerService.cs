@@ -3,6 +3,9 @@ using TetrisShared;
 using TetrisShared.DTOs;
 using TetrisWeb.DTOs;
 using TetrisWeb.ApiServices.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using TetrisWeb.Components.Pages;
+
 namespace TetrisWeb.ApiServices;
 
 public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
@@ -11,6 +14,7 @@ public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
     {
         var playerObject = new Player
         {
+            Username = player.Username,
             Authid = player.Authid,
             PlayerQuote = player.PlayerQuote,
             AvatarUrl = player.AvatarUrl,
@@ -22,6 +26,7 @@ public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
 
         return new PlayerDto
         {
+            Username = playerObject.Username,
             Id = playerObject.Id,
             Authid = playerObject.Authid,
             PlayerQuote = playerObject.PlayerQuote,
@@ -30,13 +35,90 @@ public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
         };
     }
 
-    public Task<PlayerDto> GetPlayerAsync(Guid playerId)
+    public async Task<PlayerDto> GetPlayerByUsernameAsync(string username)
     {
-        throw new NotImplementedException();
+        var player = await dbContext.Players
+                .SingleOrDefaultAsync(p => p.Username == username);
+
+        if (player == null)
+        {
+            throw new KeyNotFoundException("Player details not found.");
+        }
+
+        return new PlayerDto
+        {
+            Id = player.Id,
+            Authid = player.Authid,
+            PlayerQuote = player.PlayerQuote,
+            AvatarUrl = player.AvatarUrl,
+            Isblocked = player.Isblocked
+        };
     }
 
-    public Task<PlayerDto> UpdatePlayerAsync(PlayerDto player)
+    public async Task<PlayerDto> GetPlayerByAuthIdAsync(string authId)
     {
-        throw new NotImplementedException();
+        var player = await dbContext.Players
+                .SingleOrDefaultAsync(p => p.Authid == authId);
+
+
+        if (player == null)
+        {
+            throw new KeyNotFoundException("Player details not found.");
+        }
+
+        return new PlayerDto
+        {
+            Username = player.Username,
+            Id = player.Id,
+            Authid = player.Authid,
+            PlayerQuote = player.PlayerQuote,
+            AvatarUrl = player.AvatarUrl,
+            Isblocked = player.Isblocked
+        };
+    }
+
+    public async Task<PlayerDto> UpdatePlayerAsync(PlayerDto playerDto)
+    {
+        var player = await dbContext.Players.FindAsync(playerDto.Id);
+
+        if (player == null)
+        {
+            throw new KeyNotFoundException("Player details not found.");
+        }
+
+        player.Authid = playerDto.Authid;
+        player.PlayerQuote = playerDto.PlayerQuote;
+        player.AvatarUrl = playerDto.AvatarUrl;
+        player.Isblocked = playerDto.Isblocked;
+
+        await dbContext.SaveChangesAsync();
+
+        return new PlayerDto
+        {
+            Id = player.Id,
+            Authid = player.Authid,
+            PlayerQuote = player.PlayerQuote,
+            AvatarUrl = player.AvatarUrl,
+            Isblocked = player.Isblocked
+        };
+
+    }
+
+    public async Task<int> GetPlayerTotalScore(string authId)
+    {
+        //from the database, get the id from the player table that has 
+        var player = await dbContext.Players
+                .SingleOrDefaultAsync(p => p.Authid == authId);
+
+        if(player == null)
+        {
+            throw new KeyNotFoundException("Can't get a score for a player that does not exist.");
+        }
+
+        int totalScore = await dbContext.GameSessions
+            .Where(gs => gs.PlayerId == player.Id)
+            .SumAsync(gs => gs.Score);
+
+        return totalScore;
     }
 }

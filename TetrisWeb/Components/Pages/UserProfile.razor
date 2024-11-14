@@ -1,0 +1,48 @@
+﻿@page "/user/{name}"
+@inject IPlayerService PlayerService
+
+@attribute [Authorize]
+
+<PageTitle>@name's Profile</PageTitle>
+
+<div class="profile-container">
+    @if (loading)
+    {
+        <p>Loading profile...</p>
+    }
+    else if (player is null)
+    {
+        <p>Player not found. Please <a href="/register">register</a> to create a profile.</p>
+    }
+    else
+    {
+        <h2>@player.Username</h2>
+        <p>Quote: @player.PlayerQuote</p>
+        <img style="width:40px" src="@player.AvatarUrl" alt="player avatar" />
+        <p>Total Score: @totalScore</p>
+    }
+</div>
+
+@code {
+    [Parameter] public string name { get; set; }
+    private PlayerDto player = null;
+    private int totalScore = 0;
+    private bool loading = true;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            player = await PlayerService.GetPlayerByUsernameAsync(name);
+            totalScore = await PlayerService.GetPlayerTotalScore(player.Authid);
+        }
+        catch (KeyNotFoundException)
+        {
+            player = null;
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+}

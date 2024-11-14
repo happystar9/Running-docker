@@ -15,6 +15,8 @@ public partial class Player
 
     public bool? Isblocked { get; set; }
 
+    public string? Username { get; set; }
+
     public virtual ICollection<ApiKey> ApiKeys { get; set; } = new List<ApiKey>();
 
     public virtual ICollection<Chat> Chats { get; set; } = new List<Chat>();
