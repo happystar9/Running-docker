@@ -1,0 +1,51 @@
+﻿@page "/register"
+@inject IPlayerService PlayerService
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+@inject UserManager<ApplicationUser> UserManager
+
+@attribute [Authorize]
+
+<PageTitle>Register Player</PageTitle>
+
+<AuthorizeView>
+    <div class="register-container">
+        <h3>Create Your Player Profile</h3>
+
+        <EditForm Model="newPlayer" OnValidSubmit="RegisterPlayer" Context="registerContext">
+            <InputText @bind-Value="newPlayer.Username" placeholder="Username" class="input" />
+            <InputText @bind-Value="newPlayer.PlayerQuote" placeholder="Favorite Quote" class="input" />
+            <InputText @bind-Value="newPlayer.AvatarUrl" placeholder="Avatar URL" class="input" />
+            <button type="submit">Register</button>
+        </EditForm>
+    </div>
+</AuthorizeView>
+
+@code {
+    private PlayerDto newPlayer = new PlayerDto();
+    private string authid = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var applicationUser = await UserManager.GetUserAsync(user);
+            if (applicationUser != null)
+            {
+                authid = applicationUser.Id;
+            }
+        }
+    }
+
+    private async Task RegisterPlayer()
+    {
+        newPlayer.Authid = authid;
+        await PlayerService.CreatePlayerAsync(newPlayer);
+
+        // Redirect to the user's profile page after registration
+        Navigation.NavigateTo($"/user/{newPlayer.Username}");
+    }
+}
