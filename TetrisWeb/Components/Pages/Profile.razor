@@ -46,7 +46,16 @@ else
         else
         {
             isAuthenticated = true;
-            authid = user.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                var applicationUser = await UserManager.GetUserAsync(user);
+                if (applicationUser != null)
+                {
+                    authid = applicationUser.Id;
+                }
+            }
+
             var player = await PlayerService.GetPlayerAsync(authid);
         }
     }
