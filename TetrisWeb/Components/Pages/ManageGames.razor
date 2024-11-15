@@ -2,31 +2,62 @@
 @using TetrisWeb.ApiServices;
 @using Microsoft.AspNetCore.Identity;
 @using TetrisWeb.AuthData;
+@using TetrisWeb.GameData;
 @inject GameService gameService;
 @inject UserManager<ApplicationUser> userManager;
 
 @*TODO: Authorize for admins only*@
-<button @onclick="CreateGame">CreateGame</button>
-<button @onclick="EndGame">EndGame</button>
-<Dropdown Color="DropdownColor.Secondary">
-    <DropdownToggleButton>Dropdown button</DropdownToggleButton>
-    <DropdownMenu>
-        @foreach (GameData.Game game in games){
-			<DropdownItem></DropdownItem>
+<button class="btn-primary" @onclick="@CreateGame">CreateGame</button>
+<button class="btn-danger">EndGame
+	@if (selectedGame != null)
+	{
+		<p>selectedGame</p>
+	}
+</button>
+<div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+	  @if (selectedGame != null){
+			@selectedGame?.Id
 		}
-    </DropdownMenu>
-</Dropdown>
+		else
+		{
+			<a>Select Game</a>
+		}
+	</button>
+  <ul class="dropdown-menu">
+		@if (games is not null)
+		{
+			@foreach (Game game in games)
+			{
+                <li><a class="dropdown-item" onclick=@selectedGame = @game>@game.Id</a></li>
+			}
+		}
+		else
+		{
+			<li><a class="dropdown-item">No games available</a></li>
+		}
+	</ul>
+</div>
 
 @code {
-	string authId = "jfnsjgoewrnonnmjwkgfnpwerngwengpw";
+	Game selectedGame;
+	string authId;
 	List<GameData.Game> games;
 
-	public async Task CreateGame(){
-		// games.Add(gameService.CreateGameAsync(authId));
-		// return;
+	protected override void OnInitialized()
+	{
+		games = new List<GameData.Game>();
 	}
-	public async Task EndGame(){
-		// await gameService.EndGameAsync();
-		// return;
+
+	public async Task CreateGame(){
+		games.Add(await gameService.CreateGameAsync());
+		StateHasChanged();
+	}
+	public async Task EndGame(Game game){
+		if (selectedGame != null){
+		// await gameService.EndGameAsync(game.Id);
+		// games.Remove(game);
+		// StateHasChanged();
+		}
 	}
 }
