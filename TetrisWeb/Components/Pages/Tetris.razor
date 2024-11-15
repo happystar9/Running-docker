@@ -5,7 +5,7 @@
 @using TetrisWeb.ApiServices;
 @inject IJSRuntime _jsRuntime;
 @inject GameSessionService gameSessionService;
-@inject GameService gameService;
+@inject IGameService gameService;
 
 <script>
     window.SetFocusToElement = (element) => {

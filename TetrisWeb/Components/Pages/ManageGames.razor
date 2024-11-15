@@ -31,7 +31,7 @@
 		{
 			@foreach (Game game in games)
 			{
-				<li><a class="dropdown-item" onclick=@selectedGame = @game>@game.Id</a></li>
+				<li class="dropdown-item" onclick="() =>@selectedGame = @game">@game.Id"</li>
 			}
 		}
 		else

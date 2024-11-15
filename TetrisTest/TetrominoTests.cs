@@ -25,11 +25,12 @@ public class TetrominoTests
         var grid = new Grid();
         CellList coveredCells = new();
         var tetromino = new TestTetromino(grid, coveredCells);
-        tetromino.CenterPieceCol = 9;
+        for (int i = 0; i < 5; i++)
+        {
+            tetromino.MoveRight();
+        }
 
-        tetromino.MoveRight();
-
-        tetromino.CenterPieceCol.Should().Be(9);
+        tetromino.CenterPieceCol.Should().Be(10);
     }
 
     [Fact]
