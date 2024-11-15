@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TetrisWeb.ApiServices;
 
-public class GameService(Dbf25TeamArzContext context)
+public class GameService(Dbf25TeamArzContext context) : IGameService
 {
     private readonly ConcurrentDictionary<string, Game> _gameSessions = new();
     private readonly int maxPlayersPerGame = 99; // Example max limit for players
@@ -70,6 +70,23 @@ public class GameService(Dbf25TeamArzContext context)
         game.StopTime = DateTime.Now;
         await context.SaveChangesAsync();
     }
+
+    public async Task<List<Game>> GetAllGamesAsync(){
+        return await context.Games.ToListAsync();
+    }
+
+    public async Task<List<Game>> GetAllLiveGamesAsync(){
+        return await context.Games.Where(g => g.StopTime == null).ToListAsync();
+    }
+}
+
+public interface IGameService
+{
+    Task<Game> CreateGameAsync(string createdByAuthId);
+    Task<GameSession> JoinGameAsync(int gameId, int playerId);
+    Task EndGameAsync(int gameId);
+    Task<List<Game>> GetAllGamesAsync();
+    Task<List<Game>> GetAllLiveGamesAsync();
 }
 
 
