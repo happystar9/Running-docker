@@ -18,9 +18,20 @@ public class GameSessionService
     private int standardDelay = 1000;
     private bool skipDelay = false;
     private int level = 1;
-    private int score = 0;
     private int previousHighScore = 0;
     string previousScoreValue = "Nothing";
+
+    private int _score = 0;
+    public int Score
+    {
+        get => _score;
+        private set
+        {
+            _score = value;
+            NotifyStateChanged();
+        }
+    }
+
 
     public event Action? OnStateChange;
 
@@ -40,7 +51,7 @@ public class GameSessionService
         GameStateGrid = new Grid();
         generator = new TetrominoGenerator();
         level = 1;
-        score = 0;
+        Score = 0;
     }
 
     public void ResetGame()
@@ -94,7 +105,7 @@ public class GameSessionService
     public void LevelChange()
     {
         int counter = 1;
-        int scoreCopy = score;
+        int scoreCopy = Score;
         while (scoreCopy > 4000)
         {
             counter++;
@@ -142,19 +153,19 @@ public class GameSessionService
             switch (rowsComplete.Count)
             {
                 case 1:
-                    score += 40 * level;
+                    Score += 40 * level;
                     break;
 
                 case 2:
-                    score += 100 * level;
+                    Score += 100 * level;
                     break;
 
                 case 3:
-                    score += 300 * level;
+                    Score += 300 * level;
                     break;
 
                 case 4:
-                    score += 1200 * level;
+                    Score += 1200 * level;
                     break;
             }
 
