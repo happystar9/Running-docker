@@ -4,6 +4,8 @@
 @using TetrisWeb.AuthData;
 @using TetrisWeb.GameData;
 @inject GameService gameService;
+@inject UserManager<ApplicationUser> UserManager;
+@inject AuthenticationStateProvider AuthStateProvider;
 @inject UserManager<ApplicationUser> userManager;
 
 @*TODO: Authorize for admins only*@
@@ -15,8 +17,8 @@
 	}
 </button>
 <div class="dropdown">
-  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-	  @if (selectedGame != null){
+	<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+		@if (selectedGame != null){
 			@selectedGame?.Id
 		}
 		else
@@ -24,12 +26,12 @@
 			<a>Select Game</a>
 		}
 	</button>
-  <ul class="dropdown-menu">
+	<ul class="dropdown-menu">
 		@if (games is not null)
 		{
 			@foreach (Game game in games)
 			{
-                <li><a class="dropdown-item" onclick=@selectedGame = @game>@game.Id</a></li>
+				<li><a class="dropdown-item" onclick=@selectedGame = @game>@game.Id</a></li>
 			}
 		}
 		else
@@ -43,14 +45,29 @@
 	Game selectedGame;
 	string authId;
 	List<GameData.Game> games;
+	AuthenticationState authState;
 
-	protected override void OnInitialized()
+
+	protected override async void OnInitialized()
 	{
 		games = new List<GameData.Game>();
+		authState = await AuthStateProvider.GetAuthenticationStateAsync();
+		var user = authState.User;
+
+		if(user.Identity?.IsAuthenticated == true)
+		{
+			var applicationuser = await UserManager.GetUserAsync(user);
+			if(applicationuser != null)
+			{
+				authId = applicationuser.Id;
+			}
+
+		}
+
 	}
 
 	public async Task CreateGame(){
-		games.Add(await gameService.CreateGameAsync());
+		games.Add(await gameService.CreateGameAsync(authId));
 		StateHasChanged();
 	}
 	public async Task EndGame(Game game){

@@ -29,18 +29,7 @@ public class GameService(Dbf25TeamArzContext context)
         return game;
     }
 
-	public async Task<Game> CreateGameAsync()
-	{
-		var game = new Game()
-		{
-			StartTime = DateTime.Now,
-			PlayerCount = 0
-		};
-		//context.Games.Add(game);
-		//await context.SaveChangesAsync();
-
-		return game;
-	}
+	
 
 	public async Task<GameSession> JoinGameAsync(int gameId, int playerId)
     {
