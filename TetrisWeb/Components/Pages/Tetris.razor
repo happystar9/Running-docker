@@ -2,13 +2,14 @@
 @inherits LayoutComponentBase
 @using TetrisWeb.Components.Models;
 @using TetrisWeb.Components.Pages.Partials;
-@using TetrisWeb.Services;
+@using TetrisWeb.ApiServices;
 @inject IJSRuntime _jsRuntime;
-@inject GameStateService gameState;
+@inject GameSessionService gameSessionService;
+@inject GameService gameService;
 
 <script>
     window.SetFocusToElement = (element) => {
-        element.focus();
+    element.focus();
     };
 </script>
 
@@ -18,11 +19,11 @@
 
 <div class="row">
     <div class="col">
-        @if (gameState.gameStateGrid.State == GameState.NotStarted)
+        @if (gameSessionService.GameStateGrid.State == GameState.NotStarted)
         {
             <button @onclick="RunGame" class="btn btn-primary">Start!</button>
         }
-        @if (gameState.gameStateGrid.State == GameState.GameOver)
+        @if (gameSessionService.GameStateGrid.State == GameState.GameOver)
         {
             <button @onclick="NewGame" class="btn btn-primary">New Game!</button>
         }
@@ -32,33 +33,33 @@
 <div class="row">
     <div class="col">
         <div class="tetris-container" tabindex="0" @onkeydown="KeyDown" @ref="gameBoardDiv">
-            @for (int i = gameState.gameStateGrid.Height; i >= 1; i--)
+            @for (int i = gameSessionService.GameStateGrid.Height; i >= 1; i--)
             {
                 <div class="tetris-row">
-                    @for (int j = 1; j <= gameState.gameStateGrid.Width; j++)
+                    @for (int j = 1; j <= gameSessionService.GameStateGrid.Width; j++)
                     {
-                        <GridCell Row="i" Column="j" Tetromino="currentTetromino" Grid="gameState.gameStateGrid" />
+                        <GridCell Row="i" Column="j" Tetromino="gameSessionService.currentTetromino" Grid="gameSessionService.GameStateGrid" />
                     }
                 </div>
             }
         </div>
     </div>
     <div class="col">
-        @if (gameState.gameStateGrid.State == GameState.GameOver)
+        @if (gameSessionService.GameStateGrid.State == GameState.GameOver)
         {
             <h1>Game Over!</h1>
             <p>Thanks for playing!</p>
         }
-        @if (gameState.gameStateGrid.IsStarted)
+        @if (gameSessionService.GameStateGrid.IsStarted)
         {
             <div class="row">
                 <div class="col">
                     <h2>Upcoming Pieces</h2>
                 </div>
             </div>
-            <TetrominoDisplay Style="nextStyle" />
-            <TetrominoDisplay Style="secondNextStyle" />
-            <TetrominoDisplay Style="thirdNextStyle" />
+            <TetrominoDisplay Style="gameSessionService.nextStyle" />
+            <TetrominoDisplay Style="gameSessionService.secondNextStyle" />
+            <TetrominoDisplay Style="gameSessionService.thirdNextStyle" />
             <div class="row">
                 <div class="col">
                     <h3>Controls</h3>
@@ -87,15 +88,9 @@
 
 
 @code {
-    Grid grid => gameState.gameStateGrid;
+    Grid grid => gameSessionService.GameStateGrid;
 
     TetrominoGenerator generator = new TetrominoGenerator();
-
-    Tetromino currentTetromino;
-
-    TetrominoStyle nextStyle;
-    TetrominoStyle secondNextStyle;
-    TetrominoStyle thirdNextStyle;
 
     int standardDelay = 1000;
 
@@ -110,7 +105,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-
+        gameSessionService.OnStateChange += StateHasChanged;
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -123,9 +118,7 @@
 
     public void NewGame()
     {
-        gameState.ResetGame();
-        generator = new TetrominoGenerator();
-        currentTetromino = null;
+        gameSessionService.ResetGame();
         level = 1;
         if (score > previousHighScore)
         {
@@ -136,34 +129,8 @@
 
     public async Task RunGame()
     {
-        nextStyle = generator.Next();
-        secondNextStyle = generator.Next(nextStyle);
-        thirdNextStyle = generator.Next(nextStyle, secondNextStyle);
-
+        gameSessionService.RunGameSession();
         await _jsRuntime.InvokeVoidAsync("SetFocusToElement", gameBoardDiv);
-
-        gameState.gameStateGrid.State = GameState.Playing;
-
-        while (!gameState.gameStateGrid.Cells.HasRow(21))
-        {
-            currentTetromino = generator.CreateFromStyle(nextStyle, grid);
-            nextStyle = secondNextStyle;
-            secondNextStyle = thirdNextStyle;
-            thirdNextStyle = generator.Next(currentTetromino.Style, nextStyle, secondNextStyle);
-
-            StateHasChanged();
-
-            await RunCurrentTetromino();
-
-            await ClearCompleteRows();
-
-            LevelChange();
-        }
-
-        gameState.gameStateGrid.State = GameState.GameOver;
-
-        // if(score > previousHighScore)
-        //     await _jsRuntime.InvokeAsync<object>("WriteCookie", "tetrisHighScore", score, 14);
     }
 
     public async Task Delay(int millis)
@@ -179,112 +146,48 @@
 
     public async Task RunCurrentTetromino()
     {
-        while (currentTetromino.CanMoveDown())
-        {
-            await Delay(standardDelay);
-
-            currentTetromino.MoveDown();
-
-            StateHasChanged();
-
-            if (!currentTetromino.CanMoveDown())
-                await Delay(500);
-        }
-
-        gameState.UpdateBoard(currentTetromino);
-    }
-
-    public void LevelChange()
-    {
-        int counter = 1;
-        int scoreCopy = score;
-        while(scoreCopy > 4000)
-        {
-            counter++;
-            scoreCopy -= 4000;
-        }
-
-        int newLevel = counter;
-        if(newLevel != level)
-        {
-            standardDelay = 1000 - ((newLevel - 1) * 100);
-
-            level = newLevel;
-        }
+        gameSessionService.RunCurrentTetromino();
     }
 
     public async Task ClearCompleteRows()
     {
-        List<int> rowsComplete = new List<int>();
-        for (int i = 1; i <= gameState.gameStateGrid.Height; i++)
-        {
-            if (gameState.gameStateGrid.Cells.GetAllInRow(i).Count == gameState.gameStateGrid.Width)
-            {
-                gameState.gameStateGrid.Cells.SetCssClass(i, "tetris-clear-row");
-
-                rowsComplete.Add(i);
-            }
-        }
-
-        if(rowsComplete.Any())
-        {
-            StateHasChanged();
-
-            gameState.gameStateGrid.Cells.CollapseRows(rowsComplete);
-
-            switch (rowsComplete.Count)
-            {
-                case 1:
-                    score += 40 * level;
-                    break;
-
-                case 2:
-                    score += 100 * level;
-                    break;
-
-                case 3:
-                    score += 300 * level;
-                    break;
-
-                case 4:
-                    score += 1200 * level;
-                    break;
-            }
-
-            await Task.Delay(1000);
-        }
-        gameState.gameStateGrid.State = GameState.Playing;
+        gameSessionService.ClearCompleteRows();
+        StateHasChanged();
     }
 
     protected async Task KeyDown(KeyboardEventArgs e)
     {
-        if (gameState.gameStateGrid.State == GameState.Playing)
+        if (gameSessionService.GameStateGrid.State == GameState.Playing)
         {
             if (e.Key == "ArrowRight")
             {
-                currentTetromino.MoveRight();
+                await gameSessionService.MoveRight(1);
             }
             if (e.Key == "ArrowLeft")
             {
-                currentTetromino.MoveLeft();
+                await gameSessionService.MoveLeft(1);
             }
             if(e.Key == " ")
             {
-                int addlScore = currentTetromino.Drop();
+                int addlScore = await gameSessionService.Drop();
                 score += addlScore;
                 skipDelay = true;
                 StateHasChanged();
             }
             if(e.Key == "ArrowDown")
             {
-                currentTetromino.MoveDown();
+                await gameSessionService.MoveDown(1);
             }
             if(e.Key == "ArrowUp")
             {
-                currentTetromino.Rotate();
+                await gameSessionService.Rotate();
             }
             StateHasChanged();
         }
+    }
+    public void Dispose()
+    {
+        gameSessionService.OnStateChange -= StateHasChanged;
     }
 }
 

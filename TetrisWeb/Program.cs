@@ -8,8 +8,8 @@ using TetrisWeb.GameData;
 using TetrisWeb.ApiServices;
 using TetrisWeb.AuthData;
 using Microsoft.AspNetCore.Builder;
-using TetrisWeb.Services;
 using TetrisWeb.ApiServices.Interfaces;
+using TetrisWeb.DTOs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,7 +34,9 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-builder.Services.AddTransient<GameStateService>();
+builder.Services.AddTransient<GameService>();
+builder.Services.AddTransient<GameSessionService>();
+builder.Services.AddTransient<GameSessionDto>();
 //builder.Services.AddTransient<GameManager>();
 
 
