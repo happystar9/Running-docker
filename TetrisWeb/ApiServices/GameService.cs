@@ -12,7 +12,7 @@ namespace TetrisWeb.ApiServices;
 
 public class GameService(Dbf25TeamArzContext context)
 {
-    private readonly ConcurrentDictionary<string, Game> _games = new();
+    private readonly ConcurrentDictionary<string, Game> _gameSessions = new();
     private readonly int maxPlayersPerGame = 99; // Example max limit for players
 
     public async Task<Game> CreateGameAsync(string createdByAuthId)

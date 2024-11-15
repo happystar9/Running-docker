@@ -22,30 +22,30 @@
 //    [HttpGet("boardState/{apiKey}")]
 //    public async Task<CellList> BoardState(string apiKey)
 //    {
-//        return game._games[apiKey].gameStateGrid.Cells;
+//        return game._gameSessions[apiKey].gameStateGrid.Cells;
 //    }
 
 //    [HttpPost("moveRight/{apiKey}/{x}")]
 //    public async Task MoveRight(int x, string apiKey)
 //    {
-//        game._games[apiKey].MoveRight(x);
+//        game._gameSessions[apiKey].MoveRight(x);
 //    }
 
 //    [HttpPost("moveLeft/{apiKey}/{x}")]
 //    public async Task MoveLeft(int x, string apiKey)
 //    {
-//        game._games[apiKey].MoveLeft(x);
+//        game._gameSessions[apiKey].MoveLeft(x);
 //    }
 
 //    [HttpPost("rotate/{apiKey}")]
 //    public async Task Rotate(string apiKey)
 //    {
-//        game._games[apiKey].Rotate();
+//        game._gameSessions[apiKey].Rotate();
 //    }
 
 //    [HttpPost("drop/{apiKey}")]
 //    public async Task Drop(string apiKey)
 //    {
-//        game._games[apiKey].Drop();
+//        game._gameSessions[apiKey].Drop();
 //    }
 //}
