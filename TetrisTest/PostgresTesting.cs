@@ -20,6 +20,8 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Testcontainers.PostgreSql;
 using Xunit.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net.Http.Json;
+using FluentAssertions;
 
 namespace TetrisTest;
 
@@ -188,11 +190,14 @@ public class PostgresTesting : IClassFixture<WebApplicationFactory<Program>>, IA
         """";
 
     internal WebApplicationFactory<Program> customWebAppFactory;
-    internal readonly PostgreSqlContainer _dbContainer;
+    private static PostgreSqlContainer _dbContainer;
     internal readonly ITestOutputHelper outputHelper;
+    internal readonly HttpClient client;
+
 
     public PostgresTesting(WebApplicationFactory<Program> webAppFactory, ITestOutputHelper helper)
     {
+
         _dbContainer = new PostgreSqlBuilder()
             .WithImage("postgres")
             .WithPassword("Strong_password_123!")
@@ -208,13 +213,17 @@ public class PostgresTesting : IClassFixture<WebApplicationFactory<Program>>, IA
                 services.AddDbContext<Dbf25TeamArzContext>(options => options.UseNpgsql(_dbContainer.GetConnectionString()));
             });
         });
+
+        client = customWebAppFactory.CreateClient();
+
     }
     public async Task InitializeAsync()
     {
-        await _dbContainer.StartAsync();
-        Console.WriteLine("PostgreSQL container started");
+        
+            await _dbContainer.StartAsync();
+        
 
-
+        // Execute your initialization script
         var yourInitScriptContents = schema;
         await _dbContainer.ExecScriptAsync(yourInitScriptContents);
     }
@@ -224,5 +233,30 @@ public class PostgresTesting : IClassFixture<WebApplicationFactory<Program>>, IA
         await _dbContainer.StopAsync();
     }
 
+    [Fact]
+    public async Task RegisterPlayerCreatesPlayer()
+    {
+        var samplePlayer = new PlayerDto
+        {
+            Username = "TestUser",
+            Authid = "TestAuthId",
+            PlayerQuote = "TestQuote",
+            AvatarUrl = "TestAvatarUrl",
+            Isblocked = false
+        };
+
+        var response = await client.PostAsJsonAsync("/api/player/register", samplePlayer);
+        response.EnsureSuccessStatusCode();
+
+        var createdPlayer = await response.Content.ReadFromJsonAsync<PlayerDto>();
+
+        createdPlayer.Should().NotBeNull();
+        createdPlayer.Username.Should().Be(samplePlayer.Username);
+        createdPlayer.Authid.Should().Be(samplePlayer.Authid);
+        createdPlayer.PlayerQuote.Should().Be(samplePlayer.PlayerQuote);
+        createdPlayer.AvatarUrl.Should().Be(samplePlayer.AvatarUrl);
+        createdPlayer.Isblocked.Should().BeFalse();
+        createdPlayer.Id.Should().BeGreaterThan(0);
+    }
 
 }
