@@ -18,8 +18,8 @@
         }
     </button>
     <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            @if (selectedGame != null)
+        @* <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"> *@
+            @if (selectedGame is not null)
             {
                 @selectedGame?.Id
             }
@@ -27,20 +27,22 @@
             {
                 <a>Select Game</a>
             }
-        </button>
-        <ul class="dropdown-menu">
+        @* </button> *@
+        @* <ul class="dropdown-menu"> *@
             @if (games is not null)
             {
-                @foreach (Game game in games)
-                {
-                    <li class="dropdown-item" onclick="() =>@selectedGame = @game">@game.Id"</li>
-                }
+                @foreach (var game in games)
+            {
+                <li>
+                     @*class="dropdown-item" @onclick="() => SelectGame(game)" *@>@game.Id
+                </li>
+            }
             }
             else
             {
-                <li><a class="dropdown-item">No games available</a></li>
+                <li>No games available</li>
             }
-        </ul>
+        @* </ul> *@
     </div>
 
 
@@ -57,7 +59,6 @@
 
     protected override async void OnInitialized()
     {
-        games = await gameService.GetAllLiveGamesAsync();
         authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
@@ -72,21 +73,28 @@
 
             isAdmin = user.IsInRole("Admin");
         }
+        games = await gameService.GetAllLiveGamesAsync();
 
     }
 
-    public async Task CreateGame()
-    {
-        games.Add(await gameService.CreateGameAsync(authId));
-        StateHasChanged();
-    }
-    public async Task EndGame(Game game)
-    {
-        if (selectedGame != null)
-        {
-            // await gameService.EndGameAsync(game.Id);
-            // games.Remove(game);
-            // StateHasChanged();
-        }
-    }
+	private void SelectGame(Game game)
+	{
+		selectedGame = game;
+		StateHasChanged();
+	}
+
+	public async Task CreateGame()
+	{
+		games.Add(await gameService.CreateGameAsync(authId));
+		StateHasChanged();
+	}
+	public async Task EndGame(Game game)
+	{
+		if (selectedGame != null)
+		{
+			// await gameService.EndGameAsync(game.Id);
+			// games.Remove(game);
+			// StateHasChanged();
+		}
+	}
 }
