@@ -219,11 +219,8 @@ public class PostgresTesting : IClassFixture<WebApplicationFactory<Program>>, IA
     }
     public async Task InitializeAsync()
     {
+        await _dbContainer.StartAsync();
         
-            await _dbContainer.StartAsync();
-        
-
-        // Execute your initialization script
         var yourInitScriptContents = schema;
         await _dbContainer.ExecScriptAsync(yourInitScriptContents);
     }

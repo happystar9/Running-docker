@@ -9,16 +9,20 @@
 @inject UserManager<ApplicationUser> userManager;
 
 @*TODO: Authorize for admins only*@
+
+@if(isAdmin)
+{
 <button class="btn-primary" @onclick="@CreateGame">CreateGame</button>
 <button class="btn-danger">EndGame
-	@if (selectedGame != null) 
+	@if (selectedGame != null)
 	{
 		<p>selectedGame</p>
 	}
 </button>
 <div class="dropdown">
 	<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-		@if (selectedGame != null){
+		@if (selectedGame != null)
+		{
 			@selectedGame?.Id
 		}
 		else
@@ -41,11 +45,16 @@
 	</ul>
 </div>
 
+}
+
+
 @code {
 	Game selectedGame;
 	string authId;
 	List<Game> games;
 	AuthenticationState authState;
+	bool isAdmin;
+
 
 
 	protected override async void OnInitialized()
@@ -54,27 +63,31 @@
 		authState = await AuthStateProvider.GetAuthenticationStateAsync();
 		var user = authState.User;
 
-		if(user.Identity?.IsAuthenticated == true)
+		if (user.Identity?.IsAuthenticated == true)
 		{
 			var applicationuser = await UserManager.GetUserAsync(user);
-			if(applicationuser != null)
+			if (applicationuser != null)
 			{
 				authId = applicationuser.Id;
 			}
 
+			isAdmin = user.IsInRole("Admin");
 		}
 
 	}
 
-	public async Task CreateGame(){
+	public async Task CreateGame()
+	{
 		games.Add(await gameService.CreateGameAsync(authId));
 		StateHasChanged();
 	}
-	public async Task EndGame(Game game){
-		if (selectedGame != null){
-		// await gameService.EndGameAsync(game.Id);
-		// games.Remove(game);
-		// StateHasChanged();
+	public async Task EndGame(Game game)
+	{
+		if (selectedGame != null)
+		{
+			// await gameService.EndGameAsync(game.Id);
+			// games.Remove(game);
+			// StateHasChanged();
 		}
 	}
 }
