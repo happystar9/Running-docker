@@ -39,7 +39,7 @@ builder.Services.AddTransient<GameSessionService>();
 builder.Services.AddTransient<GameSessionDto>();
 //builder.Services.AddTransient<GameManager>();
 
-
+builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultScheme = IdentityConstants.ApplicationScheme;
@@ -57,6 +57,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
