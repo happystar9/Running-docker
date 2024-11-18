@@ -11,6 +11,7 @@ public class ChatDto
 	public int Id { get; set; }
 
 	public int PlayerId { get; set; }
+	public string? PlayerUsername {get; set;}
 
 	public string? Message { get; set; }
 

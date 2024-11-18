@@ -1,0 +1,96 @@
+@using TetrisShared.DTOs;
+@inject IChatService chatService;
+@inject AuthenticationStateProvider AuthStateProvider;
+@inject UserManager<ApplicationUser> UserManager;
+@inject IPlayerService playerService;
+
+<div class="chat-container">
+    <div class="chat-messages">
+        @if (messages != null)
+        {
+            @foreach (var message in messages)
+            {
+                <div class="chat-message">
+                    <div class="chat-username">@message.PlayerUsername</div>
+                    <div class="chat-time">@message.TimeSent</div>
+                    <div class="chat-text">@message.Message</div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No messages yet.</p>
+        }
+    </div>
+
+    <div class="chat-input">
+        <input class="form-control" @bind="newMessageText" type="text"
+            placeholder="Type a message..." />
+
+        @if (playerUsername is not null)
+        {
+            <button @onclick="SendMessage" class="btn btn-primary">Send</button>
+
+        }
+        else
+        {
+            <p>You must be logged in to send messages.</p>
+        }
+    </div>
+</div>
+
+@code {
+    List<ChatDto> messages = null;
+    string authId;
+    int playerId;
+    string playerUsername;
+    AuthenticationState authState;
+    string newMessageText;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var applicationuser = await UserManager.GetUserAsync(user);
+            if (applicationuser != null)
+            {
+                authId = applicationuser.Id;
+            }
+
+            var player = await playerService.GetPlayerByAuthIdAsync(authId);
+            if (player is not null)
+            {
+                playerId = player.Id;
+                playerUsername = player.Username;
+            }
+        }
+
+        await LoadMessages();
+    }
+
+    private async Task LoadMessages()
+    {
+        messages = await chatService.GetRecentChatsAsync();
+
+    }
+
+
+    private async Task SendMessage()
+    {
+         ChatDto chatDto = new ChatDto()
+            {
+                PlayerId = playerId,
+                Message = newMessageText
+            };
+
+        await chatService.PostChatAsync(chatDto);
+        newMessageText = "";
+        await LoadMessages();
+
+    }
+
+}

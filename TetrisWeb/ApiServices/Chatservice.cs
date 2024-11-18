@@ -10,13 +10,37 @@ namespace TetrisWeb.ApiServices
         public async Task<List<ChatDto>> GetAllChatsAsync()
         {
             var chats = await dbcontext.Chats
-            .Select(c => new ChatDto
+            .Join(dbcontext.Players,
+            c => c.PlayerId,
+            p => p.Id,
+            (c, p) => new ChatDto
             {
                 PlayerId = c.PlayerId,
+                PlayerUsername = p.Username,
                 Message = c.Message,
                 TimeSent = c.TimeSent
             })
             .ToListAsync();
+
+            return chats;
+        }
+
+        public async Task<List<ChatDto>> GetRecentChatsAsync()
+        {
+            var chats = await dbcontext.Chats
+                .OrderByDescending(c => c.TimeSent)
+                .Take(20)
+                .Join(dbcontext.Players,
+                    c => c.PlayerId,
+                    p => p.Id,
+                    (c, p) => new ChatDto
+                    {
+                        PlayerId = c.PlayerId,
+                        PlayerUsername = p.Username,
+                        Message = c.Message,
+                        TimeSent = c.TimeSent
+                    })
+                .ToListAsync();
 
             return chats;
         }
@@ -43,6 +67,6 @@ namespace TetrisWeb.ApiServices
 
             return result;
         }
-        
+
     }
 }
