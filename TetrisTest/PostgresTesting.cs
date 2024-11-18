@@ -22,6 +22,7 @@ using Xunit.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 using FluentAssertions;
+using System.Net.Http;
 
 namespace TetrisTest;
 
@@ -30,7 +31,7 @@ public class PostgresTesting : IClassFixture<WebApplicationFactory<Program>>, IA
     internal const string schema = """"
                 -- DROP SCHEMA game;
 
-        CREATE SCHEMA game AUTHORIZATION dbf25_team_arz;
+        CREATE SCHEMA game;
 
         -- DROP SEQUENCE game.api_key_id_seq;
 
@@ -197,16 +198,20 @@ public class PostgresTesting : IClassFixture<WebApplicationFactory<Program>>, IA
 
     public PostgresTesting(WebApplicationFactory<Program> webAppFactory, ITestOutputHelper helper)
     {
+        outputHelper = helper;
 
         _dbContainer = new PostgreSqlBuilder()
             .WithImage("postgres")
+            .WithPortBinding("1645")
             .WithPassword("Strong_password_123!")
             .Build();
 
         customWebAppFactory = webAppFactory.WithWebHostBuilder(builder =>
         {
+            builder.UseSetting("DB_CONN", _dbContainer.GetConnectionString());
             builder.ConfigureTestServices(services =>
             {
+                //services.Configure
                 services.RemoveAll<Dbf25TeamArzContext>();
                 services.RemoveAll<DbContextOptions>();
                 services.RemoveAll(typeof(DbContextOptions<Dbf25TeamArzContext>));
@@ -214,7 +219,6 @@ public class PostgresTesting : IClassFixture<WebApplicationFactory<Program>>, IA
             });
         });
 
-        client = customWebAppFactory.CreateClient();
 
     }
     public async Task InitializeAsync()
@@ -233,10 +237,15 @@ public class PostgresTesting : IClassFixture<WebApplicationFactory<Program>>, IA
     [Fact]
     public async Task RegisterPlayerCreatesPlayer()
     {
+        HttpClient client = customWebAppFactory.CreateClient();
+
+
+        outputHelper.WriteLine(_dbContainer.GetConnectionString());
+
         var samplePlayer = new PlayerDto
         {
-            Username = "TestUser",
-            Authid = "TestAuthId",
+            Username = "Testing99",
+            Authid = "Testing99",
             PlayerQuote = "TestQuote",
             AvatarUrl = "TestAvatarUrl",
             Isblocked = false
