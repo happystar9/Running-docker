@@ -74,7 +74,7 @@
     <div class="col">
         <div class="row">
             <div class="col">
-                <h2>Score: @score</h2>
+                <h2>Score: @gameSessionService.Score</h2>
                 <span>Previous High Score: @previousHighScore</span>
             </div>
         </div>
@@ -177,9 +177,7 @@
             }
             if(e.Key == " ")
             {
-                int addlScore = await gameSessionService.Drop();
-                score += addlScore;
-                skipDelay = true;
+                await gameSessionService.Drop();
                 StateHasChanged();
             }
             if(e.Key == "ArrowDown")

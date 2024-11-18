@@ -6,7 +6,6 @@
 @inject IGameService gameService;
 @inject UserManager<ApplicationUser> UserManager;
 @inject AuthenticationStateProvider AuthStateProvider;
-@inject UserManager<ApplicationUser> userManager;
 @attribute [Authorize(Roles = "Admin")]
 
     <button class="btn-primary" @onclick="@CreateGame">CreateGame</button>

@@ -37,7 +37,7 @@ public class TetrominoTests
     public async Task ClearCompleteRows_Should_Update_Score()
     {
         var service = new GameSessionService(new GameSessionDto());
-        for(int i = 0; i <= 10; i++) { service.GameStateGrid.Cells.Add(0, i); }
+        for(int i = 1; i <= 10; i++) { service.GameStateGrid.Cells.Add(1, i); }
 
         await service.ClearCompleteRows();
 
