@@ -3,12 +3,23 @@
 @inject AuthenticationStateProvider AuthStateProvider;
 @inject UserManager<ApplicationUser> UserManager;
 @inject IPlayerService playerService;
+@inject IJSRuntime JSRuntime
+
+<script>
+    function scrollToBottom(element) {
+        if (element) {
+            element.scrollTop = element.scrollHeight;
+        }
+    }
+</script>
+
+
 
 <div class="chat-container">
-    <div class="chat-messages">
+    <div class="chat-messages" @ref="chatMessagesDiv">
         @if (messages != null)
         {
-            @foreach (var message in messages)
+            foreach (var message in messages)
             {
                 <div class="chat-message">
                     <div class="chat-username">@message.PlayerUsername</div>
@@ -24,18 +35,16 @@
     </div>
 
     <div class="chat-input">
-        <input class="form-control" @bind="newMessageText" type="text"
-            placeholder="Type a message..." />
+        <input class="form-control" @bind="newMessageText" type="text" placeholder="Type a message..." />
 
         @if (playerUsername is not null)
         {
             <button @onclick="SendMessage" class="btn btn-primary">Send</button>
 
         }
-        else
-        {
-            <p>You must be logged in to send messages.</p>
-        }
+
+        <p class="help-message">You must be logged in to send messages.</p>
+
     </div>
 </div>
 
@@ -46,6 +55,7 @@
     string playerUsername;
     AuthenticationState authState;
     string newMessageText;
+    private ElementReference chatMessagesDiv;
 
 
     protected override async Task OnInitializedAsync()
@@ -75,13 +85,15 @@
     private async Task LoadMessages()
     {
         messages = await chatService.GetRecentChatsAsync();
-        
+        messages = messages.OrderBy(m => m.TimeSent).ToList();
+        await ScrollToBottom();
+
     }
 
 
     private async Task SendMessage()
     {
-         ChatDto chatDto = new ChatDto()
+        ChatDto chatDto = new ChatDto()
             {
                 PlayerId = playerId,
                 Message = newMessageText
@@ -91,6 +103,11 @@
         newMessageText = "";
         await LoadMessages();
 
+    }
+
+    private async Task ScrollToBottom()
+    {
+        await JSRuntime.InvokeVoidAsync("scrollToBottom", chatMessagesDiv);
     }
 
 }

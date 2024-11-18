@@ -62,3 +62,7 @@
 .chat-input button {
     flex-shrink: 0;
 }
+
+.help-message {
+    color: var(--mid-light-purple);
+}
