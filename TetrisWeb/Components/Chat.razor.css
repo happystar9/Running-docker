@@ -48,21 +48,34 @@
 
 .chat-input {
     display: flex;
+    flex-direction: column;
     padding: 10px;
     background-color: var(--mid-light-purple);
     border-top: 1px solid #ccc;
+    /* margin-right: 10px; */
+
 }
 
 .chat-input input {
     flex: 1;
-    margin-right: 10px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 8px;
+    /* flex-grow: 1; */
     /* background-color: */
 }
 
 .chat-input button {
-    flex-shrink: 0;
+    /* flex-shrink: 0; */
+    width: 100%;
+    margin-bottom: 10px;
 }
 
 .help-message {
     color: var(--mid-light-purple);
+}
+
+.message-form {
+    width: 100%;
 }

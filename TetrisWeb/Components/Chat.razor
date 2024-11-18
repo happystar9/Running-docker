@@ -35,16 +35,17 @@
     </div>
 
     <div class="chat-input">
-        <input class="form-control" @bind="newMessageText" type="text" placeholder="Type a message..." />
-
-        @if (playerUsername is not null)
+        <EditForm Model="@this" OnValidSubmit="SendMessage">
+            <InputText class="form-control" @bind-Value="newMessageText" placeholder="Type a message..." />
+            @if (playerUsername is not null)
+            {
+                <button type="submit" class="btn btn-primary">Send</button>
+            }
+        </EditForm>
+        @if (playerUsername is null)
         {
-            <button @onclick="SendMessage" class="btn btn-primary">Send</button>
-
+            <p class="help-message">You must be logged in to send messages.</p>
         }
-
-        <p class="help-message">You must be logged in to send messages.</p>
-
     </div>
 </div>
 

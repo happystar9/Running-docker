@@ -16,7 +16,7 @@
 <HeadContent>
     <title>Tetris</title>
 </HeadContent>
-
+<div class="main-container">
 <div class="row">
     <div class="col">
         @if (gameSessionService.GameStateGrid.State == GameState.NotStarted)
@@ -83,10 +83,17 @@
                 <h2>Level: @level</h2>
             </div>
         </div>
+        <div class="row">
+                <div class="col">
+                    <div class="chat-container">
+                        <Chat></Chat>
+                    </div>
+                </div>
+            </div>
     </div>
 </div>
 
-<Chat></Chat>
+</div>
 
 @code {
     Grid grid => gameSessionService.GameStateGrid;
