@@ -202,8 +202,12 @@ public class GameSessionService
     }
     public async Task<int> Drop()
     {
-        return currentTetromino.Drop();
+        return Score += currentTetromino.Drop();
     }
+
+
+        
+    
     public async Task Rotate()
     {
         currentTetromino.Rotate();
