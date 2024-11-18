@@ -7,12 +7,13 @@ using TetrisWeb.Components.Pages.Partials;
 using System.Collections.Concurrent;
 using TetrisWeb.GameData;
 using Microsoft.EntityFrameworkCore;
+using TetrisWeb.DTOs;
 
 namespace TetrisWeb.ApiServices;
 
 public class GameService(Dbf25TeamArzContext context) : IGameService
 {
-    private readonly ConcurrentDictionary<string, Game> _gameSessions = new();
+    private readonly ConcurrentDictionary<string, GameDto> _gameSessions = new();
     private readonly int maxPlayersPerGame = 99; // Example max limit for players
 
     public async Task<Game> CreateGameAsync(string createdByAuthId)
@@ -23,8 +24,18 @@ public class GameService(Dbf25TeamArzContext context) : IGameService
             StartTime = DateTime.Now,
             PlayerCount = 0
         };
+
         context.Games.Add(game);
+
         await context.SaveChangesAsync();
+
+        GameDto gameDto = new GameDto
+        {
+            Id = game.Id,
+            CreatedByAuthId = game.CreatedByAuthId,
+            StartTime = game.StartTime,
+            PlayerCount = game.PlayerCount
+        };
 
         return game;
     }
@@ -73,6 +84,7 @@ public class GameService(Dbf25TeamArzContext context) : IGameService
 
     public async Task<List<Game>> GetAllGamesAsync(){
         return await context.Games.ToListAsync();
+        
     }
 
     public async Task<List<Game>> GetAllLiveGamesAsync(){
