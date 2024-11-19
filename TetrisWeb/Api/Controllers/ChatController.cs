@@ -8,9 +8,15 @@ namespace TetrisWeb.Controllers;
 public class ChatController(IChatService chatService) : ControllerBase
 {
     [HttpPost]
-    public async Task<IResult> RegisterPlayer([FromBody] ChatDto chatDto)
+    public async Task<IResult> PostChat([FromBody] ChatDto chatDto)
     {
         var newChat = await chatService.PostChatAsync(chatDto);
         return Results.Ok(newChat);
+    }
+
+    [HttpGet]
+    public async Task<IResult> GetRecentChats()
+    {
+        return Results.Ok(await chatService.GetRecentChatsAsync());
     }
 }

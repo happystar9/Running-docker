@@ -19,16 +19,24 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddControllers();
 
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var connectionString = builder.Configuration["DB_CONN"] ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
+
+builder.Services.AddHttpClient("TetrisApi", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5247");
+});
+
+
+
 builder.Services.AddDbContext<Dbf25TeamArzContext>(options => options.UseNpgsql(connectionString));
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IApiKeyManagementService, ApiKeyManagementService>();
-
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();

@@ -8,7 +8,8 @@ Content-Type: application/json
   "Message": "test 100"
   
 }
-###TEST ENDPOINT FOR CHAT GET not implemented yet
+
+###
 GET {{TetrisWeb_HostAddress}}/api/Chat
 ###
 

@@ -3,6 +3,7 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject UserManager<ApplicationUser> UserManager
 @inject IPlayerService playerService
+@inject IHttpClientFactory HttpClientFactory
 @* @inject IJSRuntime JSRuntime
 
 <script>
@@ -50,6 +51,7 @@
 </div>
 
 @code {
+    private HttpClient httpClient;
     List<ChatDto> messages = null;
     string authId;
     int playerId;
@@ -61,6 +63,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        httpClient = HttpClientFactory.CreateClient("TetrisApi");
+
         authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
@@ -87,7 +91,7 @@
 
     private async Task LoadMessages()
     {
-        messages = await chatService.GetRecentChatsAsync();
+        messages = await httpClient.GetFromJsonAsync<List<ChatDto>>("api/chat");
         messages = messages.OrderBy(m => m.TimeSent).ToList();
         @* await ScrollToBottom(); *@
 
@@ -102,12 +106,12 @@
                 Message = newMessageText
             };
 
-        await chatService.PostChatAsync(chatDto);
+        await httpClient.PostAsJsonAsync("api/chat", chatDto);
         newMessageText = "";
         await LoadMessages();
 
     }
-@* 
+    @*
     private async Task ScrollToBottom()
     {
         await JSRuntime.InvokeVoidAsync("scrollToBottom", chatMessagesDiv);
