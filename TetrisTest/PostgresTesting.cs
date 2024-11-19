@@ -234,35 +234,35 @@ public class PostgresTesting : IClassFixture<WebApplicationFactory<Program>>, IA
         await _dbContainer.StopAsync();
     }
 
-    // [Fact]
-    // public async Task RegisterPlayerCreatesPlayer()
-    // {
-    //     HttpClient client = customWebAppFactory.CreateClient();
+    [Fact]
+    public async Task RegisterPlayerCreatesPlayer()
+    {
+        HttpClient client = customWebAppFactory.CreateClient();
 
 
-    //     outputHelper.WriteLine(_dbContainer.GetConnectionString());
+        outputHelper.WriteLine(_dbContainer.GetConnectionString());
 
-    //     var samplePlayer = new PlayerDto
-    //     {
-    //         Username = "Testing99",
-    //         Authid = "Testing99",
-    //         PlayerQuote = "TestQuote",
-    //         AvatarUrl = "TestAvatarUrl",
-    //         Isblocked = false
-    //     };
+        var samplePlayer = new PlayerDto
+        {
+            Username = "Testing99",
+            Authid = "Testing99",
+            PlayerQuote = "TestQuote",
+            AvatarUrl = "TestAvatarUrl",
+            Isblocked = false
+        };
 
-    //     var response = await client.PostAsJsonAsync("/api/player/register", samplePlayer);
-    //     response.EnsureSuccessStatusCode();
+        var response = await client.PostAsJsonAsync("/api/player/register", samplePlayer);
+        response.EnsureSuccessStatusCode();
 
-    //     var createdPlayer = await response.Content.ReadFromJsonAsync<PlayerDto>();
+        var createdPlayer = await response.Content.ReadFromJsonAsync<PlayerDto>();
 
-    //     createdPlayer.Should().NotBeNull();
-    //     createdPlayer.Username.Should().Be(samplePlayer.Username);
-    //     createdPlayer.Authid.Should().Be(samplePlayer.Authid);
-    //     createdPlayer.PlayerQuote.Should().Be(samplePlayer.PlayerQuote);
-    //     createdPlayer.AvatarUrl.Should().Be(samplePlayer.AvatarUrl);
-    //     createdPlayer.Isblocked.Should().BeFalse();
-    //     createdPlayer.Id.Should().BeGreaterThan(0);
-    // }
+        createdPlayer.Should().NotBeNull();
+        createdPlayer.Username.Should().Be(samplePlayer.Username);
+        createdPlayer.Authid.Should().Be(samplePlayer.Authid);
+        createdPlayer.PlayerQuote.Should().Be(samplePlayer.PlayerQuote);
+        createdPlayer.AvatarUrl.Should().Be(samplePlayer.AvatarUrl);
+        createdPlayer.Isblocked.Should().BeFalse();
+        createdPlayer.Id.Should().BeGreaterThan(0);
+    }
 
 }
