@@ -9,13 +9,13 @@
 @inject IGameService gameService;
 @inject AuthenticationStateProvider AuthStateProvider;
 @inject UserManager<ApplicationUser> UserManager;
+@inject IPlayerService playerService;
 
-<script 
-src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js">
 </script>
 <script>
     window.SetFocusToElement = (element) => {
-    element.focus();
+        element.focus();
     };
 </script>
 
@@ -79,7 +79,7 @@ src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundl
                 </div>
             }
         </div>
-        @*<button @onclick="()=> gameService.JoinGameAsync(selectedGame,authId)">Join Game</button>*@
+        <button @onclick="()=> gameService.JoinGameAsync(selectedGame.Id, playerId)">Join Game</button>
         <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                 @if (selectedGame is not null)
@@ -136,6 +136,7 @@ src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundl
     List<Game> games;
     AuthenticationState authState;
     string authId;
+    private int playerId;
 
     Grid grid => gameSessionService.GameStateGrid;
 
@@ -163,8 +164,19 @@ src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundl
             if (applicationuser != null)
             {
                 authId = applicationuser.Id;
+
+                try
+                {
+                    playerId = playerService.GetPlayerByAuthIdAsync(authId).Id;
+                }
+                catch
+                {
+                    throw new Exception("Auth id does not have an associated player account.");
+                }
             }
         }
+
+
         games = await gameService.GetAllLiveGamesAsync();
         gameSessionService.OnStateChange += StateHasChanged;
     }
@@ -234,16 +246,16 @@ src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundl
             {
                 await gameSessionService.MoveLeft(1);
             }
-            if(e.Key == " ")
+            if (e.Key == " ")
             {
                 await gameSessionService.Drop();
                 StateHasChanged();
             }
-            if(e.Key == "ArrowDown")
+            if (e.Key == "ArrowDown")
             {
                 await gameSessionService.MoveDown(1);
             }
-            if(e.Key == "ArrowUp")
+            if (e.Key == "ArrowUp")
             {
                 await gameSessionService.Rotate();
             }
