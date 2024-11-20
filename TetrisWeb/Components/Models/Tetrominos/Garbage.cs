@@ -5,6 +5,8 @@
         Random random = new Random();
         public Garbage(Grid grid) : base(grid) { }
 
+        //public override TetrominoStyle Style => TetrominoStyle.Garbage;
+
         public override string CssClass => "tetris-garbage-cell";
 
         public override CellList CoveredCells

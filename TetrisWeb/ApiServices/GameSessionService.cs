@@ -34,6 +34,11 @@ public class GameSessionService
         }
     }
 
+    public void AddGarbage()
+    {
+        garbageLines++;
+    }
+
 
     public event Action? OnStateChange;
 
@@ -98,7 +103,8 @@ public class GameSessionService
     {
         for (int i = 0;i < garbageLines; i++)
         {
-
+            currentTetromino = generator.MakeGarbage(GameStateGrid);
+            currentTetromino.Drop();
         }
         garbageLines = 0;
     }

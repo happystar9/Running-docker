@@ -36,5 +36,9 @@ namespace TetrisWeb.Components.Models
                 _ => new Block(grid),
             };
         }
+        public Tetromino MakeGarbage(Grid grid)
+        {
+            return new Garbage(grid);
+        }
     }
 }
