@@ -16,6 +16,7 @@ public class GameService(Dbf25TeamArzContext context) : IGameService
     private readonly ConcurrentDictionary<string, GameDto> _gameSessions = new();
     private readonly int maxPlayersPerGame = 99; // Example max limit for players
 
+
     public async Task<Game> CreateGameAsync(string createdByAuthId)
     {
         var game = new Game()
