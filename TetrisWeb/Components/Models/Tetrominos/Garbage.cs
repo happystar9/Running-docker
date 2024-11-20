@@ -7,7 +7,7 @@
 
         //public override TetrominoStyle Style => TetrominoStyle.Garbage;
 
-        public override string CssClass => "tetris-garbage-cell";
+        public override string CssClass => "tetris-yellow-cell";
 
         public override CellList CoveredCells
         {
