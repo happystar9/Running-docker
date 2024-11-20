@@ -33,10 +33,29 @@
 	else
 	{
 		<div class="profile-container">
-			<h2>@player.Username</h2>
-			<p>Quote: @player.PlayerQuote</p>
-			<img style="width:40px" src="@player.AvatarUrl" alt="player avatar" />
-			<p>Total Score: @totalScore</p>
+			@if (isEditing)
+			{
+				<EditForm Model="player" OnValidSubmit="UpdatePlayerProfile" Context="editContext">
+					<InputText @bind-Value="player.Username" placeholder="Username" class="input" />
+					<InputText @bind-Value="player.PlayerQuote" placeholder="Favorite Quote" class="input" />
+					<InputFile OnChange="HandlePhotoSelected" accept="image/*" />
+					@if (!string.IsNullOrEmpty(_photoUrl))
+					{
+						<img src="@_photoUrl" alt="Selected Avatar" class="avatar-preview" />
+					}
+					<button type="submit">Save Changes</button>
+					<button type="button" @onclick="CancelEdit">Cancel</button>
+				</EditForm>
+			}
+			else
+			{
+
+				<h2>@player.Username</h2>
+				<p>Quote: @player.PlayerQuote</p>
+				<img style="width:40px" src="@player.AvatarUrl" alt="player avatar" />
+				<p>Total Score: @totalScore</p>
+				<button @onclick="EnableEdit">Edit Profile</button>
+			}
 		</div>
 	}
 </AuthorizeView>
@@ -53,6 +72,7 @@
 	int totalScore = 0;
 	AuthenticationState authState = null;
 	private string _photoUrl;
+	private bool isEditing = false;
 
 
 	protected override async Task OnInitializedAsync()
@@ -114,6 +134,24 @@
 
 			newPlayer.AvatarUrl = _photoUrl;
 		}
+	}
+	private async Task UpdatePlayerProfile()
+	{
+		await PlayerService.UpdatePlayerAsync(player);
+		player = await PlayerService.GetPlayerByAuthIdAsync(authid);
+		isEditing = false;
+	}
+
+	private void EnableEdit()
+	{
+		isEditing = true;
+		_photoUrl = player.AvatarUrl; // Populate the photo URL if it exists
+	}
+
+	private void CancelEdit()
+	{
+		isEditing = false;
+		_photoUrl = null; // Clear the photo preview if editing is canceled
 	}
 }
 
