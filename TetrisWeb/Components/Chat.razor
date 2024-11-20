@@ -1,23 +1,24 @@
+
 @using TetrisShared.DTOs
 @inject IChatService chatService
 @inject AuthenticationStateProvider AuthStateProvider
 @inject UserManager<ApplicationUser> UserManager
 @inject IPlayerService playerService
 @inject IHttpClientFactory HttpClientFactory
-@* @inject IJSRuntime JSRuntime
+@inject IJSRuntime JSRuntime
 
 <script>
     function scrollToBottom(element) {
-        if (element) {
-            element.scrollTop = element.scrollHeight;
-        }
+    if (element) {
+    element.scrollTop = element.scrollHeight;
     }
-</script> *@
+    }
+</script>
 
 
 
 <div class="chat-container">
-    <div class="chat-messages">
+    <div class="chat-messages" @ref= "chatMessagesDiv">
         @if (messages != null)
         {
             foreach (var message in messages)
@@ -58,7 +59,7 @@
     string playerUsername;
     AuthenticationState authState;
     string newMessageText;
-    @* private ElementReference chatMessagesDiv; *@
+    private ElementReference chatMessagesDiv; 
 
 
     protected override async Task OnInitializedAsync()
@@ -93,7 +94,8 @@
     {
         messages = await httpClient.GetFromJsonAsync<List<ChatDto>>("api/chat");
         messages = messages.OrderBy(m => m.TimeSent).ToList();
-        @* await ScrollToBottom(); *@
+
+        StateHasChanged();
 
     }
 
@@ -111,10 +113,18 @@
         await LoadMessages();
 
     }
-    @*
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender || messages?.Count > 0)
+        {
+            await ScrollToBottom();
+        }
+    }
+    
     private async Task ScrollToBottom()
     {
         await JSRuntime.InvokeVoidAsync("scrollToBottom", chatMessagesDiv);
-    } *@
+    }
 
 }

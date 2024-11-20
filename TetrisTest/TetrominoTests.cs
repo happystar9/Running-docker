@@ -44,6 +44,33 @@ public class TetrominoTests
         service.Score.Should().Be(40);
 
     }
+
+    [Fact]
+    public void Tetromino_Should_Move_left_When_Not_At_Edge()
+    {
+        var grid = new Grid();
+        CellList coveredCells = new();
+        var tetromino = new TestTetromino(grid, coveredCells);
+        tetromino.CenterPieceCol = 2;
+
+        tetromino.MoveLeft();
+
+        tetromino.CenterPieceCol.Should().Be(1);
+    }
+
+    [Fact]
+    public void Tetromino_Should_Not_Move_left_When_At_Edge()
+    {
+        var grid = new Grid();
+        CellList coveredCells = new();
+        var tetromino = new TestTetromino(grid, coveredCells);
+        for (int i = 0; i < 5; i++)
+        {
+            tetromino.MoveLeft();
+        }
+
+        tetromino.CenterPieceCol.Should().Be(0);
+    }
 }
 
 public class TestTetromino : Tetromino
