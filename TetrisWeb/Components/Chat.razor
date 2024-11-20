@@ -70,12 +70,18 @@
     protected override async Task OnInitializedAsync()
     {
         httpClient = HttpClientFactory.CreateClient("TetrisApi");
+        
 
+        authState = await AuthStateProvider.GetAuthenticationStateAsync();
+
+        //Console.WriteLine(authState.User.Identity?.IsAuthenticated);
+
+        var user = authState.User;
         chatService.OnMessage += async () => await LoadMessages();
 
         if (user.Identity?.IsAuthenticated == true)
         {
-            if (player is not null)
+            if (CurrentPlayer is not null)
             {
                 playerId = CurrentPlayer.Id;
                 playerUsername = CurrentPlayer.Username;
