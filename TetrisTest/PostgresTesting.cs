@@ -23,6 +23,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 using FluentAssertions;
 using System.Net.Http;
+using TetrisWeb.ApiServices.Interfaces;
 
 namespace TetrisTest;
 
@@ -194,6 +195,7 @@ public class PostgresTesting : IClassFixture<WebApplicationFactory<Program>>, IA
     private static PostgreSqlContainer _dbContainer;
     internal readonly ITestOutputHelper outputHelper;
     internal readonly HttpClient client;
+    private  IPlayerService playerService;
 
 
     public PostgresTesting(WebApplicationFactory<Program> webAppFactory, ITestOutputHelper helper)
@@ -265,4 +267,41 @@ public class PostgresTesting : IClassFixture<WebApplicationFactory<Program>>, IA
         createdPlayer.Id.Should().BeGreaterThan(0);
     }
 
+
+    [Fact]
+    public async Task UpdatePlayerChangesPlayerDetails()
+    {
+        var originalPlayer = new PlayerDto
+        {
+            Username = "Testing99",
+            Authid = "Testing99",
+            PlayerQuote = "TestQuote",
+            AvatarUrl = "TestAvatarUrl",
+            Isblocked = false
+        };
+
+        //var addResult = await playerService.CreatePlayerAsync(originalPlayer);
+
+        var updatedPlayer = new PlayerDto
+        {
+            Username = "Testing99",
+            Authid = "Testing99",
+            PlayerQuote = "TestQuote2",
+            AvatarUrl = "TestAvatarUrl2",
+            Isblocked = true
+        };
+
+        //update this to use the http client
+
+        //var updateResult = await playerService.UpdatePlayerAsync(updatedPlayer);
+
+        //var retrievedPlayer = await playerService.GetPlayerByAuthIdAsync("Testing99");
+
+        //updateResult.Authid.Should().Be(retrievedPlayer.Authid);
+        //updateResult.PlayerQuote.Should().Be(retrievedPlayer.PlayerQuote);
+        //updateResult.AvatarUrl.Should().Be(retrievedPlayer.AvatarUrl);
+        //updateResult.Isblocked.Should().Be(retrievedPlayer.Isblocked);
+
+        Assert.Fail();
+    }
 }
