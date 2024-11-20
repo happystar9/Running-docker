@@ -52,9 +52,14 @@
 </div>
 
 @code {
+    [Parameter]
+    public string AuthId { get; set; }
+
+    [Parameter]
+    public PlayerDto CurrentPlayer { get; set; }
+    
     private HttpClient httpClient;
     List<ChatDto> messages = null;
-    string authId;
     int playerId;
     string playerUsername;
     AuthenticationState authState;
@@ -66,24 +71,14 @@
     {
         httpClient = HttpClientFactory.CreateClient("TetrisApi");
 
-        authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
         chatService.OnMessage += async () => await LoadMessages();
 
         if (user.Identity?.IsAuthenticated == true)
         {
-            var applicationuser = await UserManager.GetUserAsync(user);
-            if (applicationuser != null)
-            {
-                authId = applicationuser.Id;
-            }
-
-            var player = await playerService.GetPlayerByAuthIdAsync(authId);
             if (player is not null)
             {
-                playerId = player.Id;
-                playerUsername = player.Username;
+                playerId = CurrentPlayer.Id;
+                playerUsername = CurrentPlayer.Username;
             }
         }
 

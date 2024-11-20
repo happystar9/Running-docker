@@ -122,7 +122,7 @@
             <div class="row">
                 <div class="col">
                     <div class="chat-container">
-                        <Chat></Chat>
+                        <Chat AuthId=authId, Player=playerDto></Chat>
                     </div>
                 </div>
             </div>
@@ -136,7 +136,8 @@
     List<Game> games;
     AuthenticationState authState;
     string authId;
-    private int playerId;
+    int playerId;
+    PlayerDto playerDto;
 
     Grid grid => gameSessionService.GameStateGrid;
 
@@ -167,7 +168,8 @@
 
                 try
                 {
-                    playerId = playerService.GetPlayerByAuthIdAsync(authId).Id;
+                    playerDto= await playerService.GetPlayerByAuthIdAsync(authId);
+                    playerId = playerDto.Id;
                 }
                 catch
                 {
@@ -175,6 +177,8 @@
                 }
             }
         }
+
+        
 
 
         games = await gameService.GetAllLiveGamesAsync();
