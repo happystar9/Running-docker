@@ -303,5 +303,6 @@ public class PostgresTesting : IClassFixture<WebApplicationFactory<Program>>, IA
         //updateResult.Isblocked.Should().Be(retrievedPlayer.Isblocked);
 
         //Assert.Fail();
+
     }
 }
