@@ -68,11 +68,6 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v3
-        with:
-          name: .net-app
-
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
@@ -80,4 +75,4 @@ jobs:
           app-name: 'tetrisweb'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2C954E8DE0D841A89884E7A189474817 }}
-          package: .
+          package: ${{env.DOTNET_ROOT}}/myapp
