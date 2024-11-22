@@ -41,7 +41,11 @@ jobs:
       - name: Set up database schema
         run: |
           # Wait for PostgreSQL to be ready
-          sleep 30
+          echo "Waiting for PostgreSQL to be ready..."
+          until pg_isready -h localhost -p 1645 -U postgres; do
+            echo "Waiting for PostgreSQL to be ready..."
+            sleep 5
+          done
           # Path to schema.sql
           schemaFilePath=$(pwd)/schema.sql
           echo "Schema file path: $schemaFilePath"
