@@ -46,7 +46,7 @@ jobs:
           schemaFilePath=$(pwd)/schema.sql
           echo "Schema file path: $schemaFilePath"
           # Initialize the DB using the schema file
-          psql -h localhost -U postgres -p 1645 -d postgres -a -f $schemaFilePath
+          PGPASSWORD=Strong_password_123! psql -h localhost -U postgres -p 1645 -d postgres -a -f $schemaFilePath
 
       - name: Test with dotnet
         run: dotnet test --configuration Release
