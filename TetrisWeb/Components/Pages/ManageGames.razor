@@ -8,41 +8,42 @@
 @inject AuthenticationStateProvider AuthStateProvider;
 @attribute [Authorize(Roles = "Admin")]
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
     <button class="btn-primary" @onclick="@CreateGame">CreateGame</button>
-    <button class="btn-danger">
+    <button class="btn-danger" @onclick="() => EndGame(selectedGame)">
         EndGame
         @if (selectedGame != null)
+    {
+        <p>@selectedGame</p>
+    }
+</button>
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+        @if (selectedGame is not null)
         {
-            <p>selectedGame</p>
+            @selectedGame?.Id
         }
-    </button>
-    <div class="dropdown">
-        @* <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"> *@
-            @if (selectedGame is not null)
+        else
+        {
+            <a>Select Game</a>
+        }
+    </button> 
+    <ul class="dropdown-menu">
+        @if (games is not null)
+        {
+            @foreach (var game in games)
             {
-                @selectedGame?.Id
-            }
-            else
-            {
-                <a>Select Game</a>
-            }
-        @* </button> *@
-        @* <ul class="dropdown-menu"> *@
-            @if (games is not null)
-            {
-                @foreach (var game in games)
-            {
-                <li>
-                     @*class="dropdown-item" @onclick="() => SelectGame(game)" *@>@game.Id
+                <li class="dropdown-item" @onclick="() => SelectGame(game)">@game.Id
                 </li>
             }
-            }
-            else
-            {
-                <li>No games available</li>
-            }
-        @* </ul> *@
-    </div>
+        }
+        else
+        {
+            <li class="dropdown-item">No games available</li>
+        }
+    </ul>
+</div>
 
 
 
@@ -53,8 +54,6 @@
     List<Game> games;
     AuthenticationState authState;
     bool isAdmin;
-
-
 
     protected override async void OnInitialized()
     {
@@ -72,27 +71,29 @@
             isAdmin = user.IsInRole("Admin");
         }
         games = await gameService.GetAllLiveGamesAsync();
+        StateHasChanged();
 
     }
 
-	private void SelectGame(Game game)
-	{
-		selectedGame = game;
-		StateHasChanged();
-	}
+    private void SelectGame(Game game)
+    {
+        selectedGame = game;
+        StateHasChanged();
+    }
 
-	public async Task CreateGame()
-	{
-		games.Add(await gameService.CreateGameAsync(authId));
-		StateHasChanged();
-	}
-	public async Task EndGame(Game game)
-	{
-		if (selectedGame != null)
-		{
-			// await gameService.EndGameAsync(game.Id);
-			// games.Remove(game);
-			// StateHasChanged();
+    public async Task CreateGame()
+    {
+        games.Add(await gameService.CreateGameAsync(authId));
+        StateHasChanged();
+    }
+    public async Task EndGame(Game game)
+    {
+        if (selectedGame != null)
+        {
+            await gameService.EndGameAsync(game.Id);
+            games.Remove(game);
+            selectedGame = null;
+            StateHasChanged();
 		}
 	}
 }

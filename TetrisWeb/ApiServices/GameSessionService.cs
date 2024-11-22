@@ -15,6 +15,8 @@ public class GameSessionService
     public TetrominoStyle secondNextStyle;
     public TetrominoStyle thirdNextStyle;
 
+    public int garbageLines = 0;
+
     private int standardDelay = 1000;
     private bool skipDelay = false;
     private int level = 1;
@@ -30,6 +32,11 @@ public class GameSessionService
             _score = value;
             NotifyStateChanged();
         }
+    }
+
+    public void AddGarbage()
+    {
+        garbageLines++;
     }
 
 
@@ -67,6 +74,11 @@ public class GameSessionService
 
         GameStateGrid.State = GameState.Playing;
 
+        if (garbageLines > 0)
+        {
+            DropGarbageAny();
+        }
+        
         currentTetromino = generator.CreateFromStyle(nextStyle, GameStateGrid);
 
 
@@ -83,8 +95,22 @@ public class GameSessionService
             await ClearCompleteRows();
             LevelChange();
         }
-
+        if (Score > previousHighScore)
+        {
+            previousHighScore = Score;
+            Score = 0;
+        };
         GameStateGrid.State = GameState.GameOver;
+    }
+
+    public async Task DropGarbageAny()
+    {
+        for (int i = 0;i < garbageLines; i++)
+        {
+            currentTetromino = generator.MakeGarbage(GameStateGrid);
+            currentTetromino.Drop();
+        }
+        garbageLines = 0;
     }
 
     public async Task RunCurrentTetromino()
@@ -205,9 +231,6 @@ public class GameSessionService
         return Score += currentTetromino.Drop();
     }
 
-
-        
-    
     public async Task Rotate()
     {
         currentTetromino.Rotate();

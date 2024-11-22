@@ -52,6 +52,14 @@
     background-image: url(../images/tetromino-darkblue.png);
 }
 
+.tetris-garbage-cell {
+    display: table-cell;
+    background-color: #808080;
+    width: 24px;
+    height: 24px;
+    border: solid 1px #242323;
+}
+
 .tetris-block-display {
     background-image: url(../images/tetromino-block.png);
     width: 48px;

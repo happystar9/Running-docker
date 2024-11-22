@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TetrisWeb.Components.Models.Tetrominos;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace TetrisWeb.Components.Models
 {
@@ -34,6 +35,10 @@ namespace TetrisWeb.Components.Models
                 TetrominoStyle.ReverseLShaped => new ReverseLShaped(grid),
                 _ => new Block(grid),
             };
+        }
+        public Tetromino MakeGarbage(Grid grid)
+        {
+            return new Garbage(grid);
         }
     }
 }

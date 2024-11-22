@@ -8,11 +8,13 @@
             Grid = grid;
             CenterPieceRow = grid.Height;
             CenterPieceCol = grid.Width / 2;
+            LastCol = grid.Width;
         }
         public Grid Grid { get; set; }
         public Orientation Orientation { get; set; } = Orientation.LeftRight;
         public int CenterPieceRow { get; set; }
         public int CenterPieceCol { get; set; }
+        public int LastCol { get; set; }
         public virtual TetrominoStyle Style { get; }
         public virtual string CssClass { get; }
         public virtual CellList CoveredCells { get; set; }
