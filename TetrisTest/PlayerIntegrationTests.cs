@@ -1,20 +1,20 @@
-﻿//using FluentAssertions;
-//using Microsoft.AspNetCore.Hosting;
-//using Microsoft.AspNetCore.Mvc.Testing;
-//using Microsoft.Extensions.Configuration;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Net.Http.Json;
-//using System.Text;
-//using System.Threading.Tasks;
-//using TetrisWeb.DTOs;
-//using Xunit.Abstractions;
+﻿// using FluentAssertions;
+// using Microsoft.AspNetCore.Hosting;
+// using Microsoft.AspNetCore.Mvc.Testing;
+// using Microsoft.Extensions.Configuration;
+// using System;
+// using System.Collections.Generic;
+// using System.Linq;
+// using System.Net.Http.Json;
+// using System.Text;
+// using System.Threading.Tasks;
+// using TetrisWeb.DTOs;
+// using Xunit.Abstractions;
 
-//namespace TetrisTest;
+// namespace TetrisTest;
 
-//public class PlayerIntegrationTests : PostgresTesting
-//{
+// public class PlayerIntegrationTests : PostgresTesting
+// {
 //    private HttpClient client;
 
 //    public PlayerIntegrationTests(WebApplicationFactory<Program> webAppFactory, ITestOutputHelper helper) : base(webAppFactory, helper)
@@ -65,4 +65,4 @@
 
 //    }
 
-//}
+// }
