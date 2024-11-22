@@ -20,7 +20,7 @@ public class GameSessionService
     private int standardDelay = 1000;
     private bool skipDelay = false;
     private int level = 1;
-    private int previousHighScore = 0;
+    private int _previousHighScore = 0;
     string previousScoreValue = "Nothing";
 
     private int _score = 0;
@@ -31,6 +31,15 @@ public class GameSessionService
         {
             _score = value;
             NotifyStateChanged();
+        }
+    }
+
+    public int previousHighScore
+    {
+        get => _previousHighScore;
+        private set
+        {
+            _previousHighScore = value;
         }
     }
 
@@ -58,12 +67,19 @@ public class GameSessionService
         GameStateGrid = new Grid();
         generator = new TetrominoGenerator();
         level = 1;
+        if (Score > previousHighScore)
+        {
+            previousHighScore = Score;
+        }
         Score = 0;
     }
 
     public void ResetGame()
     {
         GameStateGrid = new Grid();
+        generator = new TetrominoGenerator();
+        level = 1;
+        Score = 0;
     }
 
     public async Task RunGameSession()
@@ -95,11 +111,6 @@ public class GameSessionService
             await ClearCompleteRows();
             LevelChange();
         }
-        if (Score > previousHighScore)
-        {
-            previousHighScore = Score;
-            Score = 0;
-        };
         GameStateGrid.State = GameState.GameOver;
     }
 

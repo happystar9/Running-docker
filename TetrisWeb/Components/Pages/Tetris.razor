@@ -117,7 +117,7 @@
             <div class="row">
                 <div class="col">
                     <h2>Score: @gameSessionService.Score</h2>
-                    <span>Previous High Score: @previousHighScore</span>
+                    <span>Previous High Score: @gameSessionService.previousHighScore</span>
                 </div>
             </div>
             <div class="row">
@@ -225,10 +225,6 @@
     {
         gameSessionService.ResetGame();
         level = 1;
-        if (score > previousHighScore)
-        {
-            previousHighScore = score;
-        }
         score = 0;
     }
 
