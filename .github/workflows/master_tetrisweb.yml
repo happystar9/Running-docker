@@ -59,6 +59,12 @@ jobs:
         working-directory: ./TetrisWeb
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
+      - name: Upload publish directory as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: .net-app
+          path: ./myapp
+
 
   deploy:
     runs-on: ubuntu-latest
