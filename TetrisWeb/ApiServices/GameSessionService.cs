@@ -116,12 +116,12 @@ public class GameSessionService
 
     public async Task DropGarbageAny()
     {
-        for (int i = 0;i < garbageLines; i++)
+        while (garbageLines > 0)
         {
             currentTetromino = generator.MakeGarbage(GameStateGrid);
             currentTetromino.Drop();
+            garbageLines--;
         }
-        garbageLines = 0;
     }
 
     public async Task RunCurrentTetromino()
