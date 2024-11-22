@@ -8,6 +8,7 @@ using System.Collections.Concurrent;
 using TetrisWeb.GameData;
 using Microsoft.EntityFrameworkCore;
 using TetrisWeb.DTOs;
+using System.Linq;
 
 namespace TetrisWeb.ApiServices;
 
@@ -80,6 +81,9 @@ public class GameService(Dbf25TeamArzContext context) : IGameService
         }
 
         game.StopTime = DateTime.Now;
+        foreach (var session in game.GameSessions) {
+            await context.GameSessions.AddAsync(session);
+        }
         await context.SaveChangesAsync();
     }
 

@@ -79,7 +79,13 @@
                 </div>
             }
         </div>
-        <button @onclick="()=> gameService.JoinGameAsync(selectedGame.Id, playerId)">Join Game</button>
+        @if (selectedGame == null){
+            <button>Join Game</button>
+        }
+        else
+        {
+            <button @onclick="()=> gameService.JoinGameAsync(selectedGame.Id, playerId)">Join Game</button>
+        }
         <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                 @if (selectedGame is not null)

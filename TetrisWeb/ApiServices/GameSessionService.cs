@@ -95,7 +95,11 @@ public class GameSessionService
             await ClearCompleteRows();
             LevelChange();
         }
-
+        if (Score > previousHighScore)
+        {
+            previousHighScore = Score;
+            Score = 0;
+        };
         GameStateGrid.State = GameState.GameOver;
     }
 
