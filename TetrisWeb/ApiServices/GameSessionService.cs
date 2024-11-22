@@ -89,11 +89,6 @@ public class GameSessionService
         thirdNextStyle = generator.Next(nextStyle, secondNextStyle);
 
         GameStateGrid.State = GameState.Playing;
-
-        if (garbageLines > 0)
-        {
-            DropGarbageAny();
-        }
         
         currentTetromino = generator.CreateFromStyle(nextStyle, GameStateGrid);
 
@@ -104,6 +99,11 @@ public class GameSessionService
             nextStyle = secondNextStyle;
             secondNextStyle = thirdNextStyle;
             thirdNextStyle = generator.Next(currentTetromino.Style, nextStyle, secondNextStyle);
+            
+            if (garbageLines > 0)
+            {
+                DropGarbageAny();
+            }
 
             NotifyStateChanged();
 

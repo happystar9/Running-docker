@@ -44,6 +44,12 @@
     background-image: url(../images/tetromino-green.png);
 }
 
+.tetris-garbage-cell {
+    background-image: url(../images/Tetris-cell.png);
+    width: 72px;
+    height: 48px;
+}
+
 .tetris-orange-cell {
     background-image: url(../images/tetromino-orange.png);
 }
