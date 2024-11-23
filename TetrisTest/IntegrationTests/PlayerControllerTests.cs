@@ -1,7 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,31 +7,34 @@ using System.Text;
 using System.Threading.Tasks;
 using TetrisWeb.DTOs;
 using Xunit.Abstractions;
-using TetrisWeb.Services;
-using TetrisWeb.ApiServices.Interfaces;
+using FluentAssertions;
 
-namespace TetrisTest;
+namespace TetrisTest.IntegrationTests;
 
-public class PlayerServiceTests : PostgresTestBase
+
+public class PlayerControllerTests : PostgresTestBase
 {
-    public PlayerServiceTests(WebApplicationFactory<Program> webAppFactory, ITestOutputHelper outputHelper)
+    public PlayerControllerTests(WebApplicationFactory<Program> webAppFactory, ITestOutputHelper outputHelper)
         : base(webAppFactory, outputHelper) { }
 
     [Fact]
-    public async Task CanRegisterPlayerUsingService()
+    public async Task RegisterPlayerCreatesPlayer()
     {
-        var playerService = GetService<IPlayerService>();
+        var client = CustomWebAppFactory.CreateClient();
 
         var samplePlayer = new PlayerDto
         {
-            Username = "Testing98",
-            Authid = "Testing98",
+            Username = "Testing99",
+            Authid = "Testing99",
             PlayerQuote = "TestQuote",
             AvatarUrl = "TestAvatarUrl",
             Isblocked = false
         };
 
-        var createdPlayer = await playerService.CreatePlayerAsync(samplePlayer);
+        var response = await client.PostAsJsonAsync("/api/player/register", samplePlayer);
+        response.EnsureSuccessStatusCode();
+
+        var createdPlayer = await response.Content.ReadFromJsonAsync<PlayerDto>();
 
         createdPlayer.Should().NotBeNull();
         createdPlayer.Username.Should().Be(samplePlayer.Username);
@@ -45,4 +45,3 @@ public class PlayerServiceTests : PostgresTestBase
         createdPlayer.Id.Should().BeGreaterThan(0);
     }
 }
-

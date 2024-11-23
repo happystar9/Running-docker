@@ -7,7 +7,7 @@ using Testcontainers.PostgreSql;
 using Xunit.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace TetrisTest;
+namespace TetrisTest.IntegrationTests;
 
 public abstract class PostgresTestBase : IClassFixture<WebApplicationFactory<Program>>, IAsyncLifetime
 {

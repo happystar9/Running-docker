@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,34 +10,31 @@ using System.Text;
 using System.Threading.Tasks;
 using TetrisWeb.DTOs;
 using Xunit.Abstractions;
-using FluentAssertions;
+using TetrisWeb.Services;
+using TetrisWeb.ApiServices.Interfaces;
 
-namespace TetrisTest;
+namespace TetrisTest.IntegrationTests;
 
-
-public class PlayerControllerTests : PostgresTestBase
+public class PlayerServiceTests : PostgresTestBase
 {
-    public PlayerControllerTests(WebApplicationFactory<Program> webAppFactory, ITestOutputHelper outputHelper)
+    public PlayerServiceTests(WebApplicationFactory<Program> webAppFactory, ITestOutputHelper outputHelper)
         : base(webAppFactory, outputHelper) { }
 
     [Fact]
-    public async Task RegisterPlayerCreatesPlayer()
+    public async Task CanRegisterPlayerUsingService()
     {
-        var client = CustomWebAppFactory.CreateClient();
+        var playerService = GetService<IPlayerService>();
 
         var samplePlayer = new PlayerDto
         {
-            Username = "Testing99",
-            Authid = "Testing99",
+            Username = "Testing98",
+            Authid = "Testing98",
             PlayerQuote = "TestQuote",
             AvatarUrl = "TestAvatarUrl",
             Isblocked = false
         };
 
-        var response = await client.PostAsJsonAsync("/api/player/register", samplePlayer);
-        response.EnsureSuccessStatusCode();
-
-        var createdPlayer = await response.Content.ReadFromJsonAsync<PlayerDto>();
+        var createdPlayer = await playerService.CreatePlayerAsync(samplePlayer);
 
         createdPlayer.Should().NotBeNull();
         createdPlayer.Username.Should().Be(samplePlayer.Username);
@@ -45,3 +45,4 @@ public class PlayerControllerTests : PostgresTestBase
         createdPlayer.Id.Should().BeGreaterThan(0);
     }
 }
+
