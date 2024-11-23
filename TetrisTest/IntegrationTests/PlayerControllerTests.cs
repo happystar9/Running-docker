@@ -24,8 +24,8 @@ public class PlayerControllerTests : PostgresTestBase
 
         var samplePlayer = new PlayerDto
         {
-            Username = "Testing99",
-            Authid = "Testing99",
+            Username = "Testing95",
+            Authid = "Testing95",
             PlayerQuote = "TestQuote",
             AvatarUrl = "TestAvatarUrl",
             Isblocked = false

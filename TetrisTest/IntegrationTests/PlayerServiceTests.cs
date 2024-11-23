@@ -44,5 +44,60 @@ public class PlayerServiceTests : PostgresTestBase
         createdPlayer.Isblocked.Should().BeFalse();
         createdPlayer.Id.Should().BeGreaterThan(0);
     }
+
+    [Fact]
+    public async Task CanGetPlayerByAuthId()
+    {
+        var playerService = GetService<IPlayerService>();
+
+        //arrange - create 10 players with different authIds
+        for (int i = 0; i < 10; i++)
+        {
+            var samplePlayer = new PlayerDto
+            {
+                Username = $"Player{i}",
+                Authid = $"{i}",
+                PlayerQuote = "TestQuote",
+                AvatarUrl = "TestAvatarUrl",
+                Isblocked = false
+            };
+
+            await playerService.CreatePlayerAsync(samplePlayer);
+        }
+
+        var player = await playerService.GetPlayerByAuthIdAsync("5");
+
+        player.Should().NotBeNull();
+        player.Authid.Should().Be("5");
+        player.Username.Should().Be("Player5");
+    }
+
+    [Fact]
+    public async Task CanGetPlayerByUsername()
+    {
+        Assert.Fail();
+    }
+
+
+    [Fact]
+    public async Task CanUpdateExistingPlayerDetails()
+    {
+        Assert.Fail();
+    }
+
+    [Fact]
+    public async Task CanGetPlayersAllTimeScore()
+    {
+
+    }
 }
+
+
+
+
+
+//Task<PlayerDto> GetPlayerByAuthIdAsync(string authId);
+//Task<PlayerDto> GetPlayerByUsernameAsync(string username);
+//Task<PlayerDto> UpdatePlayerAsync(PlayerDto player);
+//Task<int> GetPlayerTotalScore(string authId);
 
