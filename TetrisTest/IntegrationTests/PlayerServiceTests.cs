@@ -65,17 +65,45 @@ public class PlayerServiceTests : PostgresTestBase
             await playerService.CreatePlayerAsync(samplePlayer);
         }
 
+        //testing a specific case
         var player = await playerService.GetPlayerByAuthIdAsync("5");
 
         player.Should().NotBeNull();
         player.Authid.Should().Be("5");
         player.Username.Should().Be("Player5");
+
+        //testing all cases based on the test setup
+        for (int i = 0; i < 10; i++)
+        {
+            var p = await playerService.GetPlayerByAuthIdAsync($"{i}");
+
+            p.Should().NotBeNull();
+            p.Authid.Should().Be($"{i}");
+            p.Username.Should().Be($"Player{i}");
+        }
     }
 
     [Fact]
     public async Task CanGetPlayerByUsername()
     {
-        Assert.Fail();
+        var playerService = GetService<IPlayerService>();
+
+        var samplePlayer = new PlayerDto
+        {
+            Username = "Player11",
+            Authid = "11",
+            PlayerQuote = "TestQuote",
+            AvatarUrl = "TestAvatarUrl",
+            Isblocked = false
+        };
+
+        await playerService.CreatePlayerAsync(samplePlayer);
+
+        var player = await playerService.GetPlayerByUsernameAsync("Player11");
+
+        player.Should().NotBeNull();
+        player.Authid.Should().Be("11");
+        player.Username.Should().Be("Player11");
     }
 
 
@@ -88,6 +116,10 @@ public class PlayerServiceTests : PostgresTestBase
     [Fact]
     public async Task CanGetPlayersAllTimeScore()
     {
+        var playerService = GetService<IPlayerService>();
+        var gameSessionService = GetService<GameSessionService>();
+
+        //
 
     }
 }

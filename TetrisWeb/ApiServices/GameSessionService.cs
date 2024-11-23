@@ -1,10 +1,11 @@
 ﻿using System.Data;
+using TetrisWeb.ApiServices.Interfaces;
 using TetrisWeb.Components.Models;
 using TetrisWeb.DTOs;
 
 namespace TetrisWeb.ApiServices;
 
-public class GameSessionService
+public class GameSessionService : IGameSessionService
 {
     private readonly GameSessionDto _gameSessionDto;
 
@@ -89,7 +90,7 @@ public class GameSessionService
         thirdNextStyle = generator.Next(nextStyle, secondNextStyle);
 
         GameStateGrid.State = GameState.Playing;
-        
+
         currentTetromino = generator.CreateFromStyle(nextStyle, GameStateGrid);
 
 
@@ -99,7 +100,7 @@ public class GameSessionService
             nextStyle = secondNextStyle;
             secondNextStyle = thirdNextStyle;
             thirdNextStyle = generator.Next(currentTetromino.Style, nextStyle, secondNextStyle);
-            
+
             if (garbageLines > 0)
             {
                 DropGarbageAny();
