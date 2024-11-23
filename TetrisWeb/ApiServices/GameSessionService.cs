@@ -20,7 +20,7 @@ public class GameSessionService
     private int standardDelay = 1000;
     private bool skipDelay = false;
     private int level = 1;
-    private int previousHighScore = 0;
+    private int _previousHighScore = 0;
     string previousScoreValue = "Nothing";
 
     private int _score = 0;
@@ -34,9 +34,18 @@ public class GameSessionService
         }
     }
 
+    public int previousHighScore
+    {
+        get => _previousHighScore;
+        private set
+        {
+            _previousHighScore = value;
+        }
+    }
+
     public void AddGarbage()
     {
-        garbageLines++;
+        garbageLines = 2;
     }
 
 
@@ -58,12 +67,19 @@ public class GameSessionService
         GameStateGrid = new Grid();
         generator = new TetrominoGenerator();
         level = 1;
+        if (Score > previousHighScore)
+        {
+            previousHighScore = Score;
+        }
         Score = 0;
     }
 
     public void ResetGame()
     {
         GameStateGrid = new Grid();
+        generator = new TetrominoGenerator();
+        level = 1;
+        Score = 0;
     }
 
     public async Task RunGameSession()
@@ -73,11 +89,6 @@ public class GameSessionService
         thirdNextStyle = generator.Next(nextStyle, secondNextStyle);
 
         GameStateGrid.State = GameState.Playing;
-
-        if (garbageLines > 0)
-        {
-            DropGarbageAny();
-        }
         
         currentTetromino = generator.CreateFromStyle(nextStyle, GameStateGrid);
 
@@ -88,6 +99,11 @@ public class GameSessionService
             nextStyle = secondNextStyle;
             secondNextStyle = thirdNextStyle;
             thirdNextStyle = generator.Next(currentTetromino.Style, nextStyle, secondNextStyle);
+            
+            if (garbageLines > 0)
+            {
+                DropGarbageAny();
+            }
 
             NotifyStateChanged();
 
@@ -95,22 +111,17 @@ public class GameSessionService
             await ClearCompleteRows();
             LevelChange();
         }
-        if (Score > previousHighScore)
-        {
-            previousHighScore = Score;
-            Score = 0;
-        };
         GameStateGrid.State = GameState.GameOver;
     }
 
     public async Task DropGarbageAny()
     {
-        for (int i = 0;i < garbageLines; i++)
+        while (garbageLines > 0)
         {
             currentTetromino = generator.MakeGarbage(GameStateGrid);
             currentTetromino.Drop();
+            garbageLines--;
         }
-        garbageLines = 0;
     }
 
     public async Task RunCurrentTetromino()

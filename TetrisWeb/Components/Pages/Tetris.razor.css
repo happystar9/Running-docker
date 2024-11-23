@@ -53,11 +53,9 @@
 }
 
 .tetris-garbage-cell {
-    display: table-cell;
-    background-color: #808080;
-    width: 24px;
-    height: 24px;
-    border: solid 1px #242323;
+    background-image: url(../images/Tetris-cell.png);
+    width: 72px;
+    height: 48px;
 }
 
 .tetris-block-display {

@@ -7,17 +7,21 @@
 
         //public override TetrominoStyle Style => TetrominoStyle.Garbage;
 
-        public override string CssClass => "tetris-yellow-cell";
+        public override string CssClass => "tetris-orange-cell";
 
         public override CellList CoveredCells
         {
             get
             {
                 CellList cells = new CellList();
+                var skip = random.Next(0, LastCol + 1);
                 for (int i = 1; i < LastCol + 1; i++) {
+                    if (i == skip)
+                    {
+                        i++;
+                    }
                     cells.Add(CenterPieceRow, i);
                 }
-                cells.Remove(CenterPieceRow, random.Next(1, LastCol + 1));
                 return cells;
             }
         }

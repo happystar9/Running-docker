@@ -79,10 +79,16 @@ public class GameService(Dbf25TeamArzContext context) : IGameService
         {
             throw new KeyNotFoundException("Game not found.");
         }
-
         game.StopTime = DateTime.Now;
         foreach (var session in game.GameSessions) {
-            await context.GameSessions.AddAsync(session);
+            var _session = new GameSession
+            {
+                Score = session.Score,
+                GameId = game.Id,
+                PlayerId=session.PlayerId,
+                Player=session.Player
+            };
+            await context.GameSessions.AddAsync(_session);
         }
         await context.SaveChangesAsync();
     }
