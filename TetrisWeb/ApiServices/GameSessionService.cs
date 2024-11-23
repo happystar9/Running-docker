@@ -45,7 +45,7 @@ public class GameSessionService
 
     public void AddGarbage()
     {
-        garbageLines++;
+        garbageLines = 2;
     }
 
 
