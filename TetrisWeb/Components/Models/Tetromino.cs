@@ -2,13 +2,14 @@
 {
     public class Tetromino
     {
-
+       
         public Tetromino(Grid grid)
         {
+            //given the gameboard (including which includes cells that are covered by other tetrominos
             Grid = grid;
-            CenterPieceRow = grid.Height;
-            CenterPieceCol = grid.Width / 2;
-            LastCol = grid.Width;
+            CenterPieceRow = grid.Height; //tetromino spawn height
+            CenterPieceCol = grid.Width / 2; //tetromino spawn location
+            LastCol = grid.Width; //width of board so garbage lines can iterate over a row
         }
         public Grid Grid { get; set; }
         public Orientation Orientation { get; set; } = Orientation.LeftRight;
@@ -73,7 +74,7 @@
             while (CanMoveDown())
             {
                 CenterPieceRow -= 1;
-                i++;
+                i++; //score is added for the number of blocks that it drops
             }
             return 1 * i;
         }

@@ -10,6 +10,7 @@ namespace TetrisWeb.Components.Models
 {
     public class TetrominoGenerator
     {
+        //gets a style that isn't one of the last ones spawned (given from board)
         public TetrominoStyle Next(params TetrominoStyle[] unusableStyles)
         {
             Random rand = new Random(DateTime.Now.Millisecond);
@@ -22,6 +23,7 @@ namespace TetrisWeb.Components.Models
             return style;
         }
 
+        //given a style it returns a tetromino for use in the board
         public Tetromino CreateFromStyle(TetrominoStyle style, Grid grid)
         {
             return style switch
