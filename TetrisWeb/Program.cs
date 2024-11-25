@@ -45,6 +45,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuth
 builder.Services.AddTransient<IGameService, GameService>();
 builder.Services.AddTransient<GameSessionService>();
 builder.Services.AddTransient<GameSessionDto>();
+builder.Services.AddScoped<IScoreService, ScoreService>();
 //builder.Services.AddTransient<GameManager>();
 
 builder.Services.AddAuthorization();
