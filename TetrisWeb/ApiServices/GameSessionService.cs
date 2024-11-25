@@ -7,7 +7,6 @@ namespace TetrisWeb.ApiServices;
 
 public class GameSessionService : IGameSessionService
 {
-    private readonly GameSessionDto _gameSessionDto;
 
     private TetrominoGenerator generator = new TetrominoGenerator();
     public Tetromino? currentTetromino;
@@ -21,8 +20,7 @@ public class GameSessionService : IGameSessionService
     private int standardDelay = 1000;
     private bool skipDelay = false;
     private int level = 1;
-    private int _previousHighScore = 0;
-    string previousScoreValue = "Nothing";
+    private int _previousHighScore = 0; //possibly should rename to just highscore
 
     private int _score = 0;
     public int Score
@@ -57,9 +55,8 @@ public class GameSessionService : IGameSessionService
 
     public Grid GameStateGrid { get; private set; }
 
-    public GameSessionService(GameSessionDto sessionDto)
+    public GameSessionService()
     {
-        _gameSessionDto = sessionDto;
         GameStateGrid = new Grid();
     }
 

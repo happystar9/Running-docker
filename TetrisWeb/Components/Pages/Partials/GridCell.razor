@@ -1,4 +1,10 @@
-﻿﻿@using TetrisWeb.Components.Models;
+﻿@*
+    This page creates the tetrominos visually on the board. It styles them based off their stored 
+    "ExtraCSS" string and places them on the board based on their row & column.
+    Notice that it has it's own css file, this must be modified for any changes
+*@
+
+﻿@using TetrisWeb.Components.Models;
 
 @{
     string extraCSS = "";

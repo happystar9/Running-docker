@@ -15,7 +15,7 @@
             {
                 CellList cells = new CellList();
                 var skip = random.Next(0, LastCol + 1);
-                for (int i = 1; i < LastCol + 1; i++) {
+                for (int i = 1; i < LastCol + 1; i++) { // use coveredCells.getallinrow instead
                     if (i == skip)
                     {
                         i++;
