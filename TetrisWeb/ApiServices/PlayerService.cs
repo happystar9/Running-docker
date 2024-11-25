@@ -90,6 +90,7 @@ public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
         player.PlayerQuote = playerDto.PlayerQuote;
         player.AvatarUrl = playerDto.AvatarUrl;
         player.Isblocked = playerDto.Isblocked;
+        player.Username = playerDto.Username;
 
         await dbContext.SaveChangesAsync();
 
