@@ -57,7 +57,7 @@
 
     [Parameter]
     public PlayerDto CurrentPlayer { get; set; }
-    
+
     private HttpClient httpClient;
     List<ChatDto> messages = null;
     int playerId;
@@ -70,7 +70,7 @@
     protected override async Task OnInitializedAsync()
     {
         httpClient = HttpClientFactory.CreateClient("TetrisApi");
-        
+
 
         authState = await AuthStateProvider.GetAuthenticationStateAsync();
 
@@ -78,6 +78,12 @@
 
         var user = authState.User;
         chatService.OnMessage += async () => await LoadMessages();
+
+        //every time the state changes, we need to call LoadMessages
+
+
+
+        // chatService.OnMessage +=  () =>  StateHasChanged();
 
         if (user.Identity?.IsAuthenticated == true)
         {
@@ -120,6 +126,7 @@
         if (firstRender || messages?.Count > 0)
         {
             await ScrollToBottom();
+            await LoadMessages();
         }
     }
     
