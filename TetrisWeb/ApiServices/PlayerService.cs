@@ -45,14 +45,17 @@ public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
             throw new KeyNotFoundException("Player details not found.");
         }
 
-        return new PlayerDto
+        var result = new PlayerDto
         {
             Id = player.Id,
+            Username = player.Username,
             Authid = player.Authid,
             PlayerQuote = player.PlayerQuote,
             AvatarUrl = player.AvatarUrl,
             Isblocked = player.Isblocked
         };
+
+        return result;
     }
 
     public async Task<PlayerDto> GetPlayerByAuthIdAsync(string authId)

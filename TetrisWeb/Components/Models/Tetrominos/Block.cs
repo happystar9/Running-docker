@@ -1,4 +1,7 @@
-﻿
+﻿//All basic tetrominos have 4 cells that are based off the starting cell
+//which spawns centered at the top of the board
+//They have 4 orientations which are different arangements of cells off the starting cell
+//Not all tetrominos change based off orientation (the square stays a square)
 
 namespace TetrisWeb.Components.Models.Tetrominos;
 public class Block : Tetromino

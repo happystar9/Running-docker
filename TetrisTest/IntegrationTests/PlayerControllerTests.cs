@@ -1,7 +1,4 @@
-﻿//using FluentAssertions;
-//using Microsoft.AspNetCore.Hosting;
-//using Microsoft.AspNetCore.Mvc.Testing;
-//using Microsoft.Extensions.Configuration;
+﻿//using Microsoft.AspNetCore.Mvc.Testing;
 //using System;
 //using System.Collections.Generic;
 //using System.Linq;
@@ -10,51 +7,35 @@
 //using System.Threading.Tasks;
 //using TetrisWeb.DTOs;
 //using Xunit.Abstractions;
+//using FluentAssertions;
 
-//namespace TetrisTest;
+//namespace TetrisTest.IntegrationTests;
 
-//public class PlayerIntegrationTests : PostgresTesting
+
+//public class PlayerControllerTests : PostgresTestBase
 //{
-//    private HttpClient client;
-
-//    public PlayerIntegrationTests(WebApplicationFactory<Program> webAppFactory, ITestOutputHelper helper) : base(webAppFactory, helper)
-//    {
-//        //var Factory = customWebAppFactory.WithWebHostBuilder(builder =>
-//        //{
-//        //    builder.UseEnvironment("testing");
-//        //});
-
-//        var Factory = webAppFactory.WithWebHostBuilder(builder =>
-//        {
-//            builder.ConfigureAppConfiguration((context, config) =>
-//            {
-//                config.AddInMemoryCollection(new Dictionary<string, string>
-//        {
-//            { "DB_CONN", _dbContainer.GetConnectionString() }
-//        });
-//            });
-//        });
-
-//        client = Factory.CreateClient();
-//    }
+//    public PlayerControllerTests(WebApplicationFactory<Program> webAppFactory, ITestOutputHelper outputHelper)
+//        : base(webAppFactory, outputHelper) { }
 
 //    [Fact]
 //    public async Task RegisterPlayerCreatesPlayer()
 //    {
+//        var client = CustomWebAppFactory.CreateClient();
+
 //        var samplePlayer = new PlayerDto
 //        {
-//            Username = "TestUser",
-//            Authid = "TestAuthId",
+//            Username = "Testing95",
+//            Authid = "Testing95",
 //            PlayerQuote = "TestQuote",
 //            AvatarUrl = "TestAvatarUrl",
 //            Isblocked = false
 //        };
 
 //        var response = await client.PostAsJsonAsync("/api/player/register", samplePlayer);
-
 //        response.EnsureSuccessStatusCode();
 
 //        var createdPlayer = await response.Content.ReadFromJsonAsync<PlayerDto>();
+
 //        createdPlayer.Should().NotBeNull();
 //        createdPlayer.Username.Should().Be(samplePlayer.Username);
 //        createdPlayer.Authid.Should().Be(samplePlayer.Authid);
@@ -62,7 +43,5 @@
 //        createdPlayer.AvatarUrl.Should().Be(samplePlayer.AvatarUrl);
 //        createdPlayer.Isblocked.Should().BeFalse();
 //        createdPlayer.Id.Should().BeGreaterThan(0);
-
 //    }
-
 //}

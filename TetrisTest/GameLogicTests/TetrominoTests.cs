@@ -2,21 +2,21 @@ using FluentAssertions;
 using TetrisWeb.ApiServices;
 using TetrisWeb.Components.Models;
 using TetrisWeb.DTOs;
-namespace TetrisTest;
+namespace TetrisTest.GameLogicTests;
 
 public class TetrominoTests
 {
-	[Fact]
-	public void Tetromino_Should_Move_Right_When_Not_At_Edge()
-	{
-		var grid = new Grid();
-		CellList coveredCells = new();
-		var tetromino = new TestTetromino(grid, coveredCells);
-		tetromino.CenterPieceCol = 2;
+    [Fact]
+    public void Tetromino_Should_Move_Right_When_Not_At_Edge()
+    {
+        var grid = new Grid();
+        CellList coveredCells = new();
+        var tetromino = new TestTetromino(grid, coveredCells);
+        tetromino.CenterPieceCol = 2;
 
-		tetromino.MoveRight();
+        tetromino.MoveRight();
 
-		tetromino.CenterPieceCol.Should().Be(3);
+        tetromino.CenterPieceCol.Should().Be(3);
     }
 
     [Fact]
@@ -36,8 +36,8 @@ public class TetrominoTests
     [Fact]
     public async Task ClearCompleteRows_Should_Update_Score()
     {
-        var service = new GameSessionService(new GameSessionDto());
-        for(int i = 1; i <= 10; i++) { service.GameStateGrid.Cells.Add(1, i); }
+        var service = new GameSessionService();
+        for (int i = 1; i <= 10; i++) { service.GameStateGrid.Cells.Add(1, i); }
 
         await service.ClearCompleteRows();
 
