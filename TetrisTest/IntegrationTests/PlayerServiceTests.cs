@@ -129,6 +129,7 @@ public class PlayerServiceTests : PostgresTestBase
 
         var updatedPlayer = new PlayerDto
         {
+            Id = player.Id,
             Username = "UpdatedPlayer15",
             Authid = "15",
             PlayerQuote = "UpdatedTestQuote",
@@ -140,7 +141,7 @@ public class PlayerServiceTests : PostgresTestBase
 
         updated.Should().NotBeNull();
 
-        var retrievedPlayer = await playerService.GetPlayerByAuthIdAsync("15");
+        var retrievedPlayer = await playerService.GetPlayerByUsernameAsync("UpdatedPlayer15");
         retrievedPlayer.Username.Should().Be("UpdatedPlayer15");
         retrievedPlayer.PlayerQuote.Should().Be("UpdatedTestQuote");
         retrievedPlayer.AvatarUrl.Should().Be("UpdatedTestAvatarUrl");
@@ -243,6 +244,44 @@ public class PlayerServiceTests : PostgresTestBase
 
         //var totalScore = await playerService.GetPlayerTotalScore(postedPlayer.Authid);
         //totalScore.Should().Be(10);
+    }
+
+
+    [Fact]
+    public async Task CanBlockPlayer()
+    {
+        var playerService = GetService<IPlayerService>();
+
+        var samplePlayer = new PlayerDto
+        {
+            Username = "Player14",
+            Authid = "14",
+            PlayerQuote = "TestQuote",
+            AvatarUrl = "TestAvatarUrl",
+            Isblocked = false
+        };
+
+        await playerService.CreatePlayerAsync(samplePlayer);
+
+        var player = await playerService.GetPlayerByUsernameAsync("Player14");
+
+        player.Should().NotBeNull();
+        player.Isblocked.Should().BeFalse();
+
+        var updatePlayerDto = new PlayerDto
+        {
+            Id = player.Id,
+            Username = player.Username,
+            Authid = player.Authid,
+            PlayerQuote = player.PlayerQuote,
+            AvatarUrl = player.AvatarUrl,
+            Isblocked = true
+        };
+
+        var blockedPlayer = await playerService.UpdatePlayerAsync(updatePlayerDto);
+
+        blockedPlayer.Should().NotBeNull();
+        blockedPlayer.Isblocked.Should().BeTrue();
     }
 }
 
