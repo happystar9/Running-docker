@@ -4,8 +4,8 @@ namespace TetrisWeb.ApiServices.Interfaces;
 
 public interface IGameSessionService
 {
-    Grid GameStateGrid { get; }
-    int previousHighScore { get; }
+    Grid GameStateGrid { get; } 
+    //int previousHighScore { get; }
     int Score { get; }
 
     event Action? OnStateChange;

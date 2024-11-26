@@ -14,13 +14,13 @@ public class GameSessionService : IGameSessionService
     public TetrominoStyle nextStyle;
     public TetrominoStyle secondNextStyle;
     public TetrominoStyle thirdNextStyle;
+    public int HighScore { get; set; } = 0;
 
     public int garbageLines = 0;
 
     private int standardDelay = 1000;
     private bool skipDelay = false;
     private int level = 1;
-    private int _previousHighScore = 0; //possibly should rename to just highscore
 
     private int _score = 0;
     public int Score
@@ -33,14 +33,14 @@ public class GameSessionService : IGameSessionService
         }
     }
 
-    public int previousHighScore
-    {
-        get => _previousHighScore;
-        private set
-        {
-            _previousHighScore = value;
-        }
-    }
+    //public int previousHighScore
+    //{
+    //    get => _previousHighScore;
+    //    private set
+    //    {
+    //        _previousHighScore = value;
+    //    }
+    //}
 
     public void AddGarbage()
     {
@@ -65,9 +65,9 @@ public class GameSessionService : IGameSessionService
         GameStateGrid = new Grid();
         generator = new TetrominoGenerator();
         level = 1;
-        if (Score > previousHighScore)
+        if (Score > HighScore)
         {
-            previousHighScore = Score;
+            HighScore = Score;
         }
         Score = 0;
     }
@@ -100,7 +100,7 @@ public class GameSessionService : IGameSessionService
 
             if (garbageLines > 0)
             {
-                DropGarbageAny();
+                await DropGarbageAny();
             }
 
             NotifyStateChanged();

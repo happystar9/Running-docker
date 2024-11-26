@@ -10,12 +10,13 @@ using Microsoft.EntityFrameworkCore;
 using TetrisWeb.DTOs;
 using System.Linq;
 using TetrisWeb.ApiServices.Interfaces;
+using TetrisWeb.ApiServices;
 
 namespace TetrisWeb.ApiServices;
 
-public class GameService(Dbf25TeamArzContext context) : IGameService
+public class GameService(Dbf25TeamArzContext context, IApiKeyManagementService ApiKeyService) : IGameService
 {
-    private readonly ConcurrentDictionary<string, GameDto> _gameSessions = new();
+    private readonly ConcurrentDictionary<string, GameSessionDto> _gameSessions = new();
     private readonly int maxPlayersPerGame = 99; // Example max limit for players
 
 
@@ -45,7 +46,7 @@ public class GameService(Dbf25TeamArzContext context) : IGameService
 
 	
 
-	public async Task<GameSession> JoinGameAsync(int gameId, int playerId)
+	public async Task<GameSessionDto> JoinGameAsync(int gameId, int playerId)
     {
         var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
         if (game == null)
@@ -58,23 +59,19 @@ public class GameService(Dbf25TeamArzContext context) : IGameService
 
         }
 
-        var session = new GameSession()
+        var session = new GameSessionDto()
         {
             GameId = game.Id,
             PlayerId = playerId,
             Score = 0
         };
 
-        game.GameSessions.Add(session);
-        game.PlayerCount++;
+        var key = await ApiKeyService.AssignKeyAsync(playerId);
+        _gameSessions[key] = session;
 
-        await context.SaveChangesAsync();
         return session;
 
     }
-
-    //adjusted this method because it was adding the gameSessions to game again
-    //we'll see if it breaks anything
 
     public async Task EndGameAsync(int gameId)
     {
@@ -86,9 +83,27 @@ public class GameService(Dbf25TeamArzContext context) : IGameService
             throw new KeyNotFoundException("Game not found.");
         }
 
+        //post the game itself and its details to the database
         game.StopTime = DateTime.Now;
+        game.PlayerCount = _gameSessions.Count;
+
+        //post all of the sessions to the database
+        foreach (var session in _gameSessions.Values)
+        {
+            var gameSession = new GameSession()
+            {
+                GameId = session.GameId,
+                PlayerId = session.PlayerId,
+                Score = session.Score
+            };
+
+            context.GameSessions.Add(gameSession);
+        }
 
         await context.SaveChangesAsync();
+
+        //do we need to reset this here?
+        //_gameSessions = new ConcurrentDictionary<string, GameSessionDto>();
     }
 
 
