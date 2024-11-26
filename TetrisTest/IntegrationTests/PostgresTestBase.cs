@@ -62,3 +62,7 @@ public abstract class PostgresTestBase : IClassFixture<WebApplicationFactory<Pro
         return Scope.ServiceProvider.GetRequiredService<T>();
     }
 }
+
+
+[CollectionDefinition("SequentialTestExecution", DisableParallelization = true)]
+public class SequentialTestExecutionDefinition { }
