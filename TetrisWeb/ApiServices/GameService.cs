@@ -8,6 +8,8 @@ using System.Collections.Concurrent;
 using TetrisWeb.GameData;
 using Microsoft.EntityFrameworkCore;
 using TetrisWeb.DTOs;
+using System.Linq;
+using TetrisWeb.ApiServices.Interfaces;
 
 namespace TetrisWeb.ApiServices;
 
@@ -15,6 +17,7 @@ public class GameService(Dbf25TeamArzContext context) : IGameService
 {
     private readonly ConcurrentDictionary<string, GameDto> _gameSessions = new();
     private readonly int maxPlayersPerGame = 99; // Example max limit for players
+
 
     public async Task<Game> CreateGameAsync(string createdByAuthId)
     {
@@ -70,17 +73,24 @@ public class GameService(Dbf25TeamArzContext context) : IGameService
 
     }
 
+    //adjusted this method because it was adding the gameSessions to game again
+    //we'll see if it breaks anything
+
     public async Task EndGameAsync(int gameId)
     {
-        var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
+        var game = await context.Games
+            .Include(g => g.GameSessions)
+            .FirstOrDefaultAsync(g => g.Id == gameId);
         if (game == null)
         {
             throw new KeyNotFoundException("Game not found.");
         }
 
         game.StopTime = DateTime.Now;
+
         await context.SaveChangesAsync();
     }
+
 
     public async Task<List<Game>> GetAllGamesAsync(){
         return await context.Games.ToListAsync();
@@ -90,15 +100,11 @@ public class GameService(Dbf25TeamArzContext context) : IGameService
     public async Task<List<Game>> GetAllLiveGamesAsync(){
         return await context.Games.Where(g => g.StopTime == null).ToListAsync();
     }
-}
 
-public interface IGameService
-{
-    Task<Game> CreateGameAsync(string createdByAuthId);
-    Task<GameSession> JoinGameAsync(int gameId, int playerId);
-    Task EndGameAsync(int gameId);
-    Task<List<Game>> GetAllGamesAsync();
-    Task<List<Game>> GetAllLiveGamesAsync();
+    public async Task<Game> GetGameByIdAsync(int gameId)
+    {
+        return await context.Games.FirstOrDefaultAsync(g => g.Id == gameId);
+    }
 }
 
 

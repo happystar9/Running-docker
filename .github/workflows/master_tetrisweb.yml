@@ -11,7 +11,20 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    services:
+      postgres:
+        image: postgres:13  # Using the same image as Testcontainers
+        ports:
+          - 1645:5432  # Map the PostgreSQL port to the host
+        env:
+          POSTGRES_PASSWORD: Strong_password_123!
+        options: --health-cmd="pg_isready -U postgres" --health-timeout=5s --health-start-period=10s --health-retries=5
+
 
     steps:
       - uses: actions/checkout@v4
@@ -22,31 +35,32 @@ jobs:
           dotnet-version: '8.x'
           include-prerelease: true
 
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build the project
+        run: dotnet build --configuration Release
+
+      - name: Set up database schema
+        run: |
+          # Wait for PostgreSQL to be ready
+          echo "Waiting for PostgreSQL to be ready..."
+          until pg_isready -h localhost -p 1645 -U postgres; do
+            echo "Waiting for PostgreSQL to be ready..."
+            sleep 5
+          done
+          # Path to schema.sql
+          schemaFilePath=$(pwd)/schema.sql
+          echo "Schema file path: $schemaFilePath"
+          # Initialize the DB using the schema file
+          PGPASSWORD=Strong_password_123! psql -h localhost -U postgres -p 1645 -d postgres -a -f $schemaFilePath
+
       - name: Test with dotnet
         run: dotnet test --configuration Release
 
       - name: dotnet publish webapp
         working-directory: ./TetrisWeb
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
-        with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
-
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v3
-        with:
-          name: .net-app
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -55,4 +69,5 @@ jobs:
           app-name: 'tetrisweb'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2C954E8DE0D841A89884E7A189474817 }}
-          package: .
+          package: ${{env.DOTNET_ROOT}}/myapp
+      

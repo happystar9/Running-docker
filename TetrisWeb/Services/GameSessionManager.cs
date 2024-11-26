@@ -14,7 +14,8 @@ namespace TetrisWeb.Services
             var apiKey = await keyManager.AssignKeyAsync(playerId);
             if (!_gameSessions.TryGetValue(apiKey, out var gameSessionService))
             {
-                gameSessionService = new GameSessionService(game);
+                gameSessionService = new GameSessionService(
+                    );
                 _gameSessions[apiKey] = gameSessionService;
             }
             return gameSessionService;

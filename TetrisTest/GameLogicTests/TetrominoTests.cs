@@ -2,25 +2,25 @@ using FluentAssertions;
 using TetrisWeb.ApiServices;
 using TetrisWeb.Components.Models;
 using TetrisWeb.DTOs;
-namespace TetrisTest;
+namespace TetrisTest.GameLogicTests;
 
 public class TetrominoTests
 {
-	[Fact]
-	public void Tetromino_Should_Move_Right_When_Not_At_Edge()
-	{
-		var grid = new Grid();
-		CellList coveredCells = new();
-		var tetromino = new TestTetromino(grid, coveredCells);
-		tetromino.CenterPieceCol = 2;
+    [Fact]
+    public void TetrominoShouldMoveRightWhenNotAtEdge()
+    {
+        var grid = new Grid();
+        CellList coveredCells = new();
+        var tetromino = new TestTetromino(grid, coveredCells);
+        tetromino.CenterPieceCol = 2;
 
-		tetromino.MoveRight();
+        tetromino.MoveRight();
 
-		tetromino.CenterPieceCol.Should().Be(3);
+        tetromino.CenterPieceCol.Should().Be(3);
     }
 
     [Fact]
-    public void Tetromino_Should_Not_Move_Right_When_At_Edge()
+    public void TetrominoShouldNotMoveRightWhenAtEdge()
     {
         var grid = new Grid();
         CellList coveredCells = new();
@@ -34,10 +34,10 @@ public class TetrominoTests
     }
 
     [Fact]
-    public async Task ClearCompleteRows_Should_Update_Score()
+    public async Task ClearCompleteRowsShouldUpdateScore()
     {
-        var service = new GameSessionService(new GameSessionDto());
-        for(int i = 1; i <= 10; i++) { service.GameStateGrid.Cells.Add(1, i); }
+        var service = new GameSessionService();
+        for (int i = 1; i <= 10; i++) { service.GameStateGrid.Cells.Add(1, i); }
 
         await service.ClearCompleteRows();
 
@@ -46,7 +46,7 @@ public class TetrominoTests
     }
 
     [Fact]
-    public void Tetromino_Should_Move_left_When_Not_At_Edge()
+    public void TetrominoShouldMovLeftWhenNotAtEdge()
     {
         var grid = new Grid();
         CellList coveredCells = new();
@@ -59,7 +59,7 @@ public class TetrominoTests
     }
 
     [Fact]
-    public void Tetromino_Should_Not_Move_left_When_At_Edge()
+    public void TetrominoShouldNotMoveLeftWhenAtEdge()
     {
         var grid = new Grid();
         CellList coveredCells = new();
@@ -70,6 +70,20 @@ public class TetrominoTests
         }
 
         tetromino.CenterPieceCol.Should().Be(0);
+    }
+
+    [Fact]
+    public void TetrominoShouldRotateOnKeyUp()
+    {
+        var grid = new Grid();
+        CellList coveredCells = new();
+        var tetromino = new TestTetromino(grid, coveredCells);
+        for (int i = 0; i < 5; i++)
+        {
+            tetromino.Rotate();
+        }
+
+        tetromino.Orientation.Should().Be(Orientation.LeftRight);
     }
 }
 

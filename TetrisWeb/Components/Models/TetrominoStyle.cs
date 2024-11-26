@@ -8,6 +8,9 @@
         LeftZigZag = 4,
         RightZigZag = 5,
         LShaped = 6,
-        ReverseLShaped = 7
+        ReverseLShaped = 7,
+        Garbage1 = 8,
+        Garbage2 = 9,
+        Garbage3 = 10
     }
 }

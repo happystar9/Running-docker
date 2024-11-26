@@ -10,6 +10,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetrisTest", "TetrisTest\Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetrisWeb", "TetrisWeb\TetrisWeb.csproj", "{89E18358-0955-49F1-A662-21606A60F2C6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{76E3447F-5A63-44F9-BC99-F246F836D867}"
+	ProjectSection(SolutionItems) = preProject
+		schema.sql = schema.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

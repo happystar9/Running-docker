@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TetrisWeb.Components.Models.Tetrominos;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace TetrisWeb.Components.Models
 {
     public class TetrominoGenerator
     {
+        //gets a style that isn't one of the last ones spawned (given from board)
         public TetrominoStyle Next(params TetrominoStyle[] unusableStyles)
         {
             Random rand = new Random(DateTime.Now.Millisecond);
@@ -21,6 +23,7 @@ namespace TetrisWeb.Components.Models
             return style;
         }
 
+        //given a style it returns a tetromino for use in the board
         public Tetromino CreateFromStyle(TetrominoStyle style, Grid grid)
         {
             return style switch
@@ -34,6 +37,10 @@ namespace TetrisWeb.Components.Models
                 TetrominoStyle.ReverseLShaped => new ReverseLShaped(grid),
                 _ => new Block(grid),
             };
+        }
+        public Tetromino MakeGarbage(Grid grid)
+        {
+            return new Garbage(grid);
         }
     }
 }

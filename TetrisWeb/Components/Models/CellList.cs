@@ -21,6 +21,11 @@ namespace TetrisWeb.Components.Models
             cells.Add(new Cell(row, column));
         }
 
+        public void Remove(int row, int column)
+        {
+            cells.Remove(new Cell(row, column));
+        }
+
         public void AddMany(List<Cell> _cells, string cssClass)
         {
             var newCells = _cells.Where(cell => cssClass != "tetris-cell");
