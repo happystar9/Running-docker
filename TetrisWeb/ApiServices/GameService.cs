@@ -11,6 +11,7 @@ using TetrisWeb.DTOs;
 using System.Linq;
 using TetrisWeb.ApiServices.Interfaces;
 using TetrisWeb.ApiServices;
+using System.Reflection.Emit;
 
 namespace TetrisWeb.ApiServices;
 
@@ -18,7 +19,7 @@ public class GameService(Dbf25TeamArzContext context, IApiKeyManagementService A
 {
     private readonly ConcurrentDictionary<string, GameSessionDto> _gameSessions = new();
     private readonly int maxPlayersPerGame = 99; // Example max limit for players
-
+    private int garbageLines;
 
     public async Task<Game> CreateGameAsync(string createdByAuthId)
     {
@@ -120,6 +121,42 @@ public class GameService(Dbf25TeamArzContext context, IApiKeyManagementService A
     {
         return await context.Games.FirstOrDefaultAsync(g => g.Id == gameId);
     }
+
+    public async Task HandleRowClearAsync(int gameId, int playerId, int rowsCleared)
+    {
+        // Ensure rowsCleared is valid
+        if (rowsCleared < 2) return;
+
+        var garbageLines = rowsCleared / 2; // Send one garbage line for every two rows cleared
+        foreach (var otherSession in _gameSessions.Values.Where(s => s.GameId == gameId && s.PlayerId != playerId))
+        {
+            SendGarbageLine(otherSession.PlayerId, garbageLines);
+        }
+    }
+
+    public void AddGarbage()
+    {
+        garbageLines = 2;
+    }
+    public Grid GameStateGrid { get; private set; }
+    private TetrominoGenerator generator = new TetrominoGenerator();
+    public Tetromino? currentTetromino;
+    public async Task DropGarbageAny()
+    {
+        while (garbageLines > 0)
+        {
+            currentTetromino = generator.MakeGarbage(GameStateGrid);
+            currentTetromino.Drop();
+            garbageLines--;
+        }
+    }
+
+    private void SendGarbageLine(int playerId, int garbageLines)
+    {
+        AddGarbage();
+        
+    }
+
 }
 
 

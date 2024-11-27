@@ -42,11 +42,6 @@ public class GameSessionService : IGameSessionService
     //    }
     //}
 
-    public void AddGarbage()
-    {
-        garbageLines = 2;
-    }
-
 
     public event Action? OnStateChange;
 
@@ -110,16 +105,6 @@ public class GameSessionService : IGameSessionService
             LevelChange();
         }
         GameStateGrid.State = GameState.GameOver;
-    }
-
-    public async Task DropGarbageAny()
-    {
-        while (garbageLines > 0)
-        {
-            currentTetromino = generator.MakeGarbage(GameStateGrid);
-            currentTetromino.Drop();
-            garbageLines--;
-        }
     }
 
     public async Task RunCurrentTetromino()

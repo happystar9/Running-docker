@@ -10,11 +10,11 @@ public interface IGameSessionService
 
     event Action? OnStateChange;
 
-    void AddGarbage();
+    //void AddGarbage();
     Task ClearCompleteRows();
     Task Delay(int millis);
     Task<int> Drop();
-    Task DropGarbageAny();
+    //Task DropGarbageAny();
     void LevelChange();
     Task MoveDown(int x);
     Task MoveLeft(int x);
