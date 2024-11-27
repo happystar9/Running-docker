@@ -122,6 +122,21 @@ public class GameSessionService : IGameSessionService
         UpdateBoard(currentTetromino);
     }
 
+    public async Task AddGarbage()
+    {
+        await DropGarbageAny();
+    }
+
+    public async Task DropGarbageAny()
+    {
+        while (garbageLines > 0)
+        {
+            currentTetromino = generator.MakeGarbage(GameStateGrid);
+            currentTetromino.Drop();
+            garbageLines--;
+        }
+    }
+
     public void LevelChange()
     {
         int counter = 1;
