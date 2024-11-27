@@ -5,6 +5,7 @@ public interface IPlayerService
 {
     Task<PlayerDto> GetPlayerByAuthIdAsync(string authId);
     Task<PlayerDto> GetPlayerByUsernameAsync(string username);
+    Task<PlayerDto> GetPlayerByIdAsync(int id);
     Task<PlayerDto> CreatePlayerAsync(PlayerDto player);
     Task<PlayerDto> UpdatePlayerAsync(PlayerDto player);
     Task<int> GetPlayerTotalScore(string authId);

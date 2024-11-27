@@ -57,6 +57,26 @@ public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
 
         return result;
     }
+    public async Task<PlayerDto> GetPlayerByIdAsync(int id)
+    {
+        var player = await dbContext.Players
+                .SingleOrDefaultAsync(p => p.Id == id);
+
+        if (player == null)
+        {
+            throw new KeyNotFoundException("Player details not found.");
+        }
+
+        return new PlayerDto
+        {
+            Username = player.Username,
+            Id = player.Id,
+            Authid = player.Authid,
+            PlayerQuote = player.PlayerQuote,
+            AvatarUrl = player.AvatarUrl,
+            Isblocked = player.Isblocked
+        };
+    }
 
     public async Task<PlayerDto> GetPlayerByAuthIdAsync(string authId)
     {

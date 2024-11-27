@@ -1,10 +1,41 @@
 @page "/leaderboard"
 @using TetrisWeb.ApiServices
 @inject IScoreService scoreService
+@inject IPlayerService playerService
 
 
 <div class="leaderboard-container">
-
+    <h3>Leaderboard</h3>
+    @if(leaderboard == null)
+    {
+        <p>Loading...</p>
+    }
+    else if (!leaderboard.Any())
+    {
+        <p>No scores available.</p>
+    }
+    else
+    {
+        <table class="leaderboard-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in leaderboard)
+                {
+                    <tr>
+                        <td>@(leaderboard.IndexOf(item) + 1)</td>
+                        <td>@item.Username</td>
+                        <td>@item.TotalScore</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 
 
 </div>
@@ -12,6 +43,23 @@
 
 
 @code {
+    List<LeaderboardDto> leaderboard = new List<LeaderboardDto>();
+    int rank = 1;
+    // string username = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var l = await scoreService.GetTopLeaderboardItemsAsync();
+        foreach(var item in l)
+        {
+            var player = await playerService.GetPlayerByIdAsync(item.PlayerId);
+            leaderboard.Add(new LeaderboardDto
+            {
+                Username = player.Username,
+                TotalScore = item.TotalScore
+            });
+        }
+    }
 
 
 }

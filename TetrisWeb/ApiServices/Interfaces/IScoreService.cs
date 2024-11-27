@@ -1,6 +1,9 @@
-namespace TetrisWeb.ApiServices;
+using TetrisWeb.DTOs;
 
-public interface IScoreService{
+namespace TetrisWeb.ApiServices.Interfaces;
+
+public interface IScoreService
+{
     public int GetPlayerHighScore(int playerId);
 
     //takes in a new score and checks to see if it is higher than the player's current high score
@@ -9,5 +12,9 @@ public interface IScoreService{
 
     //calls IsHighScore and if true, will update the player's high score
     public int UpdateHighScore(int playerId, int score);
+
+    public Task<List<LeaderboardDto>> GetTopLeaderboardItemsAsync();
+
+    public Task<List<LeaderboardDto>> GetTopLeaderboardItemsWithUsernamesAsync();
 
 }
