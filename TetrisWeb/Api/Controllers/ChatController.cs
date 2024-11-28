@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TetrisShared.DTOs;
+using TetrisWeb.DTOs;
 
 namespace TetrisWeb.Controllers;
 

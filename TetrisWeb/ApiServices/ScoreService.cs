@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TetrisWeb.GameData;
-using TetrisShared.DTOs;
+using TetrisWeb.DTOs;
 using TetrisWeb.ApiServices.Interfaces;
 using TetrisWeb.DTOs;
 

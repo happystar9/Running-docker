@@ -1,4 +1,4 @@
-﻿using TetrisShared.DTOs;
+﻿using TetrisWeb.DTOs;
 
 public interface IChatService
 {
