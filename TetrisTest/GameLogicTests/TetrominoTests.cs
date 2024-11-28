@@ -77,13 +77,20 @@ public class TetrominoTests
     {
         var grid = new Grid();
         CellList coveredCells = new();
+
         var tetromino = new TestTetromino(grid, coveredCells);
+
+        var startingOrientation = tetromino.Orientation;
+
         for (int i = 0; i < 5; i++)
         {
             tetromino.Rotate();
         }
 
-        tetromino.Orientation.Should().Be(Orientation.LeftRight);
+        var endingOrientation = tetromino.Orientation;
+
+        startingOrientation.Should().Be(Orientation.LeftRight);
+        endingOrientation.Should().Be(Orientation.UpDown);
     }
 }
 
