@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Mvc.Testing;
+using TetrisWeb.DTOs;
+using Xunit.Abstractions;
 using TetrisWeb.ApiServices.Interfaces;
 using TetrisWeb.ApiServices;
-using Xunit.Abstractions;
-using TetrisWeb.DTOs;
+
 
 namespace TetrisTest.IntegrationTests;
 
@@ -18,6 +15,7 @@ public class ScoreServiceTests : PostgresTestBase
     public ScoreServiceTests(WebApplicationFactory<Program> webAppFactory, ITestOutputHelper outputHelper)
        : base(webAppFactory, outputHelper) { }
 
+    [Fact]
     public async Task CanGetPlayerHighScore()
     {
         var playerService = GetService<IPlayerService>();
@@ -28,8 +26,8 @@ public class ScoreServiceTests : PostgresTestBase
 
         var samplePlayer = new PlayerDto
         {
-            Username = "Player12",
-            Authid = "12",
+            Username = "Player18",
+            Authid = "18",
             PlayerQuote = "TestQuote",
             AvatarUrl = "TestAvatarUrl",
             Isblocked = false
@@ -49,7 +47,7 @@ public class ScoreServiceTests : PostgresTestBase
 
         var game = await gameService.CreateGameAsync(adminUser.Authid);
 
-        var postedPlayer = await playerService.GetPlayerByAuthIdAsync("12");
+        var postedPlayer = await playerService.GetPlayerByAuthIdAsync("18");
 
         var retrievedGame = await gameService.GetGameByIdAsync(game.Id);
         var session = await gameService.JoinGameAsync(retrievedGame.Id, postedPlayer.Id);

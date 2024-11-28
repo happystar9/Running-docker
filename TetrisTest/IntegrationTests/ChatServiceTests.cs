@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TetrisWeb.ApiServices.Interfaces;
-using Xunit.Abstractions;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Mvc.Testing;
 using TetrisWeb.DTOs;
-using FluentAssertions;
+using Xunit.Abstractions;
+using TetrisWeb.ApiServices.Interfaces;
+using TetrisWeb.ApiServices;
+
 
 namespace TetrisTest.IntegrationTests;
 
@@ -18,7 +15,7 @@ public class ChatServiceTests : PostgresTestBase
     public ChatServiceTests(WebApplicationFactory<Program> webAppFactory, ITestOutputHelper outputHelper)
        : base(webAppFactory, outputHelper) { }
 
-
+    [Fact]
     public async Task SendMessagePostsToChat()
     {
         var playerService = GetService<IPlayerService>();
@@ -26,15 +23,15 @@ public class ChatServiceTests : PostgresTestBase
 
         var samplePlayer = new PlayerDto
         {
-            Username = "Player12",
-            Authid = "12",
+            Username = "Player32",
+            Authid = "32",
             PlayerQuote = "TestQuote",
             AvatarUrl = "TestAvatarUrl",
             Isblocked = false
         };
 
         await playerService.CreatePlayerAsync(samplePlayer);
-        var postedPlayer = await playerService.GetPlayerByAuthIdAsync("12");
+        var postedPlayer = await playerService.GetPlayerByAuthIdAsync("32");
 
         var message = new ChatDto
         {
@@ -48,7 +45,8 @@ public class ChatServiceTests : PostgresTestBase
 
         chatMessages.Should().NotBeNullOrEmpty();
         chatMessages.Count.Should().Be(1);
-        chatMessages.Should().ContainEquivalentOf(message);
+        chatMessages.First().Message.Should().Be(message.Message);
+        chatMessages.First().PlayerId.Should().Be(message.PlayerId);
 
 
 
