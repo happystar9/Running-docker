@@ -43,7 +43,7 @@
         </div>
     </div>
 
-    <button @onclick=" () => gameSessionService.AddGarbage()">Add Garbage</button>
+    <button @onclick=" () => gameSessionService.SendGarbage()">Add Garbage</button>
 
     <div class="row">
         <div class="col">
@@ -91,7 +91,7 @@
         }
         else
         {
-            <button @onclick="()=> gameService.JoinGameAsync(selectedGame.Id, playerId)">Join Game</button>
+            <button @onclick="()=> gameService.JoinGameAsync(selectedGame.Id, playerId, gameSessionService)">Join Game</button>
         }
         <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">

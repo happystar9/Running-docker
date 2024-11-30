@@ -19,6 +19,7 @@ public class GameService(Dbf25TeamArzContext context, IApiKeyManagementService A
 {
     private readonly ConcurrentDictionary<string, GameSessionDto> _gameSessions = new();
     private readonly int maxPlayersPerGame = 99; // Example max limit for players
+    private List<GameSessionService> gameSessionList = new();
 
     public async Task<Game> CreateGameAsync(string createdByAuthId)
     {
@@ -46,8 +47,9 @@ public class GameService(Dbf25TeamArzContext context, IApiKeyManagementService A
 
 	
 
-	public async Task<GameSessionDto> JoinGameAsync(int gameId, int playerId)
+	public async Task<GameSessionDto> JoinGameAsync(int gameId, int playerId, GameSessionService gameSession)
     {
+        gameSessionList.Add(gameSession);
         var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
         if (game == null)
         {

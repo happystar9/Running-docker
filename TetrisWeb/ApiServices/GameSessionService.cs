@@ -124,7 +124,7 @@ public class GameSessionService : IGameSessionService
 
     public async Task AddGarbage()
     {
-        await DropGarbageAny();
+        garbageLines++;
     }
 
     public async Task DropGarbageAny()
@@ -175,7 +175,7 @@ public class GameSessionService : IGameSessionService
             if (GameStateGrid.Cells.GetAllInRow(i).Count == GameStateGrid.Width)
             {
                 GameStateGrid.Cells.SetCssClass(i, "tetris-clear-row");
-
+                
                 rowsComplete.Add(i);
             }
         }
