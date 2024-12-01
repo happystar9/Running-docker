@@ -107,7 +107,7 @@ public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
             throw new KeyNotFoundException("Player details not found.");
         }
 
-        player.Authid = playerDto.Authid;
+        //player.Authid = playerDto.Authid;
         player.PlayerQuote = playerDto.PlayerQuote;
         player.AvatarUrl = playerDto.AvatarUrl;
         player.Isblocked = playerDto.Isblocked;
@@ -142,5 +142,18 @@ public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
             .SumAsync(gs => gs.Score);
 
         return totalScore;
+    }
+
+    public async Task<List<PlayerDto>> GetAllPlayersAsync()
+    {
+        return await dbContext.Players
+            .Select(p => new PlayerDto
+            {
+                Id = p.Id,
+                Username = p.Username,
+                PlayerQuote = p.PlayerQuote,
+                AvatarUrl = p.AvatarUrl
+            })
+            .ToListAsync();
     }
 }

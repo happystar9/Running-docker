@@ -4,6 +4,7 @@
 @using TetrisWeb.AuthData;
 @using TetrisWeb.GameData;
 @inject IGameService gameService;
+@inject IPlayerService PlayerService
 @inject UserManager<ApplicationUser> UserManager;
 @inject AuthenticationStateProvider AuthStateProvider;
 @attribute [Authorize(Roles = "Admin")]
@@ -45,6 +46,32 @@
     </ul>
 </div>
 
+<button class="btn-info" @onclick="ShowUsers">List All Users</button>
+
+@if (players != null && players.Any())
+{
+    <ul>
+        @foreach (var user in players)
+        {
+            <li>
+                <strong>@user.Username</strong>
+                <button class="btn-link" @onclick="() => EditUser(user)">Edit</button>
+            </li>
+        }
+    </ul>
+}
+
+@if (editingUser != null)
+{
+    <h4>Edit User: @editingUser.Username</h4>
+    <EditForm Model="editingUser" OnValidSubmit="SaveUserChanges">
+        <InputText @bind-Value="editingUser.Username" placeholder="Username" class="form-control" />
+        <InputText @bind-Value="editingUser.PlayerQuote" placeholder="Player Quote" class="form-control" />
+        <button type="submit" class="btn-primary">Save</button>
+        <button type="button" class="btn-secondary" @onclick="CancelEdit">Cancel</button>
+    </EditForm>
+}
+
 
 
 
@@ -54,6 +81,8 @@
     List<Game> games;
     AuthenticationState authState;
     bool isAdmin;
+    List<PlayerDto> players;
+    PlayerDto editingUser;
 
     protected override async void OnInitialized()
     {
@@ -96,4 +125,27 @@
             StateHasChanged();
 		}
 	}
+
+    public async Task ShowUsers()
+    {
+        players = await PlayerService.GetAllPlayersAsync();
+        StateHasChanged();
+    }
+
+    private void EditUser(PlayerDto user)
+    {
+        editingUser = user;
+    }
+
+    private async Task SaveUserChanges()
+    {
+        await PlayerService.UpdatePlayerAsync(editingUser);
+        editingUser = null;
+        await ShowUsers();
+    }
+
+    private void CancelEdit()
+    {
+        editingUser = null;
+    }
 }
