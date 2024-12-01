@@ -109,7 +109,6 @@ public class GameService(Dbf25TeamArzContext context, IApiKeyManagementService A
 
     public async Task<List<Game>> GetAllGamesAsync(){
         return await context.Games.ToListAsync();
-        
     }
 
     public async Task<List<Game>> GetAllLiveGamesAsync(){
