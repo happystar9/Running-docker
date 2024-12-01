@@ -15,7 +15,6 @@ public class ScoreService(Dbf25TeamArzContext dbContext) : IScoreService
             .Max(gs => (int?)gs.Score) ?? 0;
     }
 
-    //needs testing
     public bool IsHighScore(int playerId, int score)
     {
         return score > GetPlayerHighScore(playerId);
@@ -74,4 +73,22 @@ public class ScoreService(Dbf25TeamArzContext dbContext) : IScoreService
             .ToListAsync();
     }
 
+
+    public async Task<List<LeaderboardDto>> GetCompleteLeaderboardAsync()
+    {
+        return await dbContext.Leaderboards
+            .OrderByDescending(l => l.TotalScore)
+            .Join(dbContext.Players,
+                leaderboard => leaderboard.PlayerId,
+                player => player.Id,
+                (leaderboard, player) => new LeaderboardDto
+                {
+                    PlayerId = leaderboard.PlayerId,
+                    TotalScore = leaderboard.TotalScore,
+                    GamesPlayed = leaderboard.GamesPlayed,
+                    WinCount = leaderboard.WinCount,
+                    Username = player.Username
+                })
+            .ToListAsync();
+    }
 }

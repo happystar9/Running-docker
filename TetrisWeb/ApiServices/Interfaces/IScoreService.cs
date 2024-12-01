@@ -1,3 +1,4 @@
+using Org.BouncyCastle.Asn1.Mozilla;
 using TetrisWeb.DTOs;
 
 namespace TetrisWeb.ApiServices.Interfaces;
@@ -16,5 +17,6 @@ public interface IScoreService
     public Task<List<LeaderboardDto>> GetTopLeaderboardItemsAsync();
 
     public Task<List<LeaderboardDto>> GetTopLeaderboardItemsWithUsernamesAsync();
+    public Task<List<LeaderboardDto>> GetCompleteLeaderboardAsync();
 
 }

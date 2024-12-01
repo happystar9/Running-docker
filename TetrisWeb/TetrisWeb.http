@@ -46,14 +46,15 @@ GET {{TetrisWeb_HostAddress}}/api/player/validate?key=xeOYzMpfkpJdl57NY6mnca8Gmk
 ###
 DELETE {{TetrisWeb_HostAddress}}/api/player/invalidate?key=xeOYzMpfkpJdl57NY6mnca8GmkVqO110
 
-
 ###
-
 GET {{TetrisWeb_HostAddress}}/api/game/3
 
 ###
 GET {{TetrisWeb_HostAddress}}/api/game/allgames
 ###
 GET {{TetrisWeb_HostAddress}}/api/game/livegames
-###
 
+###
+GET {{TetrisWeb_HostAddress}}/api/score/leaderboard
+
+###
