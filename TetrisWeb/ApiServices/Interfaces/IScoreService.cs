@@ -18,5 +18,7 @@ public interface IScoreService
 
     public Task<List<LeaderboardDto>> GetTopLeaderboardItemsWithUsernamesAsync();
     public Task<List<LeaderboardDto>> GetCompleteLeaderboardAsync();
+    public Task<List<LeaderboardDto>> GetScoresForGameAsync(int gameId);
+
 
 }

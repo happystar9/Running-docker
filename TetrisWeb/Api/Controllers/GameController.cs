@@ -45,4 +45,5 @@ public class GameController(IGameService gameService) : ControllerBase
         }
         return Results.Ok(await gameService.GetGameByIdAsync(gameId));
     }
+
 }

@@ -91,4 +91,22 @@ public class ScoreService(Dbf25TeamArzContext dbContext) : IScoreService
                 })
             .ToListAsync();
     }
+
+    //can't really test this until we have multiplayer working (and posting scores)
+    public async Task<List<LeaderboardDto>> GetScoresForGameAsync(int gameId)
+    {
+        return await dbContext.GameSessions
+            .Where(gs => gs.GameId == gameId)
+            .OrderByDescending(gs => gs.Score)
+            .Join(dbContext.Players,
+                gameSession => gameSession.PlayerId,
+                player => player.Id,
+                (gameSession, player) => new LeaderboardDto
+                {
+                    PlayerId = gameSession.PlayerId,
+                    TotalScore = gameSession.Score,
+                    Username = player.Username
+                })
+            .ToListAsync();
+    }
 }

@@ -16,4 +16,15 @@ public class ScoreController(IScoreService scoreService) : ControllerBase
         return Results.Ok(await scoreService.GetCompleteLeaderboardAsync());
     }
 
+    [HttpGet("leaderboard/{gameId}")]
+    public async Task<IResult> GetLeaderboardByGame(int gameId)
+    {
+
+        var scores = await scoreService.GetScoresForGameAsync(gameId);
+        if(!scores.Any())
+        {
+            throw new Exception("No scores found for this game.");
+        }
+        return Results.Ok(scores);
+    }
 }
