@@ -14,7 +14,7 @@ public interface IGameSessionService
     Task ClearCompleteRows();
     Task Delay(int millis);
     Task<int> Drop();
-    Task AddGarbage();
+    Task AddGarbage(int lines);
 
     Task DropGarbageAny();
     void LevelChange();

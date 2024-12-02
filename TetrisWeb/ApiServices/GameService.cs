@@ -17,8 +17,12 @@ namespace TetrisWeb.ApiServices;
 
 public class GameService(Dbf25TeamArzContext context, IApiKeyManagementService ApiKeyService) : IGameService
 {
+
+
     private readonly ConcurrentDictionary<string, GameSessionDto> _gameSessions = new();
     private readonly int maxPlayersPerGame = 99; // Example max limit for players
+    private List<GameSessionService> gameSessionList = new();
+    Random random = new Random();
 
     public async Task<Game> CreateGameAsync(string createdByAuthId)
     {
@@ -46,8 +50,10 @@ public class GameService(Dbf25TeamArzContext context, IApiKeyManagementService A
 
 	
 
-	public async Task<GameSessionDto> JoinGameAsync(int gameId, int playerId)
+	public async Task<GameSessionDto> JoinGameAsync(int gameId, int playerId, GameSessionService gameSession)
     {
+        gameSessionList.Add(gameSession);
+        gameSession.SendGarbage += HandleSendGarbage;
         var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
         if (game == null)
         {
@@ -118,6 +124,11 @@ public class GameService(Dbf25TeamArzContext context, IApiKeyManagementService A
     public async Task<Game> GetGameByIdAsync(int gameId)
     {
         return await context.Games.FirstOrDefaultAsync(g => g.Id == gameId);
+    }
+
+    public void HandleSendGarbage(int lines)
+    {
+        Task.Run(async () => await gameSessionList[random.Next(gameSessionList.Count)].AddGarbage(lines));
     }
 }
 
