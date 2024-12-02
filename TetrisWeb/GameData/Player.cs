@@ -13,7 +13,7 @@ public partial class Player
 
     public string? AvatarUrl { get; set; }
 
-    public bool? Isblocked { get; set; }
+    public bool Isblocked { get; set; }
 
     public string? Username { get; set; }
 

@@ -103,7 +103,7 @@ public class ScoreService(Dbf25TeamArzContext dbContext) : IScoreService
                 player => player.Id,
                 (gameSession, player) => new LeaderboardDto
                 {
-                    PlayerId = gameSession.PlayerId,
+                    PlayerId = (int)gameSession.PlayerId,
                     TotalScore = gameSession.Score,
                     Username = player.Username
                 })

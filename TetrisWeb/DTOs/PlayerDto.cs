@@ -17,5 +17,5 @@ public class PlayerDto
 
     public string? AvatarUrl { get; set; }
 
-    public bool? Isblocked { get; set; }
+    public bool Isblocked { get; set; }
 }

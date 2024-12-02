@@ -15,5 +15,5 @@ public partial class GameSession
 
     public virtual Game? Game { get; set; }
 
-    public virtual Player? Player { get; set; }
+    public virtual Player Player { get; set; } = null!;
 }

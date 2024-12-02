@@ -126,6 +126,7 @@ public partial class Dbf25TeamArzContext : DbContext
 
             entity.HasOne(d => d.Player).WithMany(p => p.GameSessions)
                 .HasForeignKey(d => d.PlayerId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("game_session_player_id_fkey");
         });
 
@@ -166,9 +167,7 @@ public partial class Dbf25TeamArzContext : DbContext
             entity.Property(e => e.Authid)
                 .HasMaxLength(450)
                 .HasColumnName("authid");
-            entity.Property(e => e.AvatarUrl)
-                .HasMaxLength(512)
-                .HasColumnName("avatar_url");
+            entity.Property(e => e.AvatarUrl).HasColumnName("avatar_url");
             entity.Property(e => e.Isblocked)
                 .HasDefaultValue(false)
                 .HasColumnName("isblocked");
