@@ -75,6 +75,10 @@
         {
             <img src="@(_photoUrl ?? editingUser.AvatarUrl)" alt="Selected Avatar" class="avatar-preview" />
         }
+        <div class="form-check">
+            <InputCheckbox @bind-Value="editingUser.Isblocked" class="form-check-input" id="blockUserCheckbox" />
+            <label class="form-check-label" for="blockUserCheckbox">Block User</label>
+        </div>
         <button type="submit" class="btn-primary">Save</button>
         <button type="button" class="btn-secondary" @onclick="CancelEdit">Cancel</button>
     </EditForm>
