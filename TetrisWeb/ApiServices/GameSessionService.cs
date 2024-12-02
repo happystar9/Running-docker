@@ -8,6 +8,7 @@ namespace TetrisWeb.ApiServices;
 public class GameSessionService : IGameSessionService
 {
 
+
     private TetrominoGenerator generator = new TetrominoGenerator();
     public Tetromino? currentTetromino;
 
@@ -33,20 +34,13 @@ public class GameSessionService : IGameSessionService
         }
     }
 
-    //public int previousHighScore
-    //{
-    //    get => _previousHighScore;
-    //    private set
-    //    {
-    //        _previousHighScore = value;
-    //    }
-    //}
-
 
     public event Action? OnStateChange;
 
     public void NotifyStateChanged() => OnStateChange?.Invoke();
 
+    public event Action<int>? SendGarbage;
+    public void NotifySendGarbage(int lines) => SendGarbage?.Invoke(lines);
 
     public Grid GameStateGrid { get; private set; }
 
@@ -122,9 +116,9 @@ public class GameSessionService : IGameSessionService
         UpdateBoard(currentTetromino);
     }
 
-    public async Task AddGarbage()
+    public async Task AddGarbage(int lines)
     {
-        garbageLines++;
+        garbageLines += lines;
     }
 
     public async Task DropGarbageAny()
@@ -193,14 +187,17 @@ public class GameSessionService : IGameSessionService
 
                 case 2:
                     Score += 100 * level;
+                    NotifySendGarbage(1);
                     break;
 
                 case 3:
                     Score += 300 * level;
+                    NotifySendGarbage(1);
                     break;
 
                 case 4:
                     Score += 1200 * level;
+                    NotifySendGarbage(1);
                     break;
             }
 
