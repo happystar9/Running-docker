@@ -40,15 +40,7 @@
             </NavLink>
         </div>
 
-        
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="manageUsers">
-                <span class="bi bi-lock-nav-menu" aria-hidden="true"></span> Manage Users
-            </NavLink>
-        </div>
-
-
+        <hr />
 
         <AuthorizeView>
             <Authorized>
@@ -57,6 +49,14 @@
                         <span class="" aria-hidden="true"></span> Manage Games
                     </NavLink>
                 </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="manageUsers">
+                        <span class="" aria-hidden="true"></span> Manage Users
+                    </NavLink>
+                </div>
+
+
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="Account/Manage">
                         <span class="" aria-hidden="true"></span> @context.User.Identity?.Name
@@ -71,7 +71,10 @@
                         </button>
                     </form>
                 </div>
+                
+                <hr />
             </Authorized>
+
             <NotAuthorized>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="Account/Register">
