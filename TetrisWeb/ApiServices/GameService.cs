@@ -1,24 +1,13 @@
-﻿using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components;
-using System;
-using TetrisWeb.Components.Models;
-using System.Net.NetworkInformation;
-using TetrisWeb.Components.Pages.Partials;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using TetrisWeb.GameData;
 using Microsoft.EntityFrameworkCore;
 using TetrisWeb.DTOs;
-using System.Linq;
 using TetrisWeb.ApiServices.Interfaces;
-using TetrisWeb.ApiServices;
-using System.Reflection.Emit;
 
 namespace TetrisWeb.ApiServices;
 
-public class GameService(Dbf25TeamArzContext context, IApiKeyManagementService ApiKeyService) : IGameService
+public class GameService(Dbf25TeamArzContext context, IPlayerService playerService, IApiKeyManagementService ApiKeyService) : IGameService
 {
-
-
     private readonly ConcurrentDictionary<string, GameSessionDto> _gameSessions = new();
     private readonly int maxPlayersPerGame = 99; // Example max limit for players
     private List<GameSessionService> gameSessionList = new();
@@ -48,34 +37,45 @@ public class GameService(Dbf25TeamArzContext context, IApiKeyManagementService A
         return game;
     }
 
-	
 
-	public async Task<GameSessionDto> JoinGameAsync(int gameId, int playerId, GameSessionService gameSession)
+
+    public async Task<GameSessionDto> JoinGameAsync(int gameId, int playerId, GameSessionService gameSession)
     {
-        gameSessionList.Add(gameSession);
-        gameSession.SendGarbage += HandleSendGarbage;
-        var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
-        if (game == null)
+
+        //verify that the player is not blocked before letting them join
+        var player = playerService.GetPlayerByIdAsync(playerId).Result;
+        if (!player.Isblocked)
         {
-            throw new KeyNotFoundException("Game not found.");
+
+            gameSessionList.Add(gameSession);
+            gameSession.SendGarbage += HandleSendGarbage;
+            var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
+            if (game == null)
+            {
+                throw new KeyNotFoundException("Game not found.");
+            }
+            if (game.PlayerCount > maxPlayersPerGame)
+            {
+                throw new InvalidOperationException("Game is at max capacity.");
+
+            }
+
+            var session = new GameSessionDto()
+            {
+                GameId = game.Id,
+                PlayerId = playerId,
+                Score = 0
+            };
+
+            var key = await ApiKeyService.AssignKeyAsync(playerId);
+            _gameSessions[key] = session;
+
+            return session;
         }
-        if (game.PlayerCount > maxPlayersPerGame)
+        else
         {
-            throw new InvalidOperationException("Game is at max capacity.");
-
+            throw new InvalidOperationException("Blocked players cannot join games.");
         }
-
-        var session = new GameSessionDto()
-        {
-            GameId = game.Id,
-            PlayerId = playerId,
-            Score = 0
-        };
-
-        var key = await ApiKeyService.AssignKeyAsync(playerId);
-        _gameSessions[key] = session;
-
-        return session;
 
     }
 
@@ -113,11 +113,13 @@ public class GameService(Dbf25TeamArzContext context, IApiKeyManagementService A
     }
 
 
-    public async Task<List<Game>> GetAllGamesAsync(){
+    public async Task<List<Game>> GetAllGamesAsync()
+    {
         return await context.Games.ToListAsync();
     }
 
-    public async Task<List<Game>> GetAllLiveGamesAsync(){
+    public async Task<List<Game>> GetAllLiveGamesAsync()
+    {
         return await context.Games.Where(g => g.StopTime == null).ToListAsync();
     }
 

@@ -1,0 +1,19 @@
+﻿@inject GameSessionService gameSessionService;
+@inject IGameService gameService;
+@inject AuthenticationStateProvider AuthStateProvider;
+@inject UserManager<ApplicationUser> UserManager;
+
+
+<h3>Games</h3>
+
+@code {
+    Game selectedGame;
+    List<Game> games;
+
+    protected override async Task OnInitializedAsync()
+    {
+        games = await gameService.GetAllLiveGamesAsync();
+        gameSessionService.OnStateChange += StateHasChanged;
+    }
+
+}

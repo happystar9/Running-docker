@@ -209,8 +209,8 @@
         }
 
 
-        games = await gameService.GetAllLiveGamesAsync();
-        gameSessionService.OnStateChange += StateHasChanged;
+        // games = await gameService.GetAllLiveGamesAsync();
+        // gameSessionService.OnStateChange += StateHasChanged;
 
         isInitialized = true;
         StateHasChanged();
