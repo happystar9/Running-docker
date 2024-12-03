@@ -1,19 +1,65 @@
-﻿@inject GameSessionService gameSessionService;
+﻿@page "/games"
+@inject GameSessionService gameSessionService;
 @inject IGameService gameService;
+@inject IPlayerService playerService;
+
 @inject AuthenticationStateProvider AuthStateProvider;
 @inject UserManager<ApplicationUser> UserManager;
 
 
-<h3>Games</h3>
+<h2>Games</h2>
+@if(message != "")
+{
+    <p>@message <NavLink href="/Profile">here</NavLink>.</p>
+}
+
+<h3>Live Games</h3>
+
+<h3>Past Games</h3>
 
 @code {
     Game selectedGame;
     List<Game> games;
+    AuthenticationState authState;
+    PlayerDto playerDto;
+    string message = "";
+    bool hasPlayerAccount = false;
+
+
+    string authId;
+    int playerId;
 
     protected override async Task OnInitializedAsync()
     {
-        games = await gameService.GetAllLiveGamesAsync();
-        gameSessionService.OnStateChange += StateHasChanged;
+        authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var applicationuser = await UserManager.GetUserAsync(user);
+            if (applicationuser is not null)
+            {
+                authId = applicationuser.Id;
+
+            }
+
+
+            try
+            {
+                playerDto = await playerService.GetPlayerByAuthIdAsync(authId);
+                playerId = playerDto.Id;
+            }
+            catch
+            {
+                message = "You have not registered as a player yet. To set up a player account, click ";
+            }
+
+
+            games = await gameService.GetAllLiveGamesAsync();
+            gameSessionService.OnStateChange += StateHasChanged;
+        }
+
+
+
     }
 
 }
