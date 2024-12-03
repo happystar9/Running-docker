@@ -123,6 +123,12 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
         return await context.Games.Where(g => g.StopTime == null).ToListAsync();
     }
 
+    public async Task<List<Game>> GetAllPastGamesAsync()
+    {
+        return await context.Games.Where(g => g.StopTime != null).ToListAsync();
+
+    }
+
     public async Task<Game> GetGameByIdAsync(int gameId)
     {
         return await context.Games.FirstOrDefaultAsync(g => g.Id == gameId);

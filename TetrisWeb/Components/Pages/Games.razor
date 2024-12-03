@@ -8,18 +8,65 @@
 
 
 <h2>Games</h2>
-@if(message != "")
+<p>
+    Below are all of the current and previous games.
+    To join a game, ensure you are logged in and registered as a player,
+    then click "Join Game"" next to one of the live game IDs.
+</p>
+<p>
+    To view the results for previous games, click on "View Results"
+    next to the past game's ID.
+</p>
+@if (message != "")
 {
     <p>@message <NavLink href="/Profile">here</NavLink>.</p>
 }
 
 <h3>Live Games</h3>
 
+@if (liveGames?.Any() == true)
+{
+    <ul>
+        @foreach (var game in liveGames)
+        {
+            
+            <li>
+                ID: @game.Id 
+                @if (playerDto is not null)
+                {
+                    <button @onclick="()=> gameService.JoinGameAsync(game.Id, playerDto.Id, gameSessionService)">Join Game</button>
+                }
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No live games available.</p>
+}
+
 <h3>Past Games</h3>
+@if(pastGames?.Any() == true)
+{
+    <p>Note: we need a leaderboard component for individual game results -- use that here </p>
+    <ul>
+        @foreach (var game in pastGames)
+        {
+            <li>
+                ID: @game.Id 
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No past games available.</p>
+}
 
 @code {
     Game selectedGame;
-    List<Game> games;
+    List<Game> liveGames;
+    List<Game> pastGames;
     AuthenticationState authState;
     PlayerDto playerDto;
     string message = "";
@@ -41,25 +88,32 @@
                 authId = applicationuser.Id;
 
             }
+            
+                try
+                {
+                    playerDto = await playerService.GetPlayerByAuthIdAsync(authId);
+                    playerId = playerDto.Id;
+                }
+                catch
+                {
+                    message = "You have not registered as a player yet. Before you can play, you must set up a player account ";
+                }
 
 
-            try
-            {
-                playerDto = await playerService.GetPlayerByAuthIdAsync(authId);
-                playerId = playerDto.Id;
-            }
-            catch
-            {
-                message = "You have not registered as a player yet. To set up a player account, click ";
-            }
-
-
-            games = await gameService.GetAllLiveGamesAsync();
-            gameSessionService.OnStateChange += StateHasChanged;
         }
+            await LoadGamesAsync();
+            gameSessionService.OnStateChange += StateHasChanged;
+    }
 
+    private async Task LoadGamesAsync()
+    {
+        liveGames = await gameService.GetAllLiveGamesAsync();
+        pastGames = await gameService.GetAllPastGamesAsync();
+    }
 
-
+    private async Task JoinGameAsync(int gameId)
+    {
+        await gameService.JoinGameAsync(gameId, playerId, gameSessionService);
     }
 
 }

@@ -11,6 +11,8 @@ public interface IGameService
     Task<List<Game>> GetAllGamesAsync();
     Task<List<Game>> GetAllLiveGamesAsync();
     Task<Game> GetGameByIdAsync(int gameId);
+    Task<List<Game>> GetAllPastGamesAsync();
+
 }
 
 
