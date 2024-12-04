@@ -52,6 +52,14 @@
                         <td>@user.Username</td>
                         <td>
                             <button class="btn-link" @onclick="() => EditUser(user)">Edit</button>
+                            @if (user.Isblocked == true)
+                            {
+                                <button class="btn-link" @onclick="() => UnBlockUser(user)">Unban User</button>
+                            }
+                            else
+                            {
+                                <button class="btn-link" @onclick="() => BlockUser(user)">Ban User</button>
+                            }
                         </td>
                     </tr>
                 }
@@ -79,10 +87,6 @@
         {
             <img id="profile-image" src="@(_photoUrl ?? editingUser.AvatarUrl)" alt="Selected Avatar" class="avatar-preview" />
         }
-        <div class="form-check">
-            <InputCheckbox @bind-Value="editingUser.Isblocked" class="form-check-input" id="blockCheck" />
-            <label class="form-check-label" for="blockCheck">Block User</label>
-        </div>
         <button type="submit" class="btn-primary">Save</button>
         <button type="button" class="btn-secondary" @onclick="CancelEdit">Cancel</button>
     </EditForm>
@@ -169,19 +173,23 @@
         }
     }
 
-    private void BlockUser()
+    private async Task BlockUser(PlayerDto user)
     {
-        if (editingUser == null)
+        if (user == null)
             return;
 
-        editingUser.Isblocked = true;
+        user.Isblocked = true;
+        await PlayerService.UpdatePlayerAsync(user);
+        StateHasChanged();
     }
 
-    private void UnBlockUser()
+    private async Task UnBlockUser(PlayerDto user)
     {
-        if (editingUser == null)
+        if (user == null)
             return;
 
-        editingUser.Isblocked = false;
+        user.Isblocked = false;
+        await PlayerService.UpdatePlayerAsync(user);
+        StateHasChanged();
     }
 }
