@@ -64,16 +64,20 @@
     }
 </div>
 
+<div class="editing-container">
+
 @if (editingUser != null)
 {
     <h4>Edit User: @editingUser.Username</h4>
     <EditForm Model="editingUser" OnValidSubmit="SaveUserChanges">
         <InputText @bind-Value="editingUser.Username" placeholder="Username" class="form-control" />
         <InputText @bind-Value="editingUser.PlayerQuote" placeholder="Player Quote" class="form-control" />
+            <br />
+
         <InputFile OnChange="HandlePhotoSelected" accept="image/*" />
         @if (!string.IsNullOrEmpty(editingUser.AvatarUrl) || !string.IsNullOrEmpty(_photoUrl))
         {
-            <img src="@(_photoUrl ?? editingUser.AvatarUrl)" alt="Selected Avatar" class="avatar-preview" />
+            <img id="profile-image" src="@(_photoUrl ?? editingUser.AvatarUrl)" alt="Selected Avatar" class="avatar-preview" />
         }
         <div class="form-check">
             <InputCheckbox @bind-Value="editingUser.Isblocked" class="form-check-input" id="blockCheck" />
@@ -83,6 +87,7 @@
         <button type="button" class="btn-secondary" @onclick="CancelEdit">Cancel</button>
     </EditForm>
 }
+</div>
 
 
 @code {

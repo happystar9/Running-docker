@@ -90,6 +90,9 @@ h3 {
     }
 
 
+#profile-image {
+    width: 40%;
+}
 button {
     border-radius: 0.5em;
 }
