@@ -1,8 +1,19 @@
-﻿body {
+﻿:root {
+    --darkest-purple: #070F2B;
+    --mid-dark-purple: #1B1A55;
+    --mid-light-purple: #535C91;
+    --lightest-purple: #9290C3;
+    --light-blue: #a9dedc;
+}
+
+
+
+
+body {
 }
 
 .modal {
-    display: block; /* Hidden by default */
+    display: block;
     position: fixed;
     z-index: 1;
     left: 0;
@@ -15,7 +26,7 @@
 }
 
 .modal-content {
-    background-color: #fefefe;
+    background-color: var(--mid-light-purple);
     margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
@@ -35,3 +46,93 @@
         text-decoration: none;
         cursor: pointer;
     }
+
+
+
+body {
+}
+
+h3 {
+    color: var(--light-blue)
+}
+
+.leaderboard-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: var(--mid-light-purple);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+    .leaderboard-container h3 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: var(--light-blue);
+    }
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #a19fcf;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+    .leaderboard-table th, .leaderboard-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .leaderboard-table th {
+        background-color: var(--mid-dark-purple);
+        color: white;
+    }
+
+    .leaderboard-table tr:nth-child(even) {
+        background-color: var(--lightest-purple);
+    }
+
+    .leaderboard-table tr:hover {
+        background-color: #adabd9;
+    }
+
+    .leaderboard-table td {
+        color: var(--darkest-purple);
+    }
+
+
+.games-table {
+    /*width: auto;*/
+    width: 250px;
+    border-collapse: collapse;
+}
+
+    .games-table th, .games-table td {
+        padding: 8px;
+        text-align: center;
+    }
+
+    .games-table thead th {
+        background-color: #070F2B;
+    }
+
+    .games-table th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        background-color: #f2f2f2;
+    }
+
+        .games-table th.id-column, .games-table td.id-column {
+            width: 20%;
+        }
+
+        .games-table th.action-column, .games-table td.action-column {
+            width: 80%;
+        }
+
+button {
+    border-radius: 0.5em;
+    background-color: var(--lightest-purple)
+}
