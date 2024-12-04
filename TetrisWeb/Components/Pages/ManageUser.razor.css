@@ -6,6 +6,25 @@
     --light-blue: #a9dedc;
 }
 
+body {
+}
+
+
+table {
+    color: var()
+
+}
+
+
+
+:root {
+    --darkest-purple: #070F2B;
+    --mid-dark-purple: #1B1A55;
+    --mid-light-purple: #535C91;
+    --lightest-purple: #9290C3;
+    --light-blue: #a9dedc;
+}
+
 
 
 body {
@@ -15,7 +34,7 @@ h3 {
     color: var(--light-blue)
 }
 
-.leaderboard-container {
+/*.leaderboard-container {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
@@ -28,9 +47,18 @@ h3 {
         text-align: center;
         margin-bottom: 20px;
         color: var(--light-blue);
-    }
+    }*/
 
-.leaderboard-table {
+.user-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: var(--mid-light-purple);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-table {
     width: 100%;
     border-collapse: collapse;
     background-color: #a19fcf;
@@ -38,25 +66,30 @@ h3 {
     overflow: hidden;
 }
 
-    .leaderboard-table th, .leaderboard-table td {
+    .user-table th, table td {
         padding: 12px 15px;
         text-align: left;
         border-bottom: 1px solid #ddd;
     }
 
-    .leaderboard-table th {
+    .user-table th {
         background-color: var(--mid-dark-purple);
         color: white;
     }
 
-    .leaderboard-table tr:nth-child(even) {
+    .user-table tr:nth-child(even) {
         background-color: var(--lightest-purple);
     }
 
-    .leaderboard-table tr:hover {
+    .user-table tr:hover {
         background-color: #adabd9;
     }
 
-    .leaderboard-table td {
+    .user-table td {
         color: var(--darkest-purple);
     }
+
+
+button {
+    border-radius: 0.5em;
+}
