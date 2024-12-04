@@ -12,6 +12,21 @@
 body {
 }
 
+.main-game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center; 
+    margin-top: 3em;
+}
+
+.live-games-container, .past-games-container {
+    /*width: 100%; 
+    max-width: 800px;
+    margin-bottom: 20px;*/
+}
+
+
 .modal {
     display: block;
     position: fixed;
