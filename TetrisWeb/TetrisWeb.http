@@ -58,4 +58,4 @@ GET {{TetrisWeb_HostAddress}}/api/game/livegames
 GET {{TetrisWeb_HostAddress}}/api/score/leaderboard
 
 ###
-GET {{TetrisWeb_HostAddress}}/api/score/leaderboard/30
+GET {{TetrisWeb_HostAddress}}/api/score/leaderboard/27

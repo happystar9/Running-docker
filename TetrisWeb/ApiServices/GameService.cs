@@ -37,7 +37,7 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
         return game;
     }
 
-
+    
 
     public async Task<GameSessionDto> JoinGameAsync(int gameId, int playerId, GameSessionService gameSession)
     {

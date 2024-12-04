@@ -1,5 +1,6 @@
 ﻿@page "/games"
 @inject GameSessionService gameSessionService;
+@inject IScoreService scoreService;
 @inject IGameService gameService;
 @inject IPlayerService playerService;
 
@@ -29,9 +30,9 @@
     <ul>
         @foreach (var game in liveGames)
         {
-            
+
             <li>
-                ID: @game.Id 
+                ID: @game.Id
                 @if (playerDto is not null)
                 {
                     <button @onclick="()=> gameService.JoinGameAsync(game.Id, playerDto.Id, gameSessionService)">Join Game</button>
@@ -39,6 +40,7 @@
             </li>
         }
     </ul>
+
 }
 else
 {
@@ -46,17 +48,42 @@ else
 }
 
 <h3>Past Games</h3>
-@if(pastGames?.Any() == true)
+@if (pastGames?.Any() == true)
 {
     <p>Note: we need a leaderboard component for individual game results -- use that here </p>
     <ul>
         @foreach (var game in pastGames)
         {
             <li>
-                ID: @game.Id 
+                ID: @game.Id
+                <button @onclick="async () => await ShowLeaderboardAsync(game.Id)">View Results</button>
             </li>
         }
     </ul>
+
+
+    @if (showModal)
+    {
+        <div class="modal">
+            <div class="modal-content">
+                <span class="close" @onclick="CloseModal">&times;</span>
+                <h4>Leaderboard</h4>
+                <ul>
+                    @foreach (var item in selectedLeaderboard)
+                    {
+                        <li>@item.Username: @item.TotalScore</li>
+                    }
+                    
+                    @if(!selectedLeaderboard.Any())
+                    {
+                        <div>
+                            <p>No results for this game.</p>
+                        </div>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
 }
 else
 {
@@ -64,9 +91,11 @@ else
 }
 
 @code {
+    private bool showModal = false;
     Game selectedGame;
     List<Game> liveGames;
     List<Game> pastGames;
+    List<LeaderboardDto> selectedLeaderboard;
     AuthenticationState authState;
     PlayerDto playerDto;
     string message = "";
@@ -88,21 +117,34 @@ else
                 authId = applicationuser.Id;
 
             }
-            
-                try
-                {
-                    playerDto = await playerService.GetPlayerByAuthIdAsync(authId);
-                    playerId = playerDto.Id;
-                }
-                catch
-                {
-                    message = "You have not registered as a player yet. Before you can play, you must set up a player account ";
-                }
+
+            try
+            {
+                playerDto = await playerService.GetPlayerByAuthIdAsync(authId);
+                playerId = playerDto.Id;
+            }
+            catch
+            {
+                message = "You have not registered as a player yet. Before you can play, you must set up a player account ";
+            }
 
 
         }
-            await LoadGamesAsync();
-            gameSessionService.OnStateChange += StateHasChanged;
+        await LoadGamesAsync();
+        gameSessionService.OnStateChange += StateHasChanged;
+    }
+
+    private async Task ShowLeaderboardAsync(int gameId)
+    {
+        selectedLeaderboard = await scoreService.GetScoresForGameAsync(gameId);
+        showModal = true;
+        StateHasChanged();
+    }
+
+    private void CloseModal()
+    {
+        showModal = false;
+        StateHasChanged();
     }
 
     private async Task LoadGamesAsync()

@@ -39,7 +39,7 @@
         {
             @foreach (var game in games)
             {
-                <li class="dropdown-item" @onclick="() => SelectGame(game)">@game.Id
+                <li class="dropdown-item" @onclick="async () => await SelectGameAsync(game)">@game.Id
                 </li>
             }
         }
@@ -49,6 +49,9 @@
         }
     </ul>
 </div>
+<div class="session-container">
+
+</div>
 
 
 
@@ -57,6 +60,7 @@
     Game selectedGame;
     string authId;
     List<Game> games;
+    List<GameSessionDto> currentGameSessions;
     AuthenticationState authState;
     bool isAdmin;
     private bool isInitialized = false;
@@ -88,9 +92,13 @@
 
     }
 
-    private void SelectGame(Game game)
+    private async Task SelectGameAsync(Game game)
     {
         selectedGame = game;
+
+        //load in all of the sessions for the game
+        //we may need to rethink our GameService and how we're managing sessions per game
+
         StateHasChanged();
     }
 
@@ -99,6 +107,7 @@
         games.Add(await gameService.CreateGameAsync(authId));
         StateHasChanged();
     }
+
     public async Task EndGame(Game game)
     {
         if (selectedGame != null)
