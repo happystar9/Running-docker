@@ -16,7 +16,7 @@
 <div class="game-controls">
     <button class="btn-primary" @onclick="@CreateGame">CreateGame</button>
     <button class="btn-danger" @onclick="() => EndGame(selectedGame)">
-        <span>EndGame </span>
+        <span>End Game: </span>
         @if (selectedGame != null)
     {
         <span>@selectedGame.Id</span>
