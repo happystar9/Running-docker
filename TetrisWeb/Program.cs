@@ -26,10 +26,20 @@ builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration["DB_CONN"] ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 
+string apiBaseUrl = builder.Environment.IsDevelopment()
+    ? "http://localhost:5247"
+    : builder.Configuration["ApiBaseUrl"];
+
 builder.Services.AddHttpClient("TetrisApi", client =>
 {
-    client.BaseAddress = new Uri("http://localhost:5247");
+    client.BaseAddress = new Uri(apiBaseUrl);
 });
+
+
+//builder.Services.AddHttpClient("TetrisApi", client =>
+//{
+//    client.BaseAddress = new Uri("http://localhost:5247");
+//});
 
 
 
