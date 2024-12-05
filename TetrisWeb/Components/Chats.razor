@@ -65,44 +65,45 @@
     AuthenticationState authState;
     string newMessageText;
     private ElementReference chatMessagesDiv; 
+    bool isInitialized = false;
+    private Timer timer;
+
+
 
 
     protected override async Task OnInitializedAsync()
     {
         httpClient = HttpClientFactory.CreateClient("TetrisApi");
 
-
-        authState = await AuthStateProvider.GetAuthenticationStateAsync();
-
-        //Console.WriteLine(authState.User.Identity?.IsAuthenticated);
-
-        var user = authState.User;
-        chatService.OnMessage += async () => await LoadMessages();
-
-        //every time the state changes, we need to call LoadMessages
-
-
-
-        // chatService.OnMessage +=  () =>  StateHasChanged();
-
-        if (user.Identity?.IsAuthenticated == true)
+        if (!isInitialized)
         {
-            if (CurrentPlayer is not null)
+            authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (user.Identity?.IsAuthenticated == true)
             {
-                playerId = CurrentPlayer.Id;
-                playerUsername = CurrentPlayer.Username;
+                if (CurrentPlayer is not null)
+                {
+                    playerId = CurrentPlayer.Id;
+                    playerUsername = CurrentPlayer.Username;
+                }
             }
+
+            isInitialized = true;
         }
 
         await LoadMessages();
+
+        // timer to load messages every 5 seconds
+        timer = new Timer(async _ => await LoadMessages(), null, TimeSpan.Zero, TimeSpan.FromSeconds(3));
     }
 
     private async Task LoadMessages()
     {
-        messages = await httpClient.GetFromJsonAsync<List<ChatDto>>("api/chat");
+        messages = await chatService.GetRecentChatsAsync();
         messages = messages.OrderBy(m => m.TimeSent).ToList();
 
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
 
     }
 
@@ -115,7 +116,7 @@
                 Message = newMessageText
             };
 
-        await httpClient.PostAsJsonAsync("api/chat", chatDto);
+        await chatService.PostChatAsync(chatDto);
         newMessageText = "";
         await LoadMessages();
 
@@ -126,7 +127,7 @@
         if (firstRender || messages?.Count > 0)
         {
             await ScrollToBottom();
-            await LoadMessages();
+            // await LoadMessages();
         }
     }
     
@@ -135,4 +136,8 @@
         await JSRuntime.InvokeVoidAsync("scrollToBottom", chatMessagesDiv);
     }
 
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
 }

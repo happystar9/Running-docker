@@ -132,12 +132,12 @@
                     <h2>Level: @level</h2>
                 </div>
             </div>
-            <div class="row">
+           @*  <div class="row">
                 <div class="col">
                     <div class="chat-container">
                         @if (isInitialized)
                         {
-                            <Chat AuthId=authId, CurrentPlayer=playerDto></Chat>
+                            <Chats AuthId=authId, CurrentPlayer=playerDto></Chats>
 
                         }
                         else
@@ -147,7 +147,7 @@
 
                     </div>
                 </div>
-            </div>
+            </div> *@
         </div>
     </div>
 
@@ -210,7 +210,7 @@
 
 
         // games = await gameService.GetAllLiveGamesAsync();
-        // gameSessionService.OnStateChange += StateHasChanged;
+        gameSessionService.OnStateChange += StateHasChanged;
 
         isInitialized = true;
         StateHasChanged();

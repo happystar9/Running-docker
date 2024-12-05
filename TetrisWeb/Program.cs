@@ -19,6 +19,14 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddControllers();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin", policy =>
+        policy.WithOrigins("https://tetrisweb.azurewebsites.net")
+              .AllowAnyMethod()
+              .AllowAnyHeader());
+});
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -26,10 +34,20 @@ builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration["DB_CONN"] ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 
+string apiBaseUrl = builder.Environment.IsDevelopment()
+    ? "http://localhost:5247"
+    : builder.Configuration["ApiBaseUrl"];
+
 builder.Services.AddHttpClient("TetrisApi", client =>
 {
-    client.BaseAddress = new Uri("http://localhost:5247");
+    client.BaseAddress = new Uri(apiBaseUrl);
 });
+
+
+//builder.Services.AddHttpClient("TetrisApi", client =>
+//{
+//    client.BaseAddress = new Uri("http://localhost:5247");
+//});
 
 
 
@@ -103,6 +121,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowSpecificOrigin");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
@@ -116,6 +135,8 @@ app.MapRazorComponents<App>()
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
+
+
 
 app.Run();
 
