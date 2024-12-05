@@ -1,0 +1,118 @@
+﻿@page "/Chat"
+@inherits LayoutComponentBase
+@using TetrisWeb.Components.Models;
+@using TetrisWeb.Components.Pages.Partials;
+@using TetrisWeb.ApiServices;
+@using TetrisWeb.GameData
+@inject IJSRuntime _jsRuntime;
+@inject GameSessionService gameSessionService;
+@inject IGameService gameService;
+@inject AuthenticationStateProvider AuthStateProvider;
+@inject UserManager<ApplicationUser> UserManager;
+@inject IPlayerService playerService;
+@inject IJSRuntime JSRuntime
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js">
+</script>
+<script>
+	window.SetFocusToElement = (element) => {
+		element.focus();
+	};
+	window.preventScroll = (event) => {
+		// Prevent spacebar and arrow keys from scrolling
+		if (event.key === " " || event.key === "ArrowDown" || event.key === "ArrowUp") {
+			event.preventDefault();
+		}
+	};
+</script>
+<div class="row">
+	<div class="col">
+		<div class="chat-container">
+			@if (isInitialized)
+			{
+				<Chats AuthId=authId, CurrentPlayer=playerDto></Chats>
+
+			}
+			else
+			{
+				<p>Loading...</p>
+			}
+
+		</div>
+	</div>
+</div>
+
+
+
+@code {
+	Game selectedGame;
+	List<Game> games;
+	AuthenticationState authState;
+	string authId;
+	int playerId;
+	PlayerDto playerDto;
+	bool isInitialized = false;
+
+	protected ElementReference gameBoardDiv;
+
+	protected override async Task OnInitializedAsync()
+	{
+		authState = await AuthStateProvider.GetAuthenticationStateAsync();
+		var user = authState.User;
+
+		if (user.Identity?.IsAuthenticated == true)
+		{
+			var applicationuser = await UserManager.GetUserAsync(user);
+			if (applicationuser is not null)
+			{
+				authId = applicationuser.Id;
+
+			}
+
+
+			try
+			{
+				playerDto = await playerService.GetPlayerByAuthIdAsync(authId);
+				playerId = playerDto.Id;
+			}
+			catch
+			{
+				throw new Exception("Auth id does not have an associated player account.");
+			}
+
+			
+
+		}
+
+
+		// games = await gameService.GetAllLiveGamesAsync();
+		// gameSessionService.OnStateChange += StateHasChanged;
+
+		isInitialized = true;
+		StateHasChanged();
+
+
+	}
+
+	// protected async override Task OnAfterRenderAsync(bool firstRender)
+	// {
+	// 	if (firstRender)
+	// 	{
+	// 		await _jsRuntime.InvokeVoidAsync("SetFocusToElement", gameBoardDiv);
+	// 	}
+	// }
+
+	public void Dispose()
+	{
+		gameSessionService.OnStateChange -= StateHasChanged;
+	}
+
+	public async ValueTask DisposeAsync()
+	{
+		// Clean up the event listener when the component is disposed
+		await JSRuntime.InvokeVoidAsync("eval", @"
+            document.removeEventListener('keydown', window.preventScroll);
+        ");
+	}
+}
+
