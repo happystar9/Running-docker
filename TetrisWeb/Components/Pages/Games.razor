@@ -154,6 +154,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+
         authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         if (user.Identity?.IsAuthenticated == true)
@@ -175,7 +176,7 @@
                 message = "You have not registered as a player yet. Before you can play, you must set up a player account ";
             }
 
-
+            
         }
         await LoadGamesAsync();
         gameSessionService.OnStateChange += StateHasChanged;

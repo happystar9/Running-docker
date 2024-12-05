@@ -65,35 +65,41 @@
     AuthenticationState authState;
     string newMessageText;
     private ElementReference chatMessagesDiv; 
+    bool isInitialized = false;
+
 
 
     protected override async Task OnInitializedAsync()
     {
         httpClient = HttpClientFactory.CreateClient("TetrisApi");
 
-
-        authState = await AuthStateProvider.GetAuthenticationStateAsync();
-
-        //Console.WriteLine(authState.User.Identity?.IsAuthenticated);
-
-        var user = authState.User;
-        chatService.OnMessage += async () => await LoadMessages();
-
-        //every time the state changes, we need to call LoadMessages
-
-
-
-        // chatService.OnMessage +=  () =>  StateHasChanged();
-
-        if (user.Identity?.IsAuthenticated == true)
+        if (!isInitialized)
         {
-            if (CurrentPlayer is not null)
-            {
-                playerId = CurrentPlayer.Id;
-                playerUsername = CurrentPlayer.Username;
-            }
-        }
 
+            authState = await AuthStateProvider.GetAuthenticationStateAsync();
+
+            //Console.WriteLine(authState.User.Identity?.IsAuthenticated);
+
+            var user = authState.User;
+            chatService.OnMessage += async () => await LoadMessages();
+
+            //every time the state changes, we need to call LoadMessages
+
+
+
+            // chatService.OnMessage +=  () =>  StateHasChanged();
+
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                if (CurrentPlayer is not null)
+                {
+                    playerId = CurrentPlayer.Id;
+                    playerUsername = CurrentPlayer.Username;
+                }
+            }
+
+            isInitialized = true;
+        }
         await LoadMessages();
     }
 
@@ -126,7 +132,7 @@
         if (firstRender || messages?.Count > 0)
         {
             await ScrollToBottom();
-            await LoadMessages();
+            // await LoadMessages();
         }
     }
     
