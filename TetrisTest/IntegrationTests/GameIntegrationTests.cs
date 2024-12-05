@@ -46,7 +46,7 @@ public class GameIntegrationTests : PostgresTestBase
         var postedPlayer = await playerService.GetPlayerByAuthIdAsync("12");
 
         var retrievedGame = await gameService.GetGameByIdAsync(game.Id);
-        var session = await gameService.JoinGameAsync(retrievedGame.Id, postedPlayer.Id);
+        var session = await gameService.JoinGameAsync(retrievedGame.Id, postedPlayer.Id, new GameSessionService());
         await gameService.EndGameAsync(game.Id);
 
         retrievedGame.GameSessions.Count.Should().Be(1);
