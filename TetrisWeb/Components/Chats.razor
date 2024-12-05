@@ -66,6 +66,8 @@
     string newMessageText;
     private ElementReference chatMessagesDiv; 
     bool isInitialized = false;
+    private Timer timer;
+
 
 
 
@@ -75,19 +77,8 @@
 
         if (!isInitialized)
         {
-
             authState = await AuthStateProvider.GetAuthenticationStateAsync();
-
-            //Console.WriteLine(authState.User.Identity?.IsAuthenticated);
-
             var user = authState.User;
-            chatService.OnMessage += async () => await LoadMessages();
-
-            //every time the state changes, we need to call LoadMessages
-
-
-
-            // chatService.OnMessage +=  () =>  StateHasChanged();
 
             if (user.Identity?.IsAuthenticated == true)
             {
@@ -100,7 +91,11 @@
 
             isInitialized = true;
         }
+
         await LoadMessages();
+
+        // timer to load messages every 5 seconds
+        timer = new Timer(async _ => await LoadMessages(), null, TimeSpan.Zero, TimeSpan.FromSeconds(3));
     }
 
     private async Task LoadMessages()
@@ -108,7 +103,7 @@
         messages = await chatService.GetRecentChatsAsync();
         messages = messages.OrderBy(m => m.TimeSent).ToList();
 
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
 
     }
 
@@ -141,4 +136,8 @@
         await JSRuntime.InvokeVoidAsync("scrollToBottom", chatMessagesDiv);
     }
 
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
 }
