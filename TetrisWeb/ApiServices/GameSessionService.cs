@@ -7,7 +7,7 @@ namespace TetrisWeb.ApiServices;
 
 public class GameSessionService : IGameSessionService
 {
-
+    public int gameId;
 
     private TetrominoGenerator generator = new TetrominoGenerator();
     public Tetromino? currentTetromino;
@@ -39,8 +39,8 @@ public class GameSessionService : IGameSessionService
 
     public void NotifyStateChanged() => OnStateChange?.Invoke();
 
-    public event Action<int>? SendGarbage;
-    public void NotifySendGarbage(int lines) => SendGarbage?.Invoke(lines);
+    public event Action<int,int>? SendGarbage;
+    public void NotifySendGarbage(int lines) => SendGarbage?.Invoke(lines, gameId);
 
     public Grid GameStateGrid { get; private set; }
 

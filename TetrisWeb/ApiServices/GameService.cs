@@ -10,7 +10,7 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
 {
     private readonly ConcurrentDictionary<string, GameSessionDto> _gameSessions = new();
     private readonly int maxPlayersPerGame = 99; // Example max limit for players
-    private List<GameSessionService> gameSessionList = new();
+    public ConcurrentDictionary<int, List<GameSessionService>> gameSessions = new();
     Random random = new Random();
 
     public async Task<Game> CreateGameAsync(string createdByAuthId)
@@ -46,8 +46,15 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
         var player = playerService.GetPlayerByIdAsync(playerId).Result;
         if (!player.Isblocked)
         {
-
-            gameSessionList.Add(gameSession);
+            gameSession.gameId = gameId;
+            gameSessions.AddOrUpdate(
+                gameId,
+                new List<GameSessionService> { gameSession },
+                (key, existingSessions) =>
+                {
+                    existingSessions.Add(gameSession);
+                    return existingSessions;
+                });
             gameSession.SendGarbage += HandleSendGarbage;
             var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
             if (game == null)
@@ -79,37 +86,73 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
 
     }
 
+    //public async Task EndGameAsync(int gameId)
+    //{
+    //    var game = await context.Games
+    //        .Include(g => g.GameSessions)
+    //        .FirstOrDefaultAsync(g => g.Id == gameId);
+    //    if (game == null)
+    //    {
+    //        throw new KeyNotFoundException("Game not found.");
+    //    }
+
+    //    //post the game itself and its details to the database
+    //    game.StopTime = DateTime.Now;
+    //    game.PlayerCount = _gameSessions.Count;
+
+    //    //post all of the sessions to the database
+    //    foreach (var session in _gameSessions.Values)
+    //    {
+    //        var gameSession = new GameSession()
+    //        {
+    //            GameId = session.GameId,
+    //            PlayerId = session.PlayerId,
+    //            Score = session.Score
+    //        };
+
+    //        context.GameSessions.Add(gameSession);
+    //    }
+
+    //    await context.SaveChangesAsync();
+
+    //    //do we need to reset this here?
+    //    //_gameSessions = new ConcurrentDictionary<string, GameSessionDto>();
+    //}
+
     public async Task EndGameAsync(int gameId)
     {
-        var game = await context.Games
-            .Include(g => g.GameSessions)
-            .FirstOrDefaultAsync(g => g.Id == gameId);
+        if (!gameSessions.TryRemove(gameId, out var sessions))
+        {
+            throw new KeyNotFoundException("Game not found.");
+        }
+
+        var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
         if (game == null)
         {
             throw new KeyNotFoundException("Game not found.");
         }
 
-        //post the game itself and its details to the database
         game.StopTime = DateTime.Now;
-        game.PlayerCount = _gameSessions.Count;
+        game.PlayerCount = sessions.Count;
 
-        //post all of the sessions to the database
         foreach (var session in _gameSessions.Values)
         {
-            var gameSession = new GameSession()
+            // Save session data to the database
+            var sessionDto = _gameSessions.Values.FirstOrDefault(s => s.GameId == gameId && s.PlayerId == session.PlayerId);
+            if (sessionDto != null)
             {
-                GameId = session.GameId,
-                PlayerId = session.PlayerId,
-                Score = session.Score
-            };
+                var gameSession = new GameSession()
+                {
+                    GameId = sessionDto.GameId,
+                    PlayerId = sessionDto.PlayerId,
+                    Score = sessionDto.Score
+                };
 
-            context.GameSessions.Add(gameSession);
+                context.GameSessions.Add(gameSession);
+            }
         }
 
         await context.SaveChangesAsync();
-
-        //do we need to reset this here?
-        //_gameSessions = new ConcurrentDictionary<string, GameSessionDto>();
     }
 
 
@@ -134,9 +177,9 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
         return await context.Games.FirstOrDefaultAsync(g => g.Id == gameId);
     }
 
-    public void HandleSendGarbage(int lines)
+    public void HandleSendGarbage(int lines, int gameId)
     {
-        Task.Run(async () => await gameSessionList[random.Next(gameSessionList.Count)].AddGarbage(lines));
+        Task.Run(async () => await gameSessions[gameId][random.Next(gameSessions[gameId].Count())].AddGarbage(lines));
     }
 }
 
