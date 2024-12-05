@@ -15,9 +15,9 @@ public class ScoreServiceTests : PostgresTestBase
     public ScoreServiceTests(WebApplicationFactory<Program> webAppFactory, ITestOutputHelper outputHelper)
        : base(webAppFactory, outputHelper) { }
 
-    [Fact]
-    public async Task CanGetPlayerHighScore()
-    {
+    //[Fact]
+    //public async Task CanGetPlayerHighScore()
+    //{
         //var playerService = GetService<IPlayerService>();
         //var gameSessionService = GetService<GameSessionService>();
         //var gameService = GetService<IGameService>();
@@ -60,6 +60,6 @@ public class ScoreServiceTests : PostgresTestBase
 
         
 
-    }
+    //}
 
 }
