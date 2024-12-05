@@ -99,7 +99,7 @@
 
     private async Task LoadMessages()
     {
-        messages = await httpClient.GetFromJsonAsync<List<ChatDto>>("api/chat");
+        messages = await chatService.GetRecentChatsAsync();
         messages = messages.OrderBy(m => m.TimeSent).ToList();
 
         StateHasChanged();
