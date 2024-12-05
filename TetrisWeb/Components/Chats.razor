@@ -116,7 +116,7 @@
                 Message = newMessageText
             };
 
-        await httpClient.PostAsJsonAsync("api/chat", chatDto);
+        await chatService.PostChatAsync(chatDto);
         newMessageText = "";
         await LoadMessages();
 
