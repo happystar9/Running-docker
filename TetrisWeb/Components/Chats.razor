@@ -49,6 +49,7 @@
             <p class="help-message">You must be logged in to send messages.</p>
         }
     </div>
+    <div>@errorMessage</div>
 </div>
 
 @code {
@@ -67,7 +68,7 @@
     private ElementReference chatMessagesDiv; 
     bool isInitialized = false;
     private Timer timer;
-
+    string errorMessage ="";
 
 
 
@@ -110,16 +111,23 @@
 
     private async Task SendMessage()
     {
-        ChatDto chatDto = new ChatDto()
-            {
-                PlayerId = playerId,
-                Message = newMessageText
-            };
+        if (newMessageText.Count() < 140)
+        {
+            ChatDto chatDto = new ChatDto()
+                {
+                    PlayerId = playerId,
+                    Message = newMessageText
+                };
 
-        await chatService.PostChatAsync(chatDto);
-        newMessageText = "";
+            await chatService.PostChatAsync(chatDto);
+            newMessageText = "";
+            errorMessage = "";
+        }
+        else
+        {
+            errorMessage = "Message cannot exceed 140 characters";
+        }
         await LoadMessages();
-
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
