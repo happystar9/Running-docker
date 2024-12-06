@@ -10,5 +10,6 @@ public interface IPlayerService
     Task<PlayerDto> CreatePlayerAsync(PlayerDto player);
     Task<PlayerDto> UpdatePlayerAsync(PlayerDto player);
     Task<int> GetPlayerTotalScore(string authId);
-
+    void SetCurrentGameId(string authId, int gameId);
+    int GetCurrentGameId(string authId);
 }

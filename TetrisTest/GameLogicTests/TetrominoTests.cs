@@ -1,5 +1,6 @@
 using FluentAssertions;
 using TetrisWeb.ApiServices;
+using TetrisWeb.Components;
 using TetrisWeb.Components.Models;
 using TetrisWeb.DTOs;
 namespace TetrisTest.GameLogicTests;
@@ -36,12 +37,12 @@ public class TetrominoTests
     [Fact]
     public async Task ClearCompleteRowsShouldUpdateScore()
     {
-        var service = new GameSessionService();
-        for (int i = 1; i <= 10; i++) { service.GameStateGrid.Cells.Add(1, i); }
+        GameLoop gameLoop = new GameLoop();
+        for (int i = 1; i <= 10; i++) { gameLoop.GameStateGrid.Cells.Add(1, i); }
 
-        await service.ClearCompleteRows();
+        await gameLoop.ClearCompleteRows();
 
-        service.Score.Should().Be(40);
+        gameLoop.Score.Should().Be(40);
 
     }
 

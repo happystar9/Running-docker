@@ -5,9 +5,9 @@ namespace TetrisWeb.ApiServices.Interfaces;
 
 public interface IGameSessionService
 {
-    Task CreateGameSession(int playerId, int gameId);
-    Task DeleteAllInGame(int gameId);
-    Task DeleteGameSession(int playerId, int gameId);
+    void CreateGameSession(int playerId, int gameId);
+    void DeleteAllInGame(int gameId);
+    void DeleteGameSession(int playerId, int gameId);
     Task<GameLoop?> GetGameSession(int playerId, int gameId);
 
 }

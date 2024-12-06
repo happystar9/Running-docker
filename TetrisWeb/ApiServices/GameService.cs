@@ -11,8 +11,7 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
 {
     public ConcurrentDictionary<string, GameSessionDto> _gameSessions = new();
     private readonly int maxPlayersPerGame = 99; // Example max limit for players
-    private GameSessionService _gameSessionService;
-    Random random = new Random();
+    private GameSessionService _gameSessionService = new GameSessionService();
 
     public async Task<Game> CreateGameAsync(string createdByAuthId)
     {
@@ -46,7 +45,7 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
         if (!player.Isblocked)
         {
             
-            gameLoop.SendGarbage += HandleSendGarbage;
+            
             var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
             if (game == null)
             {
@@ -165,10 +164,7 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
         return await context.Games.FirstOrDefaultAsync(g => g.Id == gameId);
     }
 
-    public void HandleSendGarbage(int lines, int gameId)
-    {
-        Task.Run(async () => await gameSessions[gameId][random.Next(gameSessions[gameId].Count())].AddGarbage(lines));
-    }
+
 }
 
 

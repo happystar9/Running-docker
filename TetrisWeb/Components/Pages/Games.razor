@@ -46,7 +46,7 @@
                             <td>
                                 @if (playerDto is not null)
                                 {
-                                    <button @onclick="()=> gameService.JoinGameAsync(game.Id, playerDto.Id, gameSessionService)">Join Game</button>
+                                    <button @onclick="()=> JoinGameAsync(game.Id, playerDto.Id, gameLoop)">Join Game</button>
                                 }
                             </td>
                         </tr>
@@ -139,6 +139,7 @@
 
 @code {
     private bool showModal = false;
+    GameLoop gameLoop;
     Game selectedGame;
     List<Game> liveGames;
     List<Game> pastGames;
@@ -176,10 +177,9 @@
                 message = "You have not registered as a player yet. Before you can play, you must set up a player account ";
             }
 
-            
+
         }
         await LoadGamesAsync();
-        gameSessionService.OnStateChange += StateHasChanged;
     }
 
     private async Task ShowLeaderboardAsync(int gameId)
@@ -201,9 +201,13 @@
         pastGames = await gameService.GetAllPastGamesAsync();
     }
 
-    private async Task JoinGameAsync(int gameId)
+    private async Task JoinGameAsync(int gameId, int playerId, GameLoop gameLoop)
     {
-        await gameService.JoinGameAsync(gameId, playerId, gameSessionService);
+        playerService.SetCurrentGameId(authId, gameId);
+        gameSessionService.CreateGameSession(playerId, gameId);
+        gameLoop = await gameSessionService.GetGameSession(playerId, gameId);
+        gameLoop.OnStateChange += StateHasChanged;
+        await gameService.JoinGameAsync(gameId, playerId, gameLoop);
     }
 
 }

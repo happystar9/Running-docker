@@ -60,7 +60,7 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-builder.Services.AddSingleton<IGameService, GameService>();
+builder.Services.AddTransient<IGameService, GameService>();
 builder.Services.AddSingleton<GameSessionService>();
 builder.Services.AddTransient<GameSessionDto>();
 builder.Services.AddScoped<IScoreService, ScoreService>();
