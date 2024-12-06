@@ -202,10 +202,6 @@
                 throw new Exception("Auth id does not have an associated player account.");
             }
 
-            await JSRuntime.InvokeVoidAsync("eval", @"
-            document.addEventListener('keydown', window.preventScroll);
-        ");
-
         }
 
 

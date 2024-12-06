@@ -1,4 +1,3 @@
-
 @using TetrisWeb.DTOs
 @inject IChatService chatService
 @inject AuthenticationStateProvider AuthStateProvider
@@ -69,7 +68,7 @@
     bool isInitialized = false;
     private Timer timer;
     string errorMessage ="";
-
+    bool IsBlocked;
 
 
     protected override async Task OnInitializedAsync()
@@ -111,23 +110,32 @@
 
     private async Task SendMessage()
     {
-        if (newMessageText.Count() < 140)
+        if(CurrentPlayer.Isblocked == false)
         {
-            ChatDto chatDto = new ChatDto()
+
+            if (newMessageText.Count() < 140)
+            {
+                ChatDto chatDto = new ChatDto()
                 {
                     PlayerId = playerId,
                     Message = newMessageText
                 };
 
-            await chatService.PostChatAsync(chatDto);
-            newMessageText = "";
-            errorMessage = "";
+                await chatService.PostChatAsync(chatDto);
+                newMessageText = "";
+                errorMessage = "";
+            }
+            else
+            {
+                errorMessage = "Message cannot exceed 140 characters";
+            }
         }
         else
         {
-            errorMessage = "Message cannot exceed 140 characters";
+            errorMessage = "Cannot send messages when blocked";    
+            // await LoadMessages();
         }
-        await LoadMessages();
+        
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
