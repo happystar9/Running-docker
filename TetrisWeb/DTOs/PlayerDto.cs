@@ -18,4 +18,6 @@ public class PlayerDto
     public string? AvatarUrl { get; set; }
 
     public bool Isblocked { get; set; }
+
+    public int CurrentGameId { get; set; }
 }

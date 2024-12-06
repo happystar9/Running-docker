@@ -3,14 +3,15 @@ using TetrisWeb.GameData;
 using Microsoft.EntityFrameworkCore;
 using TetrisWeb.DTOs;
 using TetrisWeb.ApiServices.Interfaces;
+using TetrisWeb.Components;
 
 namespace TetrisWeb.ApiServices;
 
 public class GameService(Dbf25TeamArzContext context, IPlayerService playerService, IApiKeyManagementService ApiKeyService) : IGameService
 {
-    private readonly ConcurrentDictionary<string, GameSessionDto> _gameSessions = new();
+    public ConcurrentDictionary<string, GameSessionDto> _gameSessions = new();
     private readonly int maxPlayersPerGame = 99; // Example max limit for players
-    public ConcurrentDictionary<int, List<GameSessionService>> gameSessions = new();
+    private GameSessionService _gameSessionService;
     Random random = new Random();
 
     public async Task<Game> CreateGameAsync(string createdByAuthId)
@@ -37,25 +38,15 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
         return game;
     }
 
-    
-
-    public async Task<GameSessionDto> JoinGameAsync(int gameId, int playerId, GameSessionService gameSession)
+    public async Task<GameSessionDto> JoinGameAsync(int gameId, int playerId, GameLoop gameLoop)
     {
 
         //verify that the player is not blocked before letting them join
         var player = playerService.GetPlayerByIdAsync(playerId).Result;
         if (!player.Isblocked)
         {
-            gameSession.gameId = gameId;
-            gameSessions.AddOrUpdate(
-                gameId,
-                new List<GameSessionService> { gameSession },
-                (key, existingSessions) =>
-                {
-                    existingSessions.Add(gameSession);
-                    return existingSessions;
-                });
-            gameSession.SendGarbage += HandleSendGarbage;
+            
+            gameLoop.SendGarbage += HandleSendGarbage;
             var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
             if (game == null)
             {
@@ -121,10 +112,7 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
 
     public async Task EndGameAsync(int gameId)
     {
-        if (!gameSessions.TryRemove(gameId, out var sessions))
-        {
-            throw new KeyNotFoundException("Game not found.");
-        }
+        _gameSessionService.DeleteAllInGame(gameId);
 
         var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
         if (game == null)
@@ -133,7 +121,7 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
         }
 
         game.StopTime = DateTime.Now;
-        game.PlayerCount = sessions.Count;
+        game.PlayerCount = _gameSessions.Values.Where(game => game.GameId == gameId).Count();
 
         foreach (var session in _gameSessions.Values)
         {
