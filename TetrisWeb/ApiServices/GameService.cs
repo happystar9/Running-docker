@@ -41,7 +41,8 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
     {
 
         //verify that the player is not blocked before letting them join
-        var player = playerService.GetPlayerByIdAsync(playerId).Result;
+        var player = await playerService.GetPlayerByIdAsync(playerId);
+        //var playerDto = playerResult.Result;
         if (!player.Isblocked)
         {
             

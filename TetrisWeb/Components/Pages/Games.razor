@@ -46,7 +46,7 @@
                             <td>
                                 @if (playerDto is not null)
                                 {
-                                    <button href="/tetris/{game.Id}" @onclick="()=> JoinGameAsync(game.Id, playerDto.Id, gameLoop)">Join Game</button>
+                                    <button href="/tetris/{game.Id}" @onclick="async ()=>await  JoinGameAsync(game.Id, playerDto.Id, gameLoop)">Join Game</button>
                                 }
                             </td>
                         </tr>
@@ -150,6 +150,7 @@
     bool hasPlayerAccount = false;
 
 
+
     string authId;
     int playerId;
 
@@ -205,8 +206,8 @@
     {
         gameSessionService.CreateGameSession(playerId, gameId);
         gameLoop = await gameSessionService.GetGameSession(playerId, gameId);
-        gameLoop.OnStateChange += StateHasChanged;
         await gameService.JoinGameAsync(gameId, playerId, gameLoop);
+        // gameLoop.OnStateChange += StateHasChanged;
         navManager.NavigateTo($"/tetris/{gameId}", true);
     }
 }
