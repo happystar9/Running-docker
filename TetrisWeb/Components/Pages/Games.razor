@@ -203,11 +203,9 @@
 
     private async Task JoinGameAsync(int gameId, int playerId, GameLoop gameLoop)
     {
-        playerService.SetCurrentGameId(authId, gameId);
         gameSessionService.CreateGameSession(playerId, gameId);
         gameLoop = await gameSessionService.GetGameSession(playerId, gameId);
         gameLoop.OnStateChange += StateHasChanged;
         await gameService.JoinGameAsync(gameId, playerId, gameLoop);
     }
-
 }

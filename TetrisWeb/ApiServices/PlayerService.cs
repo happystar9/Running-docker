@@ -9,17 +9,6 @@ namespace TetrisWeb.ApiServices;
 
 public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
 {
-    private readonly ConcurrentDictionary<string, int> currentGameMap = new();
-
-    public void SetCurrentGameId(string authId, int gameId)
-    {
-        currentGameMap[authId] = gameId;
-    }
-
-    public int GetCurrentGameId(string authId)
-    {
-        return currentGameMap.TryGetValue(authId, out var gameId) ? gameId : 0;
-    }
     public async Task<PlayerDto> CreatePlayerAsync(PlayerDto player)
     {
         var playerObject = new Player
