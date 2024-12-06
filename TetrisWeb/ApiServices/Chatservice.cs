@@ -70,5 +70,31 @@ namespace TetrisWeb.ApiServices
             return result;
         }
 
+        public async Task<IResult> DeleteChatAsync(int chatId)
+        {
+            try
+            {
+                // Find the chat to delete
+                var chatToDelete = await dbcontext.Chats.FirstOrDefaultAsync(c => c.Id == chatId);
+                if (chatToDelete == null)
+                {
+                    return Results.NotFound("Chat not found.");
+                }
+
+                // Remove the chat from the database
+                dbcontext.Chats.Remove(chatToDelete);
+                await dbcontext.SaveChangesAsync();
+
+                // Notify listeners of the deletion
+                OnMessage?.Invoke();
+
+                return Results.Ok("Chat deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                // Handle any errors
+                return Results.Problem($"An error occurred: {ex.Message}");
+            }
+        }
     }
 }

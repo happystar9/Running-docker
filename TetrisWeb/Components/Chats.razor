@@ -26,6 +26,10 @@
                     <div class="chat-username">@message.PlayerUsername</div>
                     <div class="chat-time">@message.TimeSent</div>
                     <div class="chat-text">@message.Message</div>
+                    @if (isAdmin)
+                    {
+                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteMessage(message.Id)">Delete</button>
+                    }
                 </div>
             }
         }
@@ -69,6 +73,7 @@
     private Timer timer;
     string errorMessage ="";
     bool IsBlocked;
+    bool isAdmin = false;   
 
 
     protected override async Task OnInitializedAsync()
@@ -86,6 +91,8 @@
                 {
                     playerId = CurrentPlayer.Id;
                     playerUsername = CurrentPlayer.Username;
+
+                    isAdmin = user.IsInRole("Admin");
                 }
             }
 
@@ -156,4 +163,12 @@
     {
         timer?.Dispose();
     }
+
+    private async Task DeleteMessage(int chatId)
+    {
+        var result = await chatService.DeleteChatAsync(chatId);
+        // Refresh the messages after successful deletion
+        await LoadMessages();
+    }
+}
 }
