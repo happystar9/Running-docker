@@ -3,9 +3,9 @@
 @inject IScoreService scoreService;
 @inject IGameService gameService;
 @inject IPlayerService playerService;
-
 @inject AuthenticationStateProvider AuthStateProvider;
 @inject UserManager<ApplicationUser> UserManager;
+@inject NavigationManager navManager;
 
 
 <h2>Games</h2>
@@ -46,7 +46,7 @@
                             <td>
                                 @if (playerDto is not null)
                                 {
-                                    <button @onclick="()=> JoinGameAsync(game.Id, playerDto.Id, gameLoop)">Join Game</button>
+                                    <button href="/tetris/{game.Id}" @onclick="()=> JoinGameAsync(game.Id, playerDto.Id, gameLoop)">Join Game</button>
                                 }
                             </td>
                         </tr>
@@ -207,5 +207,6 @@
         gameLoop = await gameSessionService.GetGameSession(playerId, gameId);
         gameLoop.OnStateChange += StateHasChanged;
         await gameService.JoinGameAsync(gameId, playerId, gameLoop);
+        navManager.NavigateTo($"/tetris/{gameId}", true);
     }
 }

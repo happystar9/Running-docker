@@ -88,8 +88,6 @@ public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
             throw new KeyNotFoundException("Player details not found.");
         }
 
-        int currentGameId = currentGameMap.TryGetValue(authId, out var gameId) ? gameId : 0;
-
         return new PlayerDto
         {
             Username = player.Username,

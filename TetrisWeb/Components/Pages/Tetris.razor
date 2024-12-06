@@ -1,4 +1,6 @@
-﻿@page "/tetris"
+﻿@page "/tetris/{gameId:int}"
+@page "/tetris"
+
 @inherits LayoutComponentBase
 @using TetrisWeb.Components.Models;
 @using TetrisWeb.Components.Pages.Partials;
@@ -165,13 +167,15 @@
 </div>
 
 @code {
+    [Parameter]
+    public int gameId { get; set; }
+
     GameLoop gameLoop;
     Game selectedGame;
     List<Game> games;
     AuthenticationState authState;
     string authId;
     int playerId;
-    int gameId;
     PlayerDto playerDto;
     bool isInitialized = false;
 
@@ -208,7 +212,6 @@
             {
                 playerDto = await playerService.GetPlayerByAuthIdAsync(authId);
                 playerId = playerDto.Id;
-                gameId = 39;
             }
             catch
             {
