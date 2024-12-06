@@ -35,7 +35,13 @@ namespace TetrisWeb.Components
 
         public event Action? OnStateChange;
 
-        public void NotifyStateChanged() => OnStateChange?.Invoke();
+        public async Task NotifyStateChanged()
+        {
+            if (OnStateChange != null)
+            {
+                OnStateChange();
+            }
+        }
 
         public event Action<int, int>? SendGarbage;
         public void NotifySendGarbage(int lines) => SendGarbage?.Invoke(lines, gameId);

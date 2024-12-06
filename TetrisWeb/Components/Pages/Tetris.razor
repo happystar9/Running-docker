@@ -222,7 +222,7 @@
 
         }
 
-        gameLoop.OnStateChange += StateHasChanged;
+        gameLoop.OnStateChange += await InvokeAsync(StateHasChanged);
 
         isInitialized = true;
         StateHasChanged();
@@ -278,7 +278,7 @@
     {
         await gameLoop.ClearCompleteRows();
         StateHasChanged();
-    }s
+    }
 
     protected async Task KeyDown(KeyboardEventArgs e)
     {
