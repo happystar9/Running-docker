@@ -13,7 +13,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{76E3447F-5A63-44F9-BC99-F246F836D867}"
 	ProjectSection(SolutionItems) = preProject
 		schema.sql = schema.sql
-		testingsomething.txt = testingsomething.txt
 	EndProjectSection
 EndProject
 Global
