@@ -1,6 +1,7 @@
 using FluentAssertions;
 using TetrisWeb.ApiServices;
 using TetrisWeb.Components.Models;
+using TetrisWeb.Components.Models.Tetrominos;
 using TetrisWeb.DTOs;
 namespace TetrisTest.GameLogicTests;
 
@@ -100,7 +101,22 @@ public class TetrominoTests
         CellList coveredCells = new();
         var tetromino = new TestTetromino(grid, coveredCells);
         tetromino.Drop();
-        Te
+        tetromino.CenterPieceRow.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task ThereShouldBeGarbage()
+    {
+        GameSessionService gameSessionService = new GameSessionService();
+        var grid = new Grid();
+        CellList coveredCells = new();
+        gameSessionService.garbageLines += 1;
+        await gameSessionService.DropGarbageAny();
+        var tetromino = new LShaped(grid);
+
+        tetromino.Drop();
+
+        tetromino.CenterPieceRow.Should().Be(1);
     }
 }
 
