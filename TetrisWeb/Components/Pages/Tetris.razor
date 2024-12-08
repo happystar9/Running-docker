@@ -48,7 +48,7 @@
         </div>
     </div>
 
-    @* <button @onclick=" () => gameLoop.AddGarbage(1)">Add Garbage</button> *@
+    <button @onclick=" () => StateHasChanged()">update</button>
 
     <div class="row">
         <div class="col">
@@ -222,7 +222,7 @@
 
         }
 
-        gameLoop.OnStateChange += await InvokeAsync(StateHasChanged);
+        gameLoop.OnStateChange += StateHasChanged;
 
         isInitialized = true;
         StateHasChanged();
