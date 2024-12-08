@@ -47,17 +47,14 @@ public class GameIntegrationTests : PostgresTestBase
         var postedPlayer = await playerService.GetPlayerByAuthIdAsync("12");
        
         //TO-DO: refactor this to fit the new implementation
+        var retrievedGame = await gameService.GetGameByIdAsync(game.Id);
+        var session = await gameService.JoinGameAsync(retrievedGame.Id, postedPlayer.Id, new GameLoop());
+        await gameService.EndGameAsync(game.Id);
 
-        //var retrievedGame = await gameService.GetGameByIdAsync(game.Id);
-        //var session = await gameService.JoinGameAsync(retrievedGame.Id, postedPlayer.Id, new GameLoop());
-        //await gameService.EndGameAsync(game.Id);
+        retrievedGame.GameSessions.Count.Should().Be(1);
+        retrievedGame.GameSessions.Should().NotBeNullOrEmpty();
+        retrievedGame.GameSessions.Count.Should().Be(1);
 
-        //retrievedGame.GameSessions.Count.Should().Be(1);
-        //retrievedGame.GameSessions.Should().NotBeNullOrEmpty();
-        //retrievedGame.GameSessions.Count.Should().Be(1);
-
-        //var totalScore = await playerService.GetPlayerTotalScore(postedPlayer.Authid);
-        //totalScore.Should().Be(10);
     }
 
 }

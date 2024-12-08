@@ -106,13 +106,14 @@ public class TetrominoTests
     }
 
     //[Fact]
-    //public async Task ThereShouldBeGarbage()
+    //public void ThereShouldBeGarbage()
     //{
     //    GameSessionService gameSessionService = new GameSessionService();
     //    var grid = new Grid();
     //    CellList coveredCells = new();
 
     //    throw new NotImplementedException("Need to fix this to work with our new implementation!");
+
     //    //gameSessionService.garbageLines += 1;
     //    //await gameSessionService.DropGarbageAny();
     //    var tetromino = new LShaped(grid);
