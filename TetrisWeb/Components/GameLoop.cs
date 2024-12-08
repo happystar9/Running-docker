@@ -33,13 +33,13 @@ namespace TetrisWeb.Components
         }
 
 
-        public event Action? OnStateChange;
+        public event Func<Task> OnStateChange;
 
         public async Task NotifyStateChanged()
         {
             if (OnStateChange != null)
             {
-                OnStateChange();
+                await OnStateChange.Invoke();
             }
         }
 

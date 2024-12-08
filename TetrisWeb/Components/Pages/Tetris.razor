@@ -48,8 +48,6 @@
         </div>
     </div>
 
-    <button @onclick=" () => StateHasChanged()">update</button>
-
     <div class="row">
         <div class="col">
             <div class="tetris-container" tabindex="0" @onkeydown="KeyDown" @ref="gameBoardDiv">
@@ -222,7 +220,7 @@
 
         }
 
-        gameLoop.OnStateChange += StateHasChanged;
+        gameLoop.OnStateChange += async () => await InvokeAsync(StateHasChanged);
 
         isInitialized = true;
         StateHasChanged();
@@ -310,7 +308,7 @@
     }
     public void Dispose()
     {
-        gameLoop.OnStateChange -= StateHasChanged;
+        gameLoop.OnStateChange -= async () => await InvokeAsync(StateHasChanged);
     }
 
     public async ValueTask DisposeAsync()

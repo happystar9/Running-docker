@@ -105,7 +105,7 @@
 
 	public void Dispose()
 	{
-		gameLoop.OnStateChange -= StateHasChanged;
+		gameLoop.OnStateChange -= async () => await InvokeAsync(StateHasChanged);
 	}
 
 	public async ValueTask DisposeAsync()
