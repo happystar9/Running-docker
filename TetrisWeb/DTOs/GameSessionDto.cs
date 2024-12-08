@@ -13,6 +13,7 @@ public class GameSessionDto
 
     public int Score { get; set; }
     public GameState? GameState { get; set; }
-
+    public TetrominoStyle NextTetromino { get; set; }
+    public TetrominoStyle SecondNextTetromino { get; set; }
 }
 

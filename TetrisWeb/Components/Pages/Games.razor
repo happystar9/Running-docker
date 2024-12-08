@@ -11,17 +11,17 @@
 
 <h2>Games</h2>
 <p>
-	Below are all of the current and previous games.
-	To join a game, ensure you are logged in and registered as a player,
-	then click "Join Game"" next to one of the live game IDs.
+    Below are all of the current and previous games.
+    To join a game, ensure you are logged in and registered as a player,
+    then click "Join Game"" next to one of the live game IDs.
 </p>
 <p>
-	To view the results for previous games, click on "View Results"
-	next to the past game's ID.
+    To view the results for previous games, click on "View Results"
+    next to the past game's ID.
 </p>
 @if (message != "")
 {
-	<p>@message <NavLink href="/Profile">here</NavLink>.</p>
+    <p>@message <NavLink href="/Profile">here</NavLink>.</p>
 }
 
 <div class="main-game-container">
@@ -48,6 +48,8 @@
                                 @if (playerDto is not null)
                                 {
                                     <button href="/tetris/{game.Id}" @onclick="async ()=>await  JoinGameAsync(game.Id, playerDto.Id, gameLoop)">Join Game</button>
+                                    <br />
+                                    <button @onclick="()=> SpectateGame(game.Id)">Spectate Game</button>
                                 }
                             </td>
                         </tr>
@@ -136,7 +138,7 @@
             <p>No past games available.</p>
         }
     </div>
-</div>
+</div>  
 
 @code {
     private bool showModal = false;
@@ -210,5 +212,10 @@
         await gameService.JoinGameAsync(gameId, playerId, gameLoop);
         // gameLoop.OnStateChange += StateHasChanged;
         navManager.NavigateTo($"/tetris/{gameId}", true);
+    }
+
+    private void SpectateGame(int gameId)
+    {
+        navManager.NavigateTo($"/spectator?gameId={gameId}");
     }
 }
