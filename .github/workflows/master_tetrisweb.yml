@@ -54,6 +54,17 @@ jobs:
           echo "Schema file path: $schemaFilePath"
           # Initialize the DB using the schema file
           PGPASSWORD=Strong_password_123! psql -h localhost -U postgres -p 1645 -d postgres -a -f $schemaFilePath
+          
+      - name: List running Docker containers
+        run: docker ps -a
+
+      - name: Show PostgreSQL logs
+        run: docker logs $(docker ps -q --filter ancestor=postgres:13)
+
+      - name: Test database connection
+        run: |
+          PGPASSWORD=Strong_password_123! pg_isready -h localhost -p 1645 -U postgres
+          PGPASSWORD=Strong_password_123! psql -h localhost -p 1645 -U postgres -c "SELECT 1;"
 
       - name: Test with dotnet
         run: dotnet test --configuration Release
