@@ -47,7 +47,7 @@ public class TetrominoTests
     }
 
     [Fact]
-    public void TetrominoShouldMovLeftWhenNotAtEdge()
+    public void TetrominoShouldMoveLeftWhenNotAtEdge()
     {
         var grid = new Grid();
         CellList coveredCells = new();
