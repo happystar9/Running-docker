@@ -1,4 +1,3 @@
-
 @using TetrisWeb.DTOs
 @inject IChatService chatService
 @inject AuthenticationStateProvider AuthStateProvider
@@ -27,6 +26,10 @@
                     <div class="chat-username">@message.PlayerUsername</div>
                     <div class="chat-time">@message.TimeSent</div>
                     <div class="chat-text">@message.Message</div>
+                    @if (isAdmin)
+                    {
+                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteMessage(message.Id)">Delete</button>
+                    }
                 </div>
             }
         }
@@ -49,6 +52,7 @@
             <p class="help-message">You must be logged in to send messages.</p>
         }
     </div>
+    <div>@errorMessage</div>
 </div>
 
 @code {
@@ -67,8 +71,9 @@
     private ElementReference chatMessagesDiv; 
     bool isInitialized = false;
     private Timer timer;
-
-
+    string errorMessage ="";
+    bool IsBlocked;
+    bool isAdmin = false;   
 
 
     protected override async Task OnInitializedAsync()
@@ -86,6 +91,8 @@
                 {
                     playerId = CurrentPlayer.Id;
                     playerUsername = CurrentPlayer.Username;
+
+                    isAdmin = user.IsInRole("Admin");
                 }
             }
 
@@ -110,15 +117,31 @@
 
     private async Task SendMessage()
     {
-        ChatDto chatDto = new ChatDto()
-            {
-                PlayerId = playerId,
-                Message = newMessageText
-            };
+        if(CurrentPlayer.Isblocked == false)
+        {
 
-        await chatService.PostChatAsync(chatDto);
-        newMessageText = "";
-        await LoadMessages();
+            if (newMessageText.Count() < 140)
+            {
+                ChatDto chatDto = new ChatDto()
+                {
+                    PlayerId = playerId,
+                    Message = newMessageText
+                };
+
+                await chatService.PostChatAsync(chatDto);
+                newMessageText = "";
+                errorMessage = "";
+            }
+            else
+            {
+                errorMessage = "Message cannot exceed 140 characters";
+            }
+        }
+        else
+        {
+            errorMessage = "Cannot send messages when blocked";    
+            // await LoadMessages();
+        }
 
     }
 
@@ -130,7 +153,7 @@
             // await LoadMessages();
         }
     }
-    
+
     private async Task ScrollToBottom()
     {
         await JSRuntime.InvokeVoidAsync("scrollToBottom", chatMessagesDiv);
@@ -140,4 +163,12 @@
     {
         timer?.Dispose();
     }
+
+    private async Task DeleteMessage(int chatId)
+    {
+        await chatService.DeleteChatAsync(chatId);
+
+        await LoadMessages();
+    }
+}
 }

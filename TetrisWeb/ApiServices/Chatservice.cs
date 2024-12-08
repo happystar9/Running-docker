@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TetrisWeb.GameData;
+using Microsoft.Extensions.Logging;
 using TetrisWeb.DTOs;
+using TetrisWeb.GameData;
 
 namespace TetrisWeb.ApiServices
 {
@@ -36,6 +37,7 @@ namespace TetrisWeb.ApiServices
                     p => p.Id,
                     (c, p) => new ChatDto
                     {
+                        Id = c.Id,
                         PlayerId = c.PlayerId,
                         PlayerUsername = p.Username,
                         Message = c.Message,
@@ -70,5 +72,16 @@ namespace TetrisWeb.ApiServices
             return result;
         }
 
+        public async Task DeleteChatAsync(int chatId)
+        {
+            var chat = await dbcontext.Chats.FindAsync(chatId);
+            if (chat == null)
+            {
+                throw new Exception($"No chat found with ID {chatId}");
+            }
+
+            dbcontext.Chats.Remove(chat);
+            await dbcontext.SaveChangesAsync();
+        }
     }
 }

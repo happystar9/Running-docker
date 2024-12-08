@@ -2,8 +2,10 @@
 using System.Data;
 using TetrisWeb.ApiServices.Interfaces;
 using TetrisWeb.Components;
+using TetrisWeb.AuthData;
 using TetrisWeb.Components.Models;
 using TetrisWeb.DTOs;
+using TetrisWeb.GameData;
 
 namespace TetrisWeb.ApiServices;
 

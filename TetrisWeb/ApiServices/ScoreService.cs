@@ -8,21 +8,23 @@ namespace TetrisWeb.ApiServices;
 public class ScoreService(Dbf25TeamArzContext dbContext) : IScoreService
 {
     //needs testing
-    public int GetPlayerHighScore(int playerId)
+    public Task<int> GetPlayerHighScore(int playerId)
     {
-        return dbContext.GameSessions
-            .Where(gs => gs.PlayerId == playerId)
-            .Max(gs => (int?)gs.Score) ?? 0;
+        int highScore = dbContext.GameSessions
+        .Where(gs => gs.PlayerId == playerId)
+        .Max(gs => (int?)gs.Score) ?? 0;
+
+        return Task.FromResult(highScore);
     }
 
-    public bool IsHighScore(int playerId, int score)
+    private bool IsHighScore(int playerId, int score)
     {
-        return score > GetPlayerHighScore(playerId);
+        return score > GetPlayerHighScore(playerId).Result;
     }
 
 
     // needs testing
-    public int UpdateHighScore(int playerId, int score)
+    public async Task<int> UpdateHighScore(int playerId, int score)
     {
         Leaderboard entry = new Leaderboard
         {
@@ -33,15 +35,16 @@ public class ScoreService(Dbf25TeamArzContext dbContext) : IScoreService
 
         if (IsHighScore(playerId, score))
         {
-            dbContext.Leaderboards.AddAsync(entry);
-            dbContext.SaveChanges();
+            await dbContext.Leaderboards.AddAsync(entry);
+            await dbContext.SaveChangesAsync();
         }
-        return GetPlayerHighScore(playerId);
+
+        return GetPlayerHighScore(playerId).Result;
     }
 
     public async Task<List<LeaderboardDto>> GetTopLeaderboardItemsAsync()
     {
-        return dbContext.Leaderboards
+        return await dbContext.Leaderboards
             .OrderByDescending(l => l.TotalScore)
             .Select(l => new LeaderboardDto
             {
@@ -51,7 +54,7 @@ public class ScoreService(Dbf25TeamArzContext dbContext) : IScoreService
                 WinCount = l.WinCount
             })
             .Take(15)
-            .ToList();
+            .ToListAsync();
     }
 
     public async Task<List<LeaderboardDto>> GetTopLeaderboardItemsWithUsernamesAsync()

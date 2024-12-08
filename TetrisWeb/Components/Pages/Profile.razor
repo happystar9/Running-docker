@@ -57,6 +57,7 @@
 				<button @onclick="EnableEdit">Edit Profile</button>
 			}
 		</div>
+		<div>@errorMessage</div>
 	}
 </AuthorizeView>
 
@@ -73,7 +74,7 @@
 	AuthenticationState authState = null;
 	private string _photoUrl;
 	private bool isEditing = false;
-
+	string errorMessage = "";
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -151,8 +152,15 @@
 
 	private void EnableEdit()
 	{
-		isEditing = true;
-		_photoUrl = player.AvatarUrl; 
+		if(player.Isblocked == false)
+		{
+			isEditing = true;
+			_photoUrl = player.AvatarUrl; 
+		}
+		else
+		{
+			errorMessage = "Blocked Users cannot edit profile";
+		}
 	}
 
 	private void CancelEdit()

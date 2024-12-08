@@ -46,6 +46,7 @@
         }
         public bool CanMoveDown()
         {
+            if (CenterPieceRow <= 0) return false;
             foreach (var coord in CoveredCells.GetLowest())
             {
                 if (Grid.Cells.Contains(coord.Row - 1, coord.Column))

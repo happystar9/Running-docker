@@ -2,6 +2,7 @@ using FluentAssertions;
 using TetrisWeb.ApiServices;
 using TetrisWeb.Components;
 using TetrisWeb.Components.Models;
+using TetrisWeb.Components.Models.Tetrominos;
 using TetrisWeb.DTOs;
 namespace TetrisTest.GameLogicTests;
 
@@ -47,7 +48,7 @@ public class TetrominoTests
     }
 
     [Fact]
-    public void TetrominoShouldMovLeftWhenNotAtEdge()
+    public void TetrominoShouldMoveLeftWhenNotAtEdge()
     {
         var grid = new Grid();
         CellList coveredCells = new();
@@ -92,6 +93,31 @@ public class TetrominoTests
 
         startingOrientation.Should().Be(Orientation.LeftRight);
         endingOrientation.Should().Be(Orientation.UpDown);
+    }
+
+    [Fact]
+    public void TetrominoShouldDropOnSpacebar()
+    {
+        var grid = new Grid();
+        CellList coveredCells = new();
+        var tetromino = new TestTetromino(grid, coveredCells);
+        tetromino.Drop();
+        tetromino.CenterPieceRow.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task ThereShouldBeGarbage()
+    {
+        GameSessionService gameSessionService = new GameSessionService();
+        var grid = new Grid();
+        CellList coveredCells = new();
+        gameSessionService.garbageLines += 1;
+        await gameSessionService.DropGarbageAny();
+        var tetromino = new LShaped(grid);
+
+        tetromino.Drop();
+
+        tetromino.CenterPieceRow.Should().Be(1);
     }
 }
 
