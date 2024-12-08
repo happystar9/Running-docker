@@ -22,10 +22,10 @@ public abstract class PostgresTestBase : IClassFixture<WebApplicationFactory<Pro
 
         DbContainer ??= new PostgreSqlBuilder()
     .WithImage("postgres:13")
-    .WithPortBinding("1645")
+    .WithPortBinding(1646, 5432)
     .WithPassword("Strong_password_123!")
     .Build();
-        
+
 
         CustomWebAppFactory = webAppFactory.WithWebHostBuilder(builder =>
         {
