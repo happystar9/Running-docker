@@ -142,7 +142,7 @@
             errorMessage = "Cannot send messages when blocked";    
             // await LoadMessages();
         }
-        
+
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -153,7 +153,7 @@
             // await LoadMessages();
         }
     }
-    
+
     private async Task ScrollToBottom()
     {
         await JSRuntime.InvokeVoidAsync("scrollToBottom", chatMessagesDiv);
@@ -166,8 +166,8 @@
 
     private async Task DeleteMessage(int chatId)
     {
-        var result = await chatService.DeleteChatAsync(chatId);
-        // Refresh the messages after successful deletion
+        await chatService.DeleteChatAsync(chatId);
+
         await LoadMessages();
     }
 }

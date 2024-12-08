@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TetrisWeb.ApiServices;
 using TetrisWeb.DTOs;
 
 namespace TetrisWeb.Controllers;
@@ -19,4 +22,12 @@ public class ChatController(IChatService chatService) : ControllerBase
     {
         return Results.Ok(await chatService.GetRecentChatsAsync());
     }
+
+    //[HttpDelete]
+    //public async Task<IActionResult> DeleteChat(int chatId)
+    //{
+    //    var success = await chatService.DeleteChatAsync(chatId);
+        
+    //    return Ok("Chat message deleted.");
+    //}
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using TetrisWeb.DTOs;
 using TetrisWeb.GameData;
 
@@ -36,6 +37,7 @@ namespace TetrisWeb.ApiServices
                     p => p.Id,
                     (c, p) => new ChatDto
                     {
+                        Id = c.Id,
                         PlayerId = c.PlayerId,
                         PlayerUsername = p.Username,
                         Message = c.Message,
@@ -70,31 +72,16 @@ namespace TetrisWeb.ApiServices
             return result;
         }
 
-        public async Task<IResult> DeleteChatAsync(int chatId)
+        public async Task DeleteChatAsync(int chatId)
         {
-            try
+            var chat = await dbcontext.Chats.FindAsync(chatId);
+            if (chat == null)
             {
-                // Find the chat to delete
-                var chatToDelete = await dbcontext.Chats.FirstOrDefaultAsync(c => c.Id == chatId);
-                if (chatToDelete == null)
-                {
-                    return Results.NotFound("Chat not found.");
-                }
-
-                // Remove the chat from the database
-                dbcontext.Chats.Remove(chatToDelete);
-                await dbcontext.SaveChangesAsync();
-
-                // Notify listeners of the deletion
-                OnMessage?.Invoke();
-
-                return Results.Ok("Chat deleted successfully.");
+                throw new Exception($"No chat found with ID {chatId}");
             }
-            catch (Exception ex)
-            {
-                // Handle any errors
-                return Results.Problem($"An error occurred: {ex.Message}");
-            }
+
+            dbcontext.Chats.Remove(chat);
+            await dbcontext.SaveChangesAsync();
         }
     }
 }
