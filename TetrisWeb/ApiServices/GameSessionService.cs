@@ -1,14 +1,14 @@
 ﻿using System.Data;
 using TetrisWeb.ApiServices.Interfaces;
+using TetrisWeb.AuthData;
 using TetrisWeb.Components.Models;
 using TetrisWeb.DTOs;
+using TetrisWeb.GameData;
 
 namespace TetrisWeb.ApiServices;
 
 public class GameSessionService : IGameSessionService
 {
-
-
     private TetrominoGenerator generator = new TetrominoGenerator();
     public Tetromino? currentTetromino;
 

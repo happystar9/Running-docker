@@ -3,6 +3,7 @@
 @inject IScoreService scoreService;
 @inject IGameService gameService;
 @inject IPlayerService playerService;
+@inject NavigationManager NavigationManager
 
 @inject AuthenticationStateProvider AuthStateProvider;
 @inject UserManager<ApplicationUser> UserManager;
@@ -47,6 +48,8 @@
 								@if (playerDto is not null)
 								{
 									<button @onclick="()=> JoinGamesAsync(game.Id)">Join Game</button>
+									<br />
+									<button @onclick="()=> SpectateGame()">Spectate Game</button>
 								}
 							</td>
 						</tr>
@@ -215,4 +218,9 @@
 		}
 	}
 
+	private void SpectateGame()
+	{
+		// Redirect to the spectator page with the gameId as a parameter not implemented with id yet
+		NavigationManager.NavigateTo($"/spectator");
+	}
 }
