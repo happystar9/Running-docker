@@ -1,14 +1,16 @@
-﻿@page "/tetris"
+﻿@page "/tetris/{gameId:int}"
+@page "/tetris"
+
 @inherits LayoutComponentBase
 @using TetrisWeb.Components.Models;
 @using TetrisWeb.Components.Pages.Partials;
 @using TetrisWeb.ApiServices;
 @using TetrisWeb.GameData
 @inject IJSRuntime _jsRuntime;
-@inject GameSessionService gameSessionService;
 @inject IGameService gameService;
 @inject AuthenticationStateProvider AuthStateProvider;
 @inject UserManager<ApplicationUser> UserManager;
+@inject GameSessionService gameSessionService;
 @inject IPlayerService playerService;
 @inject IJSRuntime JSRuntime
 
@@ -16,13 +18,13 @@
 </script>
 <script>
     window.SetFocusToElement = (element) => {
-        element.focus();
+    element.focus();
     };
     window.preventScroll = (event) => {
-        // Prevent spacebar and arrow keys from scrolling
-        if (event.key === " " || event.key === "ArrowDown" || event.key === "ArrowUp") {
-            event.preventDefault();
-        }
+    // Prevent spacebar and arrow keys from scrolling
+    if (event.key === " " || event.key === "ArrowDown" || event.key === "ArrowUp") {
+    event.preventDefault();
+    }
     };
 </script>
 
@@ -32,99 +34,108 @@
 <div class="main-container">
     <div class="row">
         <div class="col">
-            @if (gameSessionService.GameStateGrid.State == GameState.NotStarted)
+            @if (gameLoop != null)
             {
-                <button @onclick="RunGame" class="btn btn-primary">Start!</button>
-            }
-            @if (gameSessionService.GameStateGrid.State == GameState.GameOver)
-            {
-                <button @onclick="NewGame" class="btn btn-primary">New Game!</button>
+                @if (gameLoop.GameStateGrid.State == GameState.NotStarted)
+                {
+                    <button @onclick="RunGame" class="btn btn-primary">Start!</button>
+                }
+                @if (gameLoop.GameStateGrid.State == GameState.GameOver)
+                {
+                    <button @onclick="NewGame" class="btn btn-primary">New Game!</button>
+                }
             }
         </div>
     </div>
 
-    <button @onclick=" () => gameSessionService.AddGarbage(1)">Add Garbage</button>
-
     <div class="row">
         <div class="col">
             <div class="tetris-container" tabindex="0" @onkeydown="KeyDown" @ref="gameBoardDiv">
-                @for (int i = gameSessionService.GameStateGrid.Height; i >= 1; i--)
+                @if (gameLoop != null)
                 {
-                    <div class="tetris-row">
-                        @for (int j = 1; j <= gameSessionService.GameStateGrid.Width; j++)
-                        {
-                            <GridCell Row="i" Column="j" Tetromino="gameSessionService.currentTetromino" Grid="gameSessionService.GameStateGrid" />
-                        }
-                    </div>
+                    @for (int i = gameLoop.GameStateGrid.Height; i >= 1; i--)
+                    {
+                        <div class="tetris-row">
+                            @for (int j = 1; j <= gameLoop.GameStateGrid.Width; j++)
+                            {
+                                <GridCell Row="i" Column="j" Tetromino="gameLoop.currentTetromino" Grid="gameLoop.GameStateGrid" />
+                            }
+                        </div>
+                    }
                 }
             </div>
         </div>
-        <div class="col">
-            @if (gameSessionService.GameStateGrid.State == GameState.GameOver)
-            {
-                <h1>Game Over!</h1>
-                <p>Thanks for playing!</p>
-            }
-            @if (gameSessionService.GameStateGrid.IsStarted)
-            {
-                <div class="row">
-                    <div class="col">
-                        <h2>Upcoming Pieces</h2>
-                    </div>
-                </div>
-                <TetrominoDisplay Style="gameSessionService.nextStyle" />
-                <TetrominoDisplay Style="gameSessionService.secondNextStyle" />
-                <TetrominoDisplay Style="gameSessionService.thirdNextStyle" />
-                <div class="row">
-                    <div class="col">
-                        <h3>Controls</h3>
-                        <span>&#8592;</span> / <span>&#8594;</span> Move Tetromino<br />
-                        <span>&#8593;</span>: Rotate Tetromino<br />
-                        <span>&#8595;</span>: Move Down <br />
-                        <span>Space</span>: Quick Drop Tetromino<br />
-                    </div>
-                </div>
-            }
-        </div>
-        @if (selectedGame == null){
-            <button>Join Game</button>
-        }
-        else
+        @if (gameLoop != null)
         {
-            <button @onclick="()=> gameService.JoinGameAsync(selectedGame.Id, playerId, gameSessionService)">Join Game</button>
+            <div class="col">
+
+                @if (gameLoop.GameStateGrid.State == GameState.GameOver)
+                {
+                    <h1>Game Over!</h1>
+                    <p>Thanks for playing!</p>
+                }
+                @if (gameLoop.GameStateGrid.IsStarted)
+                {
+                    <div class="row">
+                        <div class="col">
+                            <h2>Upcoming Pieces</h2>
+                        </div>
+                    </div>                <TetrominoDisplay Style="gameLoop.nextStyle" />                <TetrominoDisplay Style="gameLoop.secondNextStyle" />
+                    <TetrominoDisplay Style="gameLoop.thirdNextStyle" />
+                    <div class="row">
+                        <div class="col">
+                            <h3>Controls</h3>
+                            <span>&#8592;</span> / <span>&#8594;</span> Move Tetromino<br />
+                            <span>&#8593;</span>: Rotate Tetromino<br />
+                            <span>&#8595;</span>: Move Down <br />
+                            <span>Space</span>: Quick Drop Tetromino<br />
+                        </div>
+                    </div>
+                }
+            </div>
         }
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                @if (selectedGame is not null)
-                {
-                    @selectedGame?.Id
-                }
-                else
-                {
-                    <a>Select Game</a>
-                }
-            </button>
-            <ul class="dropdown-menu">
-                @if (games is not null)
-                {
-                    @foreach (var game in games)
-                    {
-                        <li class="dropdown-item" @onclick="() => SelectGame(game)">
-                            @game.Id
-                        </li>
-                    }
-                }
-                else
-                {
-                    <li class="dropdown-item">No games available</li>
-                }
-            </ul>
-        </div>
+
+        @* @if (selectedGame == null){ *@
+        @* <button>Join Game</button> *@
+        @* else *@
+        @* { *@
+        @*     <button @onclick="()=> gameService.JoinGameAsync(selectedGame.Id, playerId, gameLoop)">Join Game</button> *@
+        @* } *@
+        @* <div class="dropdown"> *@
+        @*     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"> *@
+        @*         @if (selectedGame is not null) *@
+        @*         { *@
+        @*             @selectedGame?.Id *@
+        @*         } *@
+        @*         else *@
+        @*         { *@
+        @*             <a>Select Game</a> *@
+        @*         } *@
+        @*     </button> *@
+        @*     <ul class="dropdown-menu"> *@
+        @*         @if (games is not null) *@
+        @*         { *@
+        @*             @foreach (var game in games) *@
+        @*             { *@
+        @*                 <li class="dropdown-item" @onclick="() => SelectGame(game)"> *@
+        @*                     @game.Id *@
+        @*                 </li> *@
+        @*             } *@
+        @*         } *@
+        @*         else *@
+        @*         { *@
+        @*             <li class="dropdown-item">No games available</li> *@
+        @*         } *@
+        @*     </ul> *@
+        @* </div> *@
         <div class="col">
             <div class="row">
                 <div class="col">
-                    <h2>Score: @gameSessionService.Score</h2>
-                    <span>Previous High Score: @gameSessionService.HighScore</span>
+                    @if(gameLoop != null)
+                    {
+                        <h2>Score: @gameLoop.Score</h2>
+                        <span>Previous High Score: @gameLoop.HighScore</span>
+                    }
                 </div>
             </div>
             <div class="row">
@@ -132,7 +143,7 @@
                     <h2>Level: @level</h2>
                 </div>
             </div>
-           @*  <div class="row">
+            @*  <div class="row">
                 <div class="col">
                     <div class="chat-container">
                         @if (isInitialized)
@@ -154,6 +165,10 @@
 </div>
 
 @code {
+    [Parameter]
+    public int gameId { get; set; }
+
+    GameLoop gameLoop;
     Game selectedGame;
     List<Game> games;
     AuthenticationState authState;
@@ -162,7 +177,7 @@
     PlayerDto playerDto;
     bool isInitialized = false;
 
-    Grid grid => gameSessionService.GameStateGrid;
+    Grid grid => gameLoop.GameStateGrid;
 
     TetrominoGenerator generator = new TetrominoGenerator();
 
@@ -188,25 +203,24 @@
             if(applicationuser is not null)
             {
                 authId = applicationuser.Id;
-
             }
 
 
             try
             {
-                playerDto= await playerService.GetPlayerByAuthIdAsync(authId);
+                playerDto = await playerService.GetPlayerByAuthIdAsync(authId);
                 playerId = playerDto.Id;
             }
             catch
             {
                 throw new Exception("Auth id does not have an associated player account.");
             }
+            
+            gameLoop = await gameSessionService.GetGameSession(playerId, gameId);
 
         }
 
-
-        // games = await gameService.GetAllLiveGamesAsync();
-        gameSessionService.OnStateChange += StateHasChanged;
+        gameLoop.OnStateChange += async () => await InvokeAsync(StateHasChanged);
 
         isInitialized = true;
         StateHasChanged();
@@ -216,8 +230,11 @@
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
+        await JSRuntime.InvokeVoidAsync("eval", @"
+            document.addEventListener('keydown', window.preventScroll);");
         if (firstRender)
         {
+
             await _jsRuntime.InvokeVoidAsync("SetFocusToElement", gameBoardDiv);
         }
     }
@@ -230,12 +247,12 @@
 
     public void NewGame()
     {
-        gameSessionService.ResetGame();
+        gameLoop.ResetGame();
     }
 
     public async Task RunGame()
     {
-        gameSessionService.RunGameSession();
+        await gameLoop.RunGameSession();
         await _jsRuntime.InvokeVoidAsync("SetFocusToElement", gameBoardDiv);
     }
 
@@ -252,46 +269,46 @@
 
     public async Task RunCurrentTetromino()
     {
-        gameSessionService.RunCurrentTetromino();
+        await gameLoop.RunCurrentTetromino();
     }
 
     public async Task ClearCompleteRows()
     {
-        gameSessionService.ClearCompleteRows();
+        await gameLoop.ClearCompleteRows();
         StateHasChanged();
     }
 
     protected async Task KeyDown(KeyboardEventArgs e)
     {
-        if (gameSessionService.GameStateGrid.State == GameState.Playing)
+        if (gameLoop.GameStateGrid.State == GameState.Playing)
         {
             if (e.Key == "ArrowRight")
             {
-                await gameSessionService.MoveRight(1);
+                await gameLoop.MoveRight(1);
             }
             if (e.Key == "ArrowLeft")
             {
-                await gameSessionService.MoveLeft(1);
+                await gameLoop.MoveLeft(1);
             }
             if (e.Key == " ")
             {
-                await gameSessionService.Drop();
+                await gameLoop.Drop();
                 StateHasChanged();
             }
             if (e.Key == "ArrowDown")
             {
-                await gameSessionService.MoveDown(1);
+                await gameLoop.MoveDown(1);
             }
             if (e.Key == "ArrowUp")
             {
-                await gameSessionService.Rotate();
+                await gameLoop.Rotate();
             }
             StateHasChanged();
         }
     }
     public void Dispose()
     {
-        gameSessionService.OnStateChange -= StateHasChanged;
+        gameLoop.OnStateChange -= async () => await InvokeAsync(StateHasChanged);
     }
 
     public async ValueTask DisposeAsync()

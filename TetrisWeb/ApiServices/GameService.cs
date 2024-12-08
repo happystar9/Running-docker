@@ -3,15 +3,15 @@ using TetrisWeb.GameData;
 using Microsoft.EntityFrameworkCore;
 using TetrisWeb.DTOs;
 using TetrisWeb.ApiServices.Interfaces;
+using TetrisWeb.Components;
 
 namespace TetrisWeb.ApiServices;
 
 public class GameService(Dbf25TeamArzContext context, IPlayerService playerService, IApiKeyManagementService ApiKeyService) : IGameService
 {
-    private readonly ConcurrentDictionary<string, GameSessionDto> _gameSessions = new();
+    public ConcurrentDictionary<string, GameSessionDto> _gameSessions = new();
     private readonly int maxPlayersPerGame = 99; // Example max limit for players
-    private List<GameSessionService> gameSessionList = new();
-    Random random = new Random();
+    private GameSessionService _gameSessionService = new GameSessionService();
 
     public async Task<Game> CreateGameAsync(string createdByAuthId)
     {
@@ -37,18 +37,16 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
         return game;
     }
 
-    
-
-    public async Task<GameSessionDto> JoinGameAsync(int gameId, int playerId, GameSessionService gameSession)
+    public async Task<GameSessionDto> JoinGameAsync(int gameId, int playerId, GameLoop gameLoop)
     {
 
         //verify that the player is not blocked before letting them join
-        var player = playerService.GetPlayerByIdAsync(playerId).Result;
+        var player = await playerService.GetPlayerByIdAsync(playerId);
+        //var playerDto = playerResult.Result;
         if (!player.Isblocked)
         {
-
-            gameSessionList.Add(gameSession);
-            gameSession.SendGarbage += HandleSendGarbage;
+            
+            
             var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
             if (game == null)
             {
@@ -79,37 +77,70 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
 
     }
 
+    //public async Task EndGameAsync(int gameId)
+    //{
+    //    var game = await context.Games
+    //        .Include(g => g.GameSessions)
+    //        .FirstOrDefaultAsync(g => g.Id == gameId);
+    //    if (game == null)
+    //    {
+    //        throw new KeyNotFoundException("Game not found.");
+    //    }
+
+    //    //post the game itself and its details to the database
+    //    game.StopTime = DateTime.Now;
+    //    game.PlayerCount = _gameSessions.Count;
+
+    //    //post all of the sessions to the database
+    //    foreach (var session in _gameSessions.Values)
+    //    {
+    //        var gameSession = new GameSession()
+    //        {
+    //            GameId = session.GameId,
+    //            PlayerId = session.PlayerId,
+    //            Score = session.Score
+    //        };
+
+    //        context.GameSessions.Add(gameSession);
+    //    }
+
+    //    await context.SaveChangesAsync();
+
+    //    //do we need to reset this here?
+    //    //_gameSessions = new ConcurrentDictionary<string, GameSessionDto>();
+    //}
+
     public async Task EndGameAsync(int gameId)
     {
-        var game = await context.Games
-            .Include(g => g.GameSessions)
-            .FirstOrDefaultAsync(g => g.Id == gameId);
+        _gameSessionService.DeleteAllInGame(gameId);
+
+        var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
         if (game == null)
         {
             throw new KeyNotFoundException("Game not found.");
         }
 
-        //post the game itself and its details to the database
         game.StopTime = DateTime.Now;
-        game.PlayerCount = _gameSessions.Count;
+        game.PlayerCount = _gameSessions.Values.Where(game => game.GameId == gameId).Count();
 
-        //post all of the sessions to the database
         foreach (var session in _gameSessions.Values)
         {
-            var gameSession = new GameSession()
+            // Save session data to the database
+            var sessionDto = _gameSessions.Values.FirstOrDefault(s => s.GameId == gameId && s.PlayerId == session.PlayerId);
+            if (sessionDto != null)
             {
-                GameId = session.GameId,
-                PlayerId = session.PlayerId,
-                Score = session.Score
-            };
+                var gameSession = new GameSession()
+                {
+                    GameId = sessionDto.GameId,
+                    PlayerId = sessionDto.PlayerId,
+                    Score = sessionDto.Score
+                };
 
-            context.GameSessions.Add(gameSession);
+                context.GameSessions.Add(gameSession);
+            }
         }
 
         await context.SaveChangesAsync();
-
-        //do we need to reset this here?
-        //_gameSessions = new ConcurrentDictionary<string, GameSessionDto>();
     }
 
 
@@ -134,10 +165,7 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
         return await context.Games.FirstOrDefaultAsync(g => g.Id == gameId);
     }
 
-    public void HandleSendGarbage(int lines)
-    {
-        Task.Run(async () => await gameSessionList[random.Next(gameSessionList.Count)].AddGarbage(lines));
-    }
+
 }
 
 

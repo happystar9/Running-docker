@@ -1,4 +1,6 @@
-﻿namespace TetrisWeb.DTOs
+﻿using TetrisWeb.ApiServices;
+
+namespace TetrisWeb.DTOs
 {
     public class GameDto
     {
@@ -11,5 +13,7 @@
         public DateTime? StopTime { get; set; }
 
         public int? PlayerCount { get; set; }
+
+        public List<GameSessionService> Sessions { get; set; }
     }
 }
