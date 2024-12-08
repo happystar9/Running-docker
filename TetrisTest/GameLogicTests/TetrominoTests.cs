@@ -92,6 +92,16 @@ public class TetrominoTests
         startingOrientation.Should().Be(Orientation.LeftRight);
         endingOrientation.Should().Be(Orientation.UpDown);
     }
+
+    [Fact]
+    public void TetrominoShouldDropOnSpacebar()
+    {
+        var grid = new Grid();
+        CellList coveredCells = new();
+        var tetromino = new TestTetromino(grid, coveredCells);
+        tetromino.Drop();
+        Te
+    }
 }
 
 public class TestTetromino : Tetromino

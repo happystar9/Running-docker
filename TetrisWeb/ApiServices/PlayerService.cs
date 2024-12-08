@@ -152,7 +152,8 @@ public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
                 Id = p.Id,
                 Username = p.Username,
                 PlayerQuote = p.PlayerQuote,
-                AvatarUrl = p.AvatarUrl
+                AvatarUrl = p.AvatarUrl,
+                Isblocked = p.Isblocked
             })
             .ToListAsync();
     }
