@@ -4,6 +4,7 @@ using TetrisWeb.DTOs;
 using Xunit.Abstractions;
 using TetrisWeb.ApiServices.Interfaces;
 using TetrisWeb.ApiServices;
+using TetrisWeb.Components;
 
 namespace TetrisTest.IntegrationTests;
 
@@ -175,7 +176,7 @@ public class PlayerServiceTests : PostgresTestBase
         var postedPlayer = await playerService.GetPlayerByAuthIdAsync("13");
 
         Task.Delay(500).Wait();
-        var session = await gameService.JoinGameAsync(game.Id, postedPlayer.Id, new GameSessionService());
+        var session = await gameService.JoinGameAsync(game.Id, postedPlayer.Id, new GameLoop());
         await gameService.EndGameAsync(game.Id);
         var savedGames = await gameService.GetAllGamesAsync();
 

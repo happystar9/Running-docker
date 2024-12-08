@@ -4,6 +4,7 @@ using TetrisWeb.DTOs;
 using Xunit.Abstractions;
 using TetrisWeb.ApiServices.Interfaces;
 using TetrisWeb.ApiServices;
+using TetrisWeb.Components;
 
 
 namespace TetrisTest.IntegrationTests;
@@ -50,7 +51,7 @@ public class ScoreServiceTests : PostgresTestBase
         var postedPlayer = await playerService.GetPlayerByAuthIdAsync("80");
 
         var retrievedGame = await gameService.GetGameByIdAsync(game.Id);
-        var session = await gameService.JoinGameAsync(retrievedGame.Id, postedPlayer.Id, new GameSessionService());
+        var session = await gameService.JoinGameAsync(retrievedGame.Id, postedPlayer.Id, new GameLoop());
 
         //figure out how we're going to update the values in GameService for the game sessions
         //call a method that updates the GameService dictionary?
