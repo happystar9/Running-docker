@@ -42,7 +42,7 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
 
         //verify that the player is not blocked before letting them join
         var player = await playerService.GetPlayerByIdAsync(playerId);
-        //var playerDto = playerResult.Result;
+
         if (!player.Isblocked)
         {
             
@@ -77,38 +77,6 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
 
     }
 
-    //public async Task EndGameAsync(int gameId)
-    //{
-    //    var game = await context.Games
-    //        .Include(g => g.GameSessions)
-    //        .FirstOrDefaultAsync(g => g.Id == gameId);
-    //    if (game == null)
-    //    {
-    //        throw new KeyNotFoundException("Game not found.");
-    //    }
-
-    //    //post the game itself and its details to the database
-    //    game.StopTime = DateTime.Now;
-    //    game.PlayerCount = _gameSessions.Count;
-
-    //    //post all of the sessions to the database
-    //    foreach (var session in _gameSessions.Values)
-    //    {
-    //        var gameSession = new GameSession()
-    //        {
-    //            GameId = session.GameId,
-    //            PlayerId = session.PlayerId,
-    //            Score = session.Score
-    //        };
-
-    //        context.GameSessions.Add(gameSession);
-    //    }
-
-    //    await context.SaveChangesAsync();
-
-    //    //do we need to reset this here?
-    //    //_gameSessions = new ConcurrentDictionary<string, GameSessionDto>();
-    //}
 
     public async Task EndGameAsync(int gameId)
     {

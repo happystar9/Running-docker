@@ -129,7 +129,7 @@ public class PlayerService(Dbf25TeamArzContext dbContext) : IPlayerService
 
     public async Task<int> GetPlayerTotalScore(string authId)
     {
-        //from the database, get the id from the player table that has 
+        //from the database, get the id from the player table
         var player = await dbContext.Players
                 .SingleOrDefaultAsync(p => p.Authid == authId);
 

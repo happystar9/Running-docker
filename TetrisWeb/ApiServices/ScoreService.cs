@@ -7,7 +7,6 @@ using TetrisWeb.DTOs;
 namespace TetrisWeb.ApiServices;
 public class ScoreService(Dbf25TeamArzContext dbContext) : IScoreService
 {
-    //needs testing
     public Task<int> GetPlayerHighScore(int playerId)
     {
         int highScore = dbContext.GameSessions
@@ -23,7 +22,6 @@ public class ScoreService(Dbf25TeamArzContext dbContext) : IScoreService
     }
 
 
-    // needs testing
     public async Task<int> UpdateHighScore(int playerId, int score)
     {
         Leaderboard entry = new Leaderboard
