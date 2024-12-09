@@ -18,6 +18,8 @@ public class GameSessionService : IGameSessionService
         GameLoop gameLoop = new GameLoop();
         gameLoops.TryAdd((playerId, gameId), gameLoop);
         gameLoop.SendGarbage += HandleSendGarbage;
+        gameLoop.playerId = playerId;
+        gameLoop.gameId = gameId;
         return;
     }
 
@@ -49,9 +51,14 @@ public class GameSessionService : IGameSessionService
         return null;
     }
 
-    public void HandleSendGarbage(int lines, int gameId)
+    public async Task HandleSendGarbage(int lines, int gameId)
     {
         var keys = gameLoops.Keys.Where(key => key.gameId == gameId).ToList();
-        Task.Run(async () => await gameLoops[keys[random.Next(keys.Count())]].AddGarbage(lines));
+
+        if (keys.Count > 0)
+        {
+            var randomKey = keys[random.Next(keys.Count)];
+            await gameLoops[randomKey].AddGarbage(lines);
+        }
     }
 }
