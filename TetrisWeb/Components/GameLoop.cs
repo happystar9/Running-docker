@@ -43,8 +43,17 @@ namespace TetrisWeb.Components
             }
         }
 
-        public event Action<int, int>? SendGarbage;
-        public void NotifySendGarbage(int lines) => SendGarbage?.Invoke(lines, gameId);
+        public event Func<int, int,Task>? SendGarbage;
+        public async Task NotifySendGarbage(int lines, int gameId)
+        {
+            if (SendGarbage != null)
+            {
+                foreach (var handler in SendGarbage.GetInvocationList())
+                {
+                    await ((Func<int, int, Task>)handler).Invoke(lines, gameId);
+                }
+            }
+        }
 
         public Grid GameStateGrid { get; private set; }
 
@@ -191,17 +200,17 @@ namespace TetrisWeb.Components
 
                     case 2:
                         Score += 100 * level;
-                        NotifySendGarbage(1);
+                        NotifySendGarbage(1,gameId);
                         break;
 
                     case 3:
                         Score += 300 * level;
-                        NotifySendGarbage(1);
+                        NotifySendGarbage(1,gameId);
                         break;
 
                     case 4:
                         Score += 1200 * level;
-                        NotifySendGarbage(1);
+                        NotifySendGarbage(1,gameId);
                         break;
                 }
 
