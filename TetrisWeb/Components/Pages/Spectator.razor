@@ -2,6 +2,7 @@
 @using TetrisWeb.Components.Pages.Partials
 @inject NavigationManager NavigationManager
 @inject GameSessionService gameSessionService
+@inject IPlayerService playerService
 
 <p>Viewing live gameplay for game ID: @gameId</p>
 
@@ -12,7 +13,9 @@
         <select id="playerSelect" @bind="selectedPlayerId">
             @foreach (var player in playersState)
             {
-                <option value="@player.PlayerId">@player.PlayerId</option>
+                <option value="@player.PlayerId">
+                    @playerNames.GetValueOrDefault(player.PlayerId, "Unknown Player")
+                </option>
             }
         </select>
     </div>
@@ -63,6 +66,7 @@ else
     private GameSessionDto selectedPlayer;
     private int selectedPlayerId;
     private GameLoop selectedPlayerGameLoop;
+    private Dictionary<int, string> playerNames = new Dictionary<int, string>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -85,10 +89,20 @@ else
         }
         else
         {
+            // associate a player username with their ID for display in the UI
+            foreach (var player in playersState)
+            {
+                var playerDto = await playerService.GetPlayerByIdAsync(player.PlayerId);
+                var username = playerDto.Username;
+                playerNames[player.PlayerId] = username;
+            }
+
             Console.WriteLine($"Found {playersState.Count} players.");
         }
 
-        // Set the default player to the first one in the list
+        
+
+        // set the default player to the first one in the list
         if (playersState.Any())
         {
             selectedPlayerId = playersState.First().PlayerId;

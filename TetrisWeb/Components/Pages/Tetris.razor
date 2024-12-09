@@ -18,13 +18,13 @@
 </script>
 <script>
     window.SetFocusToElement = (element) => {
-    element.focus();
+        element.focus();
     };
     window.preventScroll = (event) => {
-    // Prevent spacebar and arrow keys from scrolling
-    if (event.key === " " || event.key === "ArrowDown" || event.key === "ArrowUp") {
-    event.preventDefault();
-    }
+        // Prevent spacebar and arrow keys from scrolling
+        if (event.key === " " || event.key === "ArrowDown" || event.key === "ArrowUp") {
+            event.preventDefault();
+        }
     };
 </script>
 
@@ -131,7 +131,7 @@
         <div class="col">
             <div class="row">
                 <div class="col">
-                    @if(gameLoop != null)
+                    @if (gameLoop != null)
                     {
                         <h2>Score: @gameLoop.Score</h2>
                         <span>Previous High Score: @gameLoop.HighScore</span>
@@ -144,20 +144,20 @@
                 </div>
             </div>
             @*  <div class="row">
-                <div class="col">
-                    <div class="chat-container">
-                        @if (isInitialized)
-                        {
-                            <Chats AuthId=authId, CurrentPlayer=playerDto></Chats>
+            <div class="col">
+            <div class="chat-container">
+            @if (isInitialized)
+            {
+            <Chats AuthId=authId, CurrentPlayer=playerDto></Chats>
 
-                        }
-                        else
-                        {
-                            <p>Loading...</p>
-                        }
+            }
+            else
+            {
+            <p>Loading...</p>
+            }
 
-                    </div>
-                </div>
+            </div>
+            </div>
             </div> *@
         </div>
     </div>
@@ -200,7 +200,7 @@
         if (user.Identity?.IsAuthenticated == true)
         {
             var applicationuser = await UserManager.GetUserAsync(user);
-            if(applicationuser is not null)
+            if (applicationuser is not null)
             {
                 authId = applicationuser.Id;
             }
@@ -215,9 +215,9 @@
             {
                 throw new Exception("Auth id does not have an associated player account.");
             }
-            
+
             gameLoop = await gameSessionService.GetGameSession(playerId, gameId);
-        gameLoop.OnStateChange += async () => await InvokeAsync(StateHasChanged);
+            gameLoop.OnStateChange += async () => await InvokeAsync(StateHasChanged);
 
         }
 
@@ -303,7 +303,7 @@
             {
                 await gameLoop.Rotate();
             }
-            StateHasChanged();  
+            StateHasChanged();
         }
     }
     public void Dispose()
