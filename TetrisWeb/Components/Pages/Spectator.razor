@@ -1,8 +1,111 @@
 ﻿@page "/spectator"
-<div>
-    <btn>dddd</btn>
-</div>
+@using TetrisWeb.Components.Pages.Partials
+@inject NavigationManager NavigationManager
+@inject GameSessionService gameSessionService
 
+<p>Viewing live gameplay for game ID: @gameId</p>
+
+@if (playersState != null)
+{
+    <div class="player-selection">
+        <label for="playerSelect">Select a Player:</label>
+        <select id="playerSelect" @bind="selectedPlayerId">
+            @foreach (var player in playersState)
+            {
+                <option value="@player.PlayerId">@player.PlayerId</option>
+            }
+        </select>
+    </div>
+
+    <div class="game-state">
+        @if (selectedPlayer != null)
+        {
+            <h2>Player: @selectedPlayer.PlayerId</h2>
+            <h3>Score: @selectedPlayer.Score</h3>
+
+            <h3>Upcoming Tetrominoes:</h3>
+            <TetrominoDisplay Style="selectedPlayer.NextTetromino" />
+
+             @if (selectedPlayerGameLoop?.GameStateGrid != null)
+            {
+                <div class="game-grid">
+                    @for (int i = selectedPlayerGameLoop.GameStateGrid.Height; i >= 1; i--)
+                    {
+                        <div class="row">
+                            @for (int j = 1; j <= selectedPlayerGameLoop.GameStateGrid.Width; j++)
+                            {
+                                <TetrisWeb.Components.Pages.Partials.GridCell Row="i" Column="j" Tetromino="selectedPlayerGameLoop.currentTetromino" Grid="selectedPlayerGameLoop.GameStateGrid" />
+                            }
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p>Game grid not available yet.</p>
+            }
+        }
+        else
+        {
+            <p>Select a player to view.</p>
+        }
+    </div>
+}
+else
+{
+    <p>Loading game sessions...</p>
+}
 
 @code {
+    [Parameter] public int gameId { get; set; }
+
+    private List<GameSessionDto> playersState;
+    private GameSessionDto selectedPlayer;
+    private int selectedPlayerId;
+    private GameLoop selectedPlayerGameLoop;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (gameId == 0)
+        {
+            var uri = NavigationManager.Uri;
+            var queryParams = new Uri(uri).Query;
+            var queryDictionary = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(queryParams);
+            if (queryDictionary.ContainsKey("gameId"))
+            {
+                gameId = int.Parse(queryDictionary["gameId"]);
+            }
+        }
+
+        playersState = await gameSessionService.GetAllPlayersStateInGameAsync(gameId);
+
+        if (playersState == null || !playersState.Any())
+        {
+            Console.WriteLine("No players found or playersState is null.");
+        }
+        else
+        {
+            Console.WriteLine($"Found {playersState.Count} players.");
+        }
+
+        // Set the default player to the first one in the list
+        if (playersState.Any())
+        {
+            selectedPlayerId = playersState.First().PlayerId;
+            selectedPlayer = playersState.First();
+        }
+
+        if (selectedPlayer != null)
+        {
+            selectedPlayerGameLoop = await GetSelectedPlayerGameLoopAsync(selectedPlayerId, gameId);
+        selectedPlayerGameLoop.OnStateChange += async () => await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task<GameLoop> GetSelectedPlayerGameLoopAsync(int playerId, int gameId)
+    {
+        // Fetch the GameLoop instance for the player and game
+        var gameSession = await gameSessionService.GetGameSession(playerId, gameId);
+        return gameSession; // Return the GameLoop associated with the player
+    }
 }
