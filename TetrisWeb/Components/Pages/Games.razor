@@ -13,7 +13,11 @@
 <p>
     Below are all of the current and previous games.
     To join a game, ensure you are logged in and registered as a player,
-    then click "Join Game"" next to one of the live game IDs.
+    then click "Join Game" next to one of the live game IDs.
+</p>
+<p>
+    If you don't want to play, you can tune into other players' sessions! 
+    Just click on the "Spectate" button next to a given game ID.
 </p>
 <p>
     To view the results for previous games, click on "View Results"
@@ -49,8 +53,8 @@
                                 {
                                     <button href="/tetris/{game.Id}" @onclick="async ()=>await  JoinGameAsync(game.Id, playerDto.Id, gameLoop)">Join Game</button>
                                     <br />
-                                    <button @onclick="()=> SpectateGame(game.Id)">Spectate Game</button>
                                 }
+                                    <button @onclick="()=> SpectateGame(game.Id)">Spectate Game</button>
                             </td>
                         </tr>
                     }
