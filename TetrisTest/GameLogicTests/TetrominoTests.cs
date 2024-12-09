@@ -105,23 +105,24 @@ public class TetrominoTests
         tetromino.CenterPieceRow.Should().Be(0);
     }
 
-    //[Fact]
-    //public void ThereShouldBeGarbage()
-    //{
-    //    GameSessionService gameSessionService = new GameSessionService();
-    //    var grid = new Grid();
-    //    CellList coveredCells = new();
+    [Fact]
+    public void ThereShouldBeGarbage()
+    {
+        GameLoop gameLoop = new GameLoop();
+        var grid = new Grid();
+        CellList coveredCells = new();
 
-    //    throw new NotImplementedException("Need to fix this to work with our new implementation!");
+        var garbageTetromino = new Garbage(grid);
+        garbageTetromino.Drop();
 
-    //    //gameSessionService.garbageLines += 1;
-    //    //await gameSessionService.DropGarbageAny();
-    //    var tetromino = new LShaped(grid);
+        //gameSessionService.garbageLines += 1;
+        //await gameSessionService.DropGarbageAny();
+        var Ltetromino = new LShaped(grid);
 
-    //    tetromino.Drop();
+        Ltetromino.Drop();
 
-    //    tetromino.CenterPieceRow.Should().Be(1);
-    //}
+        Ltetromino.CenterPieceRow.Should().Be(1);
+    }
 }
 
 public class TestTetromino : Tetromino
