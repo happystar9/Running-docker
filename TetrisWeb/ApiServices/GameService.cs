@@ -80,7 +80,6 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
 
     public async Task EndGameAsync(int gameId)
     {
-        _gameSessionService.DeleteAllInGame(gameId);
 
         var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
         if (game == null)
@@ -91,10 +90,10 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
         game.StopTime = DateTime.Now;
         game.PlayerCount = _gameSessions.Values.Where(game => game.GameId == gameId).Count();
 
-        foreach (var session in _gameSessions.Values)
+        foreach (var session in _gameSessionService.GetAllGameSessionsByGameIdAsync(gameId).Result.ToList())
         {
             // Save session data to the database
-            var sessionDto = _gameSessions.Values.FirstOrDefault(s => s.GameId == gameId && s.PlayerId == session.PlayerId);
+            var sessionDto = _gameSessions.Values.FirstOrDefault(s => s.GameId == gameId && s.PlayerId == session.playerId);
             if (sessionDto != null)
             {
                 var gameSession = new GameSession()
@@ -109,6 +108,8 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
         }
 
         await context.SaveChangesAsync();
+
+        _gameSessionService.DeleteAllInGame(gameId);
     }
 
 
