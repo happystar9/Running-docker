@@ -217,10 +217,10 @@
             }
             
             gameLoop = await gameSessionService.GetGameSession(playerId, gameId);
+        gameLoop.OnStateChange += async () => await InvokeAsync(StateHasChanged);
 
         }
 
-        gameLoop.OnStateChange += async () => await InvokeAsync(StateHasChanged);
 
         isInitialized = true;
         StateHasChanged();
