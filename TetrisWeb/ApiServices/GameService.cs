@@ -7,11 +7,10 @@ using TetrisWeb.Components;
 
 namespace TetrisWeb.ApiServices;
 
-public class GameService(Dbf25TeamArzContext context, IPlayerService playerService, IApiKeyManagementService ApiKeyService) : IGameService
+public class GameService(Dbf25TeamArzContext context, IPlayerService playerService, IApiKeyManagementService ApiKeyService, GameSessionService _gameSessionService) : IGameService
 {
     public ConcurrentDictionary<string, GameSessionDto> _gameSessions = new();
     private readonly int maxPlayersPerGame = 99; // Example max limit for players
-    private GameSessionService _gameSessionService = new GameSessionService();
 
     public async Task<Game> CreateGameAsync(string createdByAuthId)
     {
@@ -80,6 +79,7 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
 
     public async Task EndGameAsync(int gameId)
     {
+        var sessions = await _gameSessionService.GetAllGameSessionsByGameIdAsync(gameId);
 
         var game = await context.Games.Include(g => g.GameSessions).FirstOrDefaultAsync(g => g.Id == gameId);
         if (game == null)
@@ -88,19 +88,20 @@ public class GameService(Dbf25TeamArzContext context, IPlayerService playerServi
         }
 
         game.StopTime = DateTime.Now;
-        game.PlayerCount = _gameSessions.Values.Where(game => game.GameId == gameId).Count();
+        game.PlayerCount = sessions.Count();
 
-        foreach (var session in _gameSessionService.GetAllGameSessionsByGameIdAsync(gameId).Result.ToList())
+
+        
+        foreach (var session in sessions)
         {
             // Save session data to the database
-            var sessionDto = _gameSessions.Values.FirstOrDefault(s => s.GameId == gameId && s.PlayerId == session.playerId);
-            if (sessionDto != null)
+            if (session != null)
             {
                 var gameSession = new GameSession()
                 {
-                    GameId = sessionDto.GameId,
-                    PlayerId = sessionDto.PlayerId,
-                    Score = sessionDto.Score
+                    GameId = session.gameId,
+                    PlayerId = session.playerId,
+                    Score = Math.Max(session.HighScore, session.Score)
                 };
 
                 context.GameSessions.Add(gameSession);
