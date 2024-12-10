@@ -79,6 +79,10 @@ namespace TetrisWeb.Components
             GameStateGrid = new Grid();
             generator = new TetrominoGenerator();
             level = 1;
+            if (Score > HighScore)
+            {
+                HighScore = Score;
+            }
             Score = 0;
         }
 
@@ -110,6 +114,10 @@ namespace TetrisWeb.Components
                 await RunCurrentTetromino();
                 await ClearCompleteRows();
                 LevelChange();
+            }
+            if (Score > HighScore)
+            {
+                HighScore = Score;
             }
             GameStateGrid.State = GameState.GameOver;
         }
