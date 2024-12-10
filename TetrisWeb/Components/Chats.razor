@@ -7,167 +7,181 @@
 @inject IJSRuntime JSRuntime
 
 <script>
-    function scrollToBottom(element) {
-    if (element) {
-    element.scrollTop = element.scrollHeight;
-    }
-    }
+	function scrollToBottom(element) {
+	if (element) {
+	element.scrollTop = element.scrollHeight;
+	}
+	}
 </script>
 
 
 
 <div class="chat-container">
-    <div class="chat-messages" @ref= "chatMessagesDiv">
-        @if (messages != null)
-        {
-            foreach (var message in messages)
-            {
-                <div class="chat-message">
-                    <div class="chat-username">@message.PlayerUsername</div>
-                    <div class="chat-time">@message.TimeSent</div>
-                    <div class="chat-text">@message.Message</div>
-                    @if (isAdmin)
-                    {
-                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteMessage(message.Id)">Delete</button>
-                    }
-                </div>
-            }
-        }
-        else
-        {
-            <p>No messages yet.</p>
-        }
-    </div>
+	<div class="chat-messages" @ref="chatMessagesDiv">
+		@if (playerUsername != null)
+		{
+			@if (messages != null)
+			{
+				foreach (var message in messages)
+				{
+					<div class="chat-message">
+						<div class="chat-username">@message.PlayerUsername</div>
+						<div class="chat-time">@message.TimeSent</div>
+						<div class="chat-text">@message.Message</div>
+						@if (isAdmin)
+						{
+							<button class="btn btn-danger btn-sm" @onclick="() => DeleteMessage(message.Id)">Delete</button>
+						}
+					</div>
+				}
+			}
+			else
+			{
+				<p>No messages yet.</p>
+			}
+		}
+		else
+		{
+			<p class="help-message">You need to login to see and send messages</p>
+		}
+	</div>
 
-    <div class="chat-input">
-        <EditForm class="message-form" Model="@this" OnValidSubmit="SendMessage">
-            <InputText class="form-control" @bind-Value="newMessageText" placeholder="Type a message..." />
-            @if (playerUsername is not null)
-            {
-                <button type="submit" class="btn btn-primary">Send</button>
-            }
-        </EditForm>
-        @if (playerUsername is null)
-        {
-            <p class="help-message">You must be logged in to send messages.</p>
-        }
-    </div>
-    <div>@errorMessage</div>
+	<div class="chat-input">
+		@if (playerUsername != null)
+		{
+			<EditForm class="message-form" Model="@this" OnValidSubmit="SendMessage">
+				<InputText class="form-control" @bind-Value="newMessageText" placeholder="Type a message..." />
+				@if (playerUsername is not null)
+				{
+					<button type="submit" class="btn btn-primary">Send</button>
+				}
+			</EditForm>
+		}
+	</div>
+	<div>@errorMessage</div>
 </div>
 
 @code {
-    [Parameter]
-    public string AuthId { get; set; }
+	[Parameter]
+	public string AuthId { get; set; }
 
-    [Parameter]
-    public PlayerDto CurrentPlayer { get; set; }
+	[Parameter]
+	public PlayerDto CurrentPlayer { get; set; }
 
-    private HttpClient httpClient;
-    List<ChatDto> messages = null;
-    int playerId;
-    string playerUsername;
-    AuthenticationState authState;
-    string newMessageText;
-    private ElementReference chatMessagesDiv; 
-    bool isInitialized = false;
-    private Timer timer;
-    string errorMessage ="";
-    bool IsBlocked;
-    bool isAdmin = false;   
-
-
-    protected override async Task OnInitializedAsync()
-    {
-        httpClient = HttpClientFactory.CreateClient("TetrisApi");
-
-        if (!isInitialized)
-        {
-            authState = await AuthStateProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
-
-            if (user.Identity?.IsAuthenticated == true)
-            {
-                if (CurrentPlayer is not null)
-                {
-                    playerId = CurrentPlayer.Id;
-                    playerUsername = CurrentPlayer.Username;
-
-                    isAdmin = user.IsInRole("Admin");
-                }
-            }
-
-            isInitialized = true;
-        }
-
-        await LoadMessages();
-
-        // timer to load messages every 5 seconds
-        timer = new Timer(async _ => await LoadMessages(), null, TimeSpan.Zero, TimeSpan.FromSeconds(3));
-    }
-
-    private async Task LoadMessages()
-    {
-        messages = await chatService.GetRecentChatsAsync();
-        messages = messages.OrderBy(m => m.TimeSent).ToList();
-
-        await InvokeAsync(StateHasChanged);
-
-    }
+	private HttpClient httpClient;
+	List<ChatDto> messages = null;
+	int playerId;
+	string playerUsername;
+	AuthenticationState authState;
+	string newMessageText;
+	private ElementReference chatMessagesDiv;
+	bool isInitialized = false;
+	private Timer timer;
+	string errorMessage = "";
+	bool IsBlocked;
+	bool isAdmin = false;
 
 
-    private async Task SendMessage()
-    {
-        if(CurrentPlayer.Isblocked == false)
-        {
+	protected override async Task OnInitializedAsync()
+	{
+		httpClient = HttpClientFactory.CreateClient("TetrisApi");
 
-            if (newMessageText.Count() < 140)
-            {
-                ChatDto chatDto = new ChatDto()
-                {
-                    PlayerId = playerId,
-                    Message = newMessageText
-                };
+		if (!isInitialized)
+		{
+			authState = await AuthStateProvider.GetAuthenticationStateAsync();
+			var user = authState.User;
 
-                await chatService.PostChatAsync(chatDto);
-                newMessageText = "";
-                errorMessage = "";
-            }
-            else
-            {
-                errorMessage = "Message cannot exceed 140 characters";
-            }
-        }
-        else
-        {
-            errorMessage = "Cannot send messages when blocked";    
-            // await LoadMessages();
-        }
+			if (user.Identity?.IsAuthenticated == true)
+			{
+				if (CurrentPlayer is not null)
+				{
+					playerId = CurrentPlayer.Id;
+					playerUsername = CurrentPlayer.Username;
 
-    }
+					isAdmin = user.IsInRole("Admin");
+				}
+			}
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender || messages?.Count > 0)
-        {
-            await ScrollToBottom();
-            // await LoadMessages();
-        }
-    }
+			isInitialized = true;
+		}
 
-    private async Task ScrollToBottom()
-    {
-        await JSRuntime.InvokeVoidAsync("scrollToBottom", chatMessagesDiv);
-    }
+		await LoadMessages();
 
-    public void Dispose()
-    {
-        timer?.Dispose();
-    }
+		// timer to load messages every 5 seconds
+		timer = new Timer(async _ => await LoadMessages(), null, TimeSpan.Zero, TimeSpan.FromSeconds(3));
+	}
 
-    private async Task DeleteMessage(int chatId)
-    {
-        await chatService.DeleteChatAsync(chatId);
+	private async Task LoadMessages()
+	{
+		if(playerUsername != null)
+		{
+			messages = await chatService.GetRecentChatsAsync();
+			messages = messages.OrderBy(m => m.TimeSent).ToList();
+			errorMessage = "";
 
-        await LoadMessages();
-    }
+			await InvokeAsync(StateHasChanged);
+		}
+		else
+		{
+			errorMessage = "You need to login to see and send messages";
+		}
+
+	}
+
+
+	private async Task SendMessage()
+	{
+		if (CurrentPlayer.Isblocked == false)
+		{
+
+			if (newMessageText.Count() < 140)
+			{
+				ChatDto chatDto = new ChatDto()
+					{
+						PlayerId = playerId,
+						Message = newMessageText
+					};
+
+				await chatService.PostChatAsync(chatDto);
+				newMessageText = "";
+				errorMessage = "";
+			}
+			else
+			{
+				errorMessage = "Message cannot exceed 140 characters";
+			}
+		}
+		else
+		{
+			errorMessage = "Cannot send messages when blocked";
+			// await LoadMessages();
+		}
+
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender || messages?.Count > 0)
+		{
+			await ScrollToBottom();
+			// await LoadMessages();
+		}
+	}
+
+	private async Task ScrollToBottom()
+	{
+		await JSRuntime.InvokeVoidAsync("scrollToBottom", chatMessagesDiv);
+	}
+
+	public void Dispose()
+	{
+		timer?.Dispose();
+	}
+
+	private async Task DeleteMessage(int chatId)
+	{
+		await chatService.DeleteChatAsync(chatId);
+
+		await LoadMessages();
+	}
 }

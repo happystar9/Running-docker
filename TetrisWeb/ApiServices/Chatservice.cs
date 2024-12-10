@@ -7,6 +7,7 @@ namespace TetrisWeb.ApiServices
 {
     public class ChatService(Dbf25TeamArzContext dbcontext) : IChatService
     {
+        private PlayerDto player;
         public Action OnMessage { get; set; }
 
         public async Task<List<ChatDto>> GetAllChatsAsync()
@@ -44,7 +45,6 @@ namespace TetrisWeb.ApiServices
                         TimeSent = c.TimeSent
                     })
                 .ToListAsync();
-
             return chats;
         }
 
