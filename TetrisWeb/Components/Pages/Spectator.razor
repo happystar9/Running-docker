@@ -12,10 +12,10 @@
 {
     <div class="player-selection">
         <label for="playerSelect">Select a Player:</label>
-        <select id="playerSelect" @bind="selectedPlayerId">
+        <select id="playerSelect" @onchange="OnPlayerSelected">
             @foreach (var player in playersState)
             {
-                <option value="@player.PlayerId">
+                <option value="@player.PlayerId" selected="@(player.PlayerId == selectedPlayerId)">
                     @playerNames.GetValueOrDefault(player.PlayerId, "Unknown Player")
                 </option>
             }
@@ -91,7 +91,6 @@ else
         }
         else
         {
-            // associate a player username with their ID for display in the UI
             foreach (var player in playersState)
             {
                 var playerDto = await playerService.GetPlayerByIdAsync(player.PlayerId);
@@ -102,9 +101,6 @@ else
             Console.WriteLine($"Found {playersState.Count} players.");
         }
 
-        
-
-        // set the default player to the first one in the list
         if (playersState.Any())
         {
             selectedPlayerId = playersState.First().PlayerId;
@@ -114,14 +110,36 @@ else
         if (selectedPlayer != null)
         {
             selectedPlayerGameLoop = await GetSelectedPlayerGameLoopAsync(selectedPlayerId, gameId);
-        selectedPlayerGameLoop.OnStateChange += async () => await InvokeAsync(StateHasChanged);
+            selectedPlayerGameLoop.OnStateChange += async () => await InvokeAsync(StateHasChanged);
         }
     }
 
     private async Task<GameLoop> GetSelectedPlayerGameLoopAsync(int playerId, int gameId)
     {
-        // Fetch the GameLoop instance for the player and game
         var gameSession = await gameSessionService.GetGameSession(playerId, gameId);
-        return gameSession; // Return the GameLoop associated with the player
+        return gameSession;
+    }
+
+    private async Task OnPlayerSelected(ChangeEventArgs e)
+    {
+        if (selectedPlayerGameLoop != null)
+        {
+            selectedPlayerGameLoop.OnStateChange -= async () => await InvokeAsync(StateHasChanged);
+        }
+
+        selectedPlayerId = int.Parse(e.Value.ToString());
+        selectedPlayer = playersState.FirstOrDefault(p => p.PlayerId == selectedPlayerId);
+
+        if (selectedPlayer != null)
+        {
+            selectedPlayerGameLoop = await GetSelectedPlayerGameLoopAsync(selectedPlayerId, gameId);
+
+            if (selectedPlayerGameLoop != null)
+            {
+                selectedPlayerGameLoop.OnStateChange += async () => await InvokeAsync(StateHasChanged);
+            }
+        }
+
+        StateHasChanged();
     }
 }
