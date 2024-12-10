@@ -4,7 +4,7 @@
     --mid-light-purple: #535C91;
     --lightest-purple: #9290C3;
     /*--light-blue: #b9edeb;*/
-    --light-blue: #a9dedc;
+    --light-blue: #bcebe9;
 }
 
 html, body {
@@ -14,6 +14,7 @@ html, body {
     font-style: normal;
     background-color: var(--mid-dark-purple);
     color: var(--light-blue);
+    line-height: 2;
 }
 
 h4, h3, h2,  h1 {

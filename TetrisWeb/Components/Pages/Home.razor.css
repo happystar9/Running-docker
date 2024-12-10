@@ -1,0 +1,32 @@
+:root {
+    --darkest-purple: #070F2B;
+    --mid-dark-purple: #1B1A55;
+    --mid-light-purple: #535C91;
+    --lightest-purple: #9290C3;
+    --light-blue: #a9dedc;
+    --opaque-mid-purple: rgba(83, 92, 145, 0.6);
+
+}
+
+
+.main-intro {
+    font-size: 1.5em;
+    font-weight: 800;
+    /* background-color: var(--lightest-purple); */
+    background-color: var(--darkest-purple);
+}
+.main-intro, .instruction-step {
+    padding: 1em;
+    border-radius: 1em;
+    margin: 1em;
+}
+
+.instruction-step {
+    background-color:  rgba(83, 92, 145, 0.45);
+    margin-right: 2em;
+    margin-left: 2em;
+}
+
+p {
+    line-height: 2.5em;
+}
