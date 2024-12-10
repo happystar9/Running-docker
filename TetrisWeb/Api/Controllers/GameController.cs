@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Crypto.Macs;
+using TetrisWeb.ApiServices;
 using TetrisWeb.ApiServices.Interfaces;
 using TetrisWeb.Components;
 using TetrisWeb.DTOs;
@@ -9,7 +10,7 @@ namespace TetrisWeb.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class GameController(IGameService gameService) : ControllerBase
+public class GameController(IGameService gameService, GameSessionService gameSession) : ControllerBase
 {
     [HttpGet("allgames")]
     public async Task<IResult> GetAllGames()
@@ -47,26 +48,20 @@ public class GameController(IGameService gameService) : ControllerBase
         return Results.Ok(await gameService.GetGameByIdAsync(gameId));
     }
 
-    [HttpPut]
-    public async Task<IResult> JoinActiveGame([FromBody] JoinGameRequest request)
+    [HttpPut ("join/{gameId}/{playerId}")]
+    public async Task<IResult> JoinGame(int gameId, int playerId)
     {
-        //(int gameId, int playerId, GameLoop gameLoop)
-        var game = await gameService.JoinGameAsync(request.GameId, request.PlayerId, request.GameLoop);
-        if (game is null)
+        try
         {
-            return Results.NoContent();
+            gameSession.CreateGameSession(gameId, playerId);
+            GameLoop session = await gameSession.GetGameSession(playerId, gameId);
+            gameService.JoinGameAsync(gameId, playerId, session);
+            return Results.Created();
         }
-
-        return Results.Ok(game);
-
+        catch (Exception ex)
+        {
+            return Results.BadRequest(ex);  
+        }
     }
-
-}
-
-public class JoinGameRequest
-{
-    public int GameId { get; set; }
-    public int PlayerId { get; set; }
-    public GameLoop GameLoop { get; set; }
 
 }

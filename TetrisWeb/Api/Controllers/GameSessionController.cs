@@ -1,51 +1,53 @@
-﻿//using Microsoft.AspNetCore.Mvc;
-//using TetrisWeb.ApiServices;
-//using TetrisShared.DTOs;
-//using TetrisWeb.Components.Models;
-//using TetrisWeb.Services;
+﻿using Microsoft.AspNetCore.Mvc;
+using TetrisWeb.ApiServices;
+using TetrisWeb.DTOs;
+using TetrisWeb.Components.Models;
+using TetrisWeb.Services;
+using TetrisWeb.Components;
+using TetrisWeb.GameData;
+using TetrisWeb.Components.Pages;
 
-////possibly have users add in their game key to each call?
+//possibly have users add in their game key to each call?
 
-//namespace TetrisWeb.Controllers;
+namespace TetrisWeb.Controllers;
 
-//[Route("api/[controller]")]
-//[ApiController]
-//public class GameSessionController(GameManager game) : ControllerBase
-//{
-//    [HttpPost("startGame/{playerId}")]
-//    public void JoinGame(int playerId)
-//    {
-//        game.CreateGame(playerId);
-//        return;
-//    }
+[Route("api/[controller]")]
+[ApiController]
+public class GameSessionController(GameService game, GameSessionService gameSession) : ControllerBase
+{
+    [HttpGet("getGame/{gameId}/{playerId}")]
+    public async Task GetGameSession(int gameId,int playerId)
+    {
+        await gameSession.GetGameSession(playerId, gameId);
+    }
 
-//    [HttpGet("boardState/{apiKey}")]
-//    public async Task<CellList> BoardState(string apiKey)
-//    {
-//        return game._gameSessions[apiKey].gameStateGrid.Cells;
-//    }
+    [HttpGet("boardState/{gameId}/{playerId}")]
+    public async Task<CellList> BoardState(int gameId, int playerId)
+    {
+        return gameSession.GetGameSession(playerId, gameId).Result.GameStateGrid.Cells;
+    }
 
-//    [HttpPost("moveRight/{apiKey}/{x}")]
-//    public async Task MoveRight(int x, string apiKey)
-//    {
-//        game._gameSessions[apiKey].MoveRight(x);
-//    }
+    [HttpPost("moveRight/{gameId}/{playerId}/{x}")]
+    public async Task MoveRight(int gameId, int playerId, int x)
+    {
+        gameSession.GetGameSession(playerId, gameId).Result.MoveRight(x);
+    }
 
-//    [HttpPost("moveLeft/{apiKey}/{x}")]
-//    public async Task MoveLeft(int x, string apiKey)
-//    {
-//        game._gameSessions[apiKey].MoveLeft(x);
-//    }
+    [HttpPost("moveLeft/{gameId}/{playerId}/{x}")]
+    public async Task MoveLeft(int x, int gameId, int playerId)
+    {
+        gameSession.GetGameSession(playerId, gameId).Result.MoveLeft(x);
+    }
 
-//    [HttpPost("rotate/{apiKey}")]
-//    public async Task Rotate(string apiKey)
-//    {
-//        game._gameSessions[apiKey].Rotate();
-//    }
+    [HttpPost("rotate/{gameId}/{playerId}")]
+    public async Task Rotate(int gameId, int playerId)
+    {
+        gameSession.GetGameSession(playerId, gameId).Result.Rotate();
+    }
 
-//    [HttpPost("drop/{apiKey}")]
-//    public async Task Drop(string apiKey)
-//    {
-//        game._gameSessions[apiKey].Drop();
-//    }
-//}
+    [HttpPost("drop/{gameId}/{playerId}")]
+    public async Task Drop(int gameId, int playerId)
+    {
+        gameSession.GetGameSession(playerId, gameId).Result.Drop();
+    }
+}
