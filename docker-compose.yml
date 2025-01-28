@@ -1,0 +1,27 @@
+services:
+  web:
+    build: ./TetrisWeb
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      DB_CONN: "Host=db;Port=5432;Database=mydatabase;Username=myuser;Password=mypassword"
+    restart: always
+
+
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    volumes:
+      - PGDATA:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  PGDATA:
