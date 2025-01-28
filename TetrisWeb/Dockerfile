@@ -7,4 +7,4 @@ RUN dotnet publish TetrisWeb.csproj --configuration Release --output /App/publis
 WORKDIR /App/publish
 
 EXPOSE 5000:5000
-CMD dotnet TetrisWeb.dll
+ENTRYPOINT dotnet TetrisWeb.dll
