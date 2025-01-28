@@ -138,6 +138,6 @@ app.MapAdditionalIdentityEndpoints();
 
 
 
-app.Run();
+app.Run("http://0.0.0.0:5000");
 
 public partial class Program { }
