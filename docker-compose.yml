@@ -17,7 +17,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/denver
+      - TZ=America/Denver
       - URL=ricardoruiz.duckdns.org
       - VALIDATION=dns
       - DNSPLUGIN=duckdns
