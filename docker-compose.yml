@@ -21,7 +21,7 @@ services:
       - URL=ricardoruiz.duckdns.org
       - VALIDATION=dns
       - DNSPLUGIN=duckdns
-      - STAGING=false
+      - STAGING=true
     volumes:
       - /home/aptalca/appdata/swag:/config
     ports:
