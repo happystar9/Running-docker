@@ -23,7 +23,7 @@ services:
       - DNSPLUGIN=duckdns
       - STAGING=false
     volumes:
-      - /config:/config
+      - ./config:/config
     ports:
       - 2000:443
     restart: always
