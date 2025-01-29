@@ -22,7 +22,6 @@ services:
       - VALIDATION=dns
       - DNSPLUGIN=duckdns
       - STAGING=false
-      - dns_duckdns_token= 9b69a768-f5ef-4b5f-ad2e-4cf42ca19fcf
     volumes:
       - /home/aptalca/appdata/swag:/config
     ports:
