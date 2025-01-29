@@ -9,7 +9,26 @@ services:
       DB_CONN: "Host=db;Port=5432;Database=mydatabase;Username=myuser;Password=mypassword"
     restart: always
 
-
+  swag:
+    image: lscr.io/linuxserver/swag
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/denver
+      - URL=ricardoruiz.duckdns.org
+      - VALIDATION=dns
+      - DNSPLUGIN=duckdns
+      - STAGING=false
+    volumes:
+      - /home/aptalca/appdata/swag:/config
+    ports:
+      - 443:443
+      - 80:80
+    restart: unless-stopped
+    
   db:
     image: postgres:latest
     container_name: postgres_db
