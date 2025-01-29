@@ -21,7 +21,7 @@ services:
       - URL=ricardoruiz.duckdns.org
       - VALIDATION=dns
       - DNSPLUGIN=duckdns
-      - STAGING=true
+      - STAGING=false
     volumes:
       - ./config:/config
     ports:
