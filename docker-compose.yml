@@ -23,7 +23,7 @@ services:
       - DNSPLUGIN=duckdns
       - STAGING=true
     volumes:
-      - /home/aptalca/appdata/swag:/config
+      - /home/aptalca/appdata/swag:./config:/config
     ports:
       - 2000:443
     restart: unless-stopped
