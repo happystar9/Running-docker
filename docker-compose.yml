@@ -25,7 +25,7 @@ services:
     volumes:
       - /home/aptalca/appdata/swag:/config
     ports:
-      - 8000:443
+      - 2000:443
     restart: unless-stopped
     
   db:
