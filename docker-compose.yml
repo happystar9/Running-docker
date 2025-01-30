@@ -41,5 +41,10 @@ services:
       - PGDATA:/var/lib/postgresql/data
     restart: always
 
+  dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:9.0
+    ports:
+    - 18888:18888
+
 volumes:
   PGDATA:
