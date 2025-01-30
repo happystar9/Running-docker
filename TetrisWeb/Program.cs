@@ -104,12 +104,17 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.AddTransient<IEmailSender<ApplicationUser>, EmailSender>();
 
 builder.Services.AddOpenTelemetry()
-    .ConfigureResource(r => r.AddService(builder.Environment.ApplicationName))
+    .ConfigureResource(r => r.AddService("web-server"))
     .WithLogging(logging => logging
-        /* Note: ConsoleExporter is used for demo purpose only. In production
-           environment, ConsoleExporter should be replaced with other exporters
-           (e.g. OTLP Exporter). */
-        .AddConsoleExporter());
+        .AddConsoleExporter()
+        .AddOtlpExporter(
+            "logging",
+            options =>
+            {
+                options.Endpoint = new Uri("http://dahsboard/logs");
+            }
+        )
+    );
 
 var app = builder.Build();
 
