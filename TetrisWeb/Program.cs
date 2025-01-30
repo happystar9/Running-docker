@@ -10,6 +10,8 @@ using TetrisWeb.AuthData;
 using Microsoft.AspNetCore.Builder;
 using TetrisWeb.ApiServices.Interfaces;
 using TetrisWeb.DTOs;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Resources;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -101,6 +103,14 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 builder.Services.AddTransient<IEmailSender<ApplicationUser>, EmailSender>();
 
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(r => r.AddService(builder.Environment.ApplicationName))
+    .WithLogging(logging => logging
+        /* Note: ConsoleExporter is used for demo purpose only. In production
+           environment, ConsoleExporter should be replaced with other exporters
+           (e.g. OTLP Exporter). */
+        .AddConsoleExporter());
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -120,6 +130,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 
 app.UseCors("AllowSpecificOrigin");
 app.UseHttpsRedirection();
