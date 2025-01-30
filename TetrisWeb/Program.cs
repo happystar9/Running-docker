@@ -111,7 +111,7 @@ builder.Services.AddOpenTelemetry()
             "logging",
             options =>
             {
-                options.Endpoint = new Uri("http://dahsboard:18889");
+                options.Endpoint = new Uri("http://dashboard:18889");
             }
         )
     );
