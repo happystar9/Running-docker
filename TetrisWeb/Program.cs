@@ -111,7 +111,7 @@ builder.Services.AddOpenTelemetry()
             "logging",
             options =>
             {
-                options.Endpoint = new Uri("http://running-docker-dashboard-1:18889");
+                options.Endpoint = new Uri("http://100.95.34.51:18888");
             }
         )
     );
