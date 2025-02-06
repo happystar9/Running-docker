@@ -1,0 +1,20 @@
+  apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ricardo-web-db-dep
+  namespace: ricardo-telem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ricardo-web-db
+  template:
+    metadata:
+      labels:
+        app: ricardo-web-db
+    spec:
+      containers:
+      - name: db
+        image: postgres:16
+        ports:
+        - containerPort: 5432

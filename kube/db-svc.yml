@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ricardo-web-db-dep
+  namespace: ricardo-telem
+spec:
+  selector:
+    app: ricardo-web-db
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432

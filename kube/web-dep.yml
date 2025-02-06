@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ricardo-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ricardo-web
+  template:
+    metadata:
+      labels:
+        app: ricardo-web
+    spec:
+      containers:
+      - name: web
+        image: usernamedocker/..:1
+        ports:
+        - containerPort: 8080
+        env:
+        - name: POSTGRES_PASSWORD
+          value: mypassword
+        - name: POSTGRES_USER
+          value: ricardo
+        - name: POSTGRES_DB
+          value: ricardodb
