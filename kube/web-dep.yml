@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ricardo-web
+  namespace: ricardo-telem
 spec:
   replicas: 1
   selector:
@@ -18,9 +19,5 @@ spec:
         ports:
         - containerPort: 8080
         env:
-        - name: POSTGRES_PASSWORD
-          value: mypassword
-        - name: POSTGRES_USER
-          value: ricardo
-        - name: POSTGRES_DB
-          value: ricardodb
+        - name: MYDATABASECONNECTIONSTRING
+          value: "host=ricardo-db-svc;password=mypassword;username=ricardo;database=ricardodb"

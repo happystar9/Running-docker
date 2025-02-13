@@ -29,17 +29,14 @@ services:
     restart: unless-stopped
     
   db:
-    image: postgres:latest
-    container_name: postgres_db
-    ports:
-      - 5432:5432
-    environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydatabase
+    image: postgres
     volumes:
-      - PGDATA:/var/lib/postgresql/data
-    restart: always
+      # /var/lib/postgres/data
+      - ./schema.sql:/docker-entrypoint-schemadb.d/schema.sql
+    environment:
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_USER=ricardo
+      - POSTGRES_DB=ricardodb
 
   dashboard:
     image: mcr.microsoft.com/dotnet/aspire-dashboard:9.0

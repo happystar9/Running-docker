@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aspire-dep
+  namespace: ricardo-telem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aspire-dep
+  template:
+    metadata:
+      labels:
+        app: aspire-dep
+    spec:
+      containers:
+      - name: aspire-dep
+        image: aspire-dashboardimage
+        ports:
+        - containerPort: 5000

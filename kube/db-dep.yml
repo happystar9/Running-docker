@@ -13,8 +13,28 @@ spec:
       labels:
         app: ricardo-web-db
     spec:
+      volumes:
+      - name: my-db-data
+        persistentVolumeClaim:
+          claimName: ricardo-web-db-pvc
+      - name: schema-init
+        configMap:
+          name: ricardo-web-schema-sql
       containers:
       - name: db
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: my-db-data
+        - mountPath: /docker-entrypoint-schemadb.d/schema.sql
+          subPath: db-schema.sql
+          name: schema-init
         image: postgres:16
         ports:
         - containerPort: 5432
+        env:
+        - name: POSTGRES_PASSWORD
+          value: mypassword
+        - name: POSTGRES_USER
+          value: ricardo
+        - name: POSTGRES_DB
+          value: ricardodb

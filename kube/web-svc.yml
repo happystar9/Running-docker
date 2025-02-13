@@ -1,11 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-service
+  name: web-svc
+  namespace: ricardo-telem
 spec:
   selector:
-    app.kubernetes.io/name: MyApp
+    app: web-svc
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 9376
+      targetPort: 50
+  type: ClusterIP
