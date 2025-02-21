@@ -115,6 +115,11 @@ builder.Logging.AddOpenTelemetry(options =>
         .SetResourceBuilder(
             ResourceBuilder.CreateDefault()
                 .AddService(serviceName))
+        .AddOtlpExporter(otlpOptions =>
+        {
+            otlpOptions.Endpoint = new Uri("http://otel-collector:4317");  
+            otlpOptions.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc; 
+        })
         .AddConsoleExporter();
 });
 builder.Services.AddOpenTelemetry()
@@ -126,6 +131,8 @@ builder.Services.AddOpenTelemetry()
 
 var app = builder.Build();
 
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("Service Name: {ServiceName} - Logging Initialized", serviceName);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

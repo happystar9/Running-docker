@@ -3,32 +3,34 @@ receivers:
     protocols:
       grpc:
         endpoint: 0.0.0.0:4317
-      http:
-        endpoint: 0.0.0.0:4318
-processors:
-  batch:
+# processors:
+#   batch:
 
 exporters:
-  otlp:
-    endpoint: otelcol:4317
+  otlphttp:
+    endpoint: http://loki:3100/otlp
+  debug:
+    verbosity: detailed
 
-extensions:
-  health_check:
-  pprof:
-  zpages:
+
+
+# extensions:
+#   health_check:
+#   pprof:
+#   zpages:
 
 service:
-  extensions: [health_check, pprof, zpages]
+  extensions: []
   pipelines:
-    traces:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [otlp]
-    metrics:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [otlp]
+    # traces:
+    #   receivers: [otlp]
+    #   processors: [batch]
+    #   exporters: [otlp]
+    # metrics:
+    #   receivers: [otlp]
+    #   processors: [batch]
+    #   exporters: [otlp]
     logs:
       receivers: [otlp]
-      processors: [batch]
-      exporters: [otlp]
+      processors: []
+      exporters: [otlphttp, debug]
