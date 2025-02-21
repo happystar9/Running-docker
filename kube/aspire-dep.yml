@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
       - name: aspire-dep
-        image: aspire-dashboardimage
+        image: mcr.microsoft.com/dotnet/aspire-dashboard:9.0
         ports:
         - containerPort: 5000

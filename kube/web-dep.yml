@@ -15,9 +15,9 @@ spec:
     spec:
       containers:
       - name: web
-        image: usernamedocker/..:1
+        image: happystar91/running-docker-kubernetes:latest
         ports:
         - containerPort: 8080
         env:
-        - name: MYDATABASECONNECTIONSTRING
+        - name: DB_CONN
           value: "host=ricardo-db-svc;password=mypassword;username=ricardo;database=ricardodb"

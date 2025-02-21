@@ -193,6 +193,9 @@ publish/
 *.pubxml
 *.publishproj
 
+config/keys/cert.crt
+config/keys/*.crt
+
 # Microsoft Azure Web App publish settings. Comment the next line if you want to
 # checkin your Azure Web App publish settings, but sensitive information contained
 # in these scripts will be unencrypted
@@ -402,7 +405,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-.idea
+.idea/
 
 ##
 ## Visual studio for Mac
@@ -426,7 +429,7 @@ test-results/
 *.dmg
 *.app
 
-# content below from: https://github.com/github/gitignore/blob/master/Global/macOS.gitignore
+# content below from: https://github.com/github/gitignore/blob/main/Global/macOS.gitignore
 # General
 .DS_Store
 .AppleDouble
@@ -455,7 +458,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-# content below from: https://github.com/github/gitignore/blob/master/Global/Windows.gitignore
+# content below from: https://github.com/github/gitignore/blob/main/Global/Windows.gitignore
 # Windows thumbnail cache files
 Thumbs.db
 ehthumbs.db
@@ -482,3 +485,19 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+config/etc/letsencrypt/live/
+config/etc/letsencrypt/archive/
+c o n f i g / e t c / l e t s e n c r y p t / l i v e / 
+ 
+ c o n f i g / e t c / l e t s e n c r y p t / a r c h i v e / 
+ 
+ c o n f i g / k e y s / c e r t . c r t 
+ 
+ c o n f i g / k e y s / c e r t . c r t 
+ 
+ config/keys/cert.crt
+c o n f i g / k e y s / c e r t . c r t 
+ 
+ c o n f i g / k e y s / * . c r t 
+ 
+ 

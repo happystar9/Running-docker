@@ -12,6 +12,10 @@ using TetrisWeb.ApiServices.Interfaces;
 using TetrisWeb.DTOs;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
+using System.Globalization;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -103,20 +107,25 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 builder.Services.AddTransient<IEmailSender<ApplicationUser>, EmailSender>();
 
+var serviceName = "TetrisWebService";
+
+builder.Logging.AddOpenTelemetry(options =>
+{
+    options
+        .SetResourceBuilder(
+            ResourceBuilder.CreateDefault()
+                .AddService(serviceName))
+        .AddConsoleExporter();
+});
 builder.Services.AddOpenTelemetry()
-    .ConfigureResource(r => r.AddService("web-server"))
-    .WithLogging(logging => logging
-        .AddConsoleExporter()
-        .AddOtlpExporter(
-            "logging",
-            options =>
-            {
-                options.Endpoint = new Uri("http://100.95.34.51:18888");
-            }
-        )
-    );
+      .ConfigureResource(resource => resource.AddService(serviceName))
+      .WithTracing(tracing => tracing
+          .AddConsoleExporter())
+      .WithMetrics(metrics => metrics
+          .AddConsoleExporter());
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
