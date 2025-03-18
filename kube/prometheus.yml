@@ -1,0 +1,6 @@
+scrape_configs:
+  - job_name: 'tetrisweb-metrics'
+    scrape_interval: 5s
+    static_configs:
+      - targets: 
+        - web:5000

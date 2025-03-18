@@ -3,8 +3,10 @@ WORKDIR /App
 COPY . .
 RUN dotnet tool install --global dotnet-ef
 
+RUN dotnet restore TetrisWeb.csproj
 RUN dotnet publish TetrisWeb.csproj --configuration Release --output /App/publish
 WORKDIR /App/publish
 
+EXPOSE 5000
 
 ENTRYPOINT ["dotnet", "TetrisWeb.dll"]

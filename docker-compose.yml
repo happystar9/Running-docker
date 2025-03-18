@@ -2,12 +2,14 @@ services:
   web:
     build: ./TetrisWeb
     ports:
-      - 5000:5000
+      - "5000:5000"
     depends_on:
       - db
     environment:
       DB_CONN: "Host=db;Port=5432;Database=mydatabase;Username=myuser;Password=mypassword"
     restart: always
+    networks:
+      - tetris_network
 
   swag:
     image: lscr.io/linuxserver/swag
@@ -27,6 +29,8 @@ services:
     ports:
       - 2000:443
     restart: unless-stopped
+    networks:
+      - tetris_network
     
   db:
     image: postgres
@@ -37,12 +41,15 @@ services:
       - POSTGRES_PASSWORD=mypassword
       - POSTGRES_USER=ricardo
       - POSTGRES_DB=ricardodb
+    networks:
+      - tetris_network
 
   dashboard:
     image: mcr.microsoft.com/dotnet/aspire-dashboard:9.0
     ports:
     - 18888:18888
-
+    networks:
+      - tetris_network
   otel-collector:
     image: otel/opentelemetry-collector-contrib
     volumes:
@@ -50,10 +57,22 @@ services:
     ports:
       - 4317:4317 # OTLP gRPC receiver
       - 4318:4318 # OTLP http receiver
+    networks:
+      - tetris_network
   loki:
     image: grafana/loki:latest
     ports:
       - "3100:3100"
+    networks:
+      - tetris_network
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./kube/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - tetris_network
   grafana:
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
@@ -63,6 +82,11 @@ services:
       - "3000:3000"
     volumes:
       - ./configs/grafana-datasource.yaml:/etc/grafana/provisioning/datasources/ds.yaml
+    networks:
+      - tetris_network
 
 volumes:
   PGDATA:
+networks:
+  tetris_network:
+    driver: bridge
