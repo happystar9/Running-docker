@@ -1,17 +1,17 @@
-apiVersion: networking.k9s.io/v1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ricardo-web-ingress
+  name: ricardo-web-prometheus-ingress
   namespace: ricardo-telem
 spec:
   rules:
-  - host: ricardoruiz.duckdns.org
+  - host: ricardoprom.duckdns.org
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: web-svc
+            name: ricardo-web-prometheus
             port:
-              number: 80
+              number: 9090

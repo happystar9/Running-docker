@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: happystar91/running-docker-kubernetes:latest
+        image: happystar91/running-docker-kubernetes:$BUILD_NUMBER
         ports:
         - containerPort: 8080
         env:
