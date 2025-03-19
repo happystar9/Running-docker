@@ -10,4 +10,4 @@ data:
         scrape_interval: 5s
         static_configs:
           - targets: 
-            - web:5000
+            - "web:5000"
