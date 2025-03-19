@@ -10,10 +10,7 @@ jobs:
 
     - name: test
       run: |
-        docker build \
-          -f ./test.Dockerfile \
-          -t ricardo_test_container \
-          .
+        docker build -f ./test.Dockerfile -t ricardo_test_container .
         docker run --rm ricardo_test_container
 
     - name: Login to Docker Hub
@@ -24,9 +21,7 @@ jobs:
           
     - name: build and push to docker hub
       run: |
-        docker build \
-          -t happystar91/running-docker-kubernetes:${{github.run_number}} \
-          .
+        docker build -t happystar91/running-docker-kubernetes:${{github.run_number}} .
         docker push happystar91/running-docker-kubernetes:${{github.run_number}}
     
     - name: deploy to kubernetes
